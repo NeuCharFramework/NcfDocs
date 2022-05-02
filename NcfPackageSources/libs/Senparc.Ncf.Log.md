@@ -1,0 +1,1 @@
+# Senparc.Ncf.Log

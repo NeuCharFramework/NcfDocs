@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "docs:dev": "vuepress dev .",
+    "docs:build": "vuepress build ."
+  },
+  "devDependencies": {
+    "@vuepress/plugin-google-analytics": "^1.0.0-alpha.0",
+    "vuepress": "^1.9.7"
+  },
+  "name": "NcfDocs",
+  "version": "1.0.0",
+  "description": "NcfDocs",
+  "main": "index.js",
+  "author": "Senparc",
+  "license": "MIT"
+}

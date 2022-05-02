@@ -1,0 +1,4 @@
+# Senparc.Ncf.AreaBase
+
+
+#

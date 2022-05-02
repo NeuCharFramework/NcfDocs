@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+node_modules/
+online/
+guide/
+ecosystem/
+SUMMARY.md
