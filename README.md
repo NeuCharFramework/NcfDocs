@@ -3,8 +3,8 @@ home: true
 heroImage: /logo.png
 heroText: ''
 actionText: 快速开始 →
-actionLink: /guide/base/preface
-footer: MIT Licensed | Copyright © 2019-present microapp.store
+actionLink: /start/home/index
+footer: MIT Licensed | Copyright © 2019-Now NeuCharFramework/NCF
 ---
 
 <div style="text-align: center">
