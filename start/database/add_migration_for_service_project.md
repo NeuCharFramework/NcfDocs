@@ -8,7 +8,7 @@
 
 例如，我们在 `AdminUserInfo` 类中添加了一个属性：
 
-<img src="./images/add_migration_for_service_project-add_prop.png" width="600" />
+![Image Text](./images/add_migration_for_service_project-add_prop.png)
 
 ## 使用 EF Core 的 Add-Migration 命令生成迁移文件
 
@@ -30,7 +30,7 @@ dotnet ef migrations add AddOpenId -c SystemServiceEntities_SqlServer -o Migrati
 
 执行命令即可完成 SQL Server 的迁移文件更新：
 
-<img src="./images/add_migration_for_service_project-run_migrations_add.png" />
+![Image Text](./images/add_migration_for_service_project-run_migrations_add.png)
 
 上图中：
 
@@ -42,11 +42,11 @@ dotnet ef migrations add AddOpenId -c SystemServiceEntities_SqlServer -o Migrati
 
 在 VS 中可以看到新建了 `20210809155647_AddOpenId.cs` 文件，以及更新了快照文件 `SystemServiceEntities_SqlServerModelSnapshot.cs`：
 
-<img src="./images/add_migration_for_service_project-run-files-added.png" width="400"/>
+![Image Text](./images/add_migration_for_service_project-run-files-added.png)
 
 通过 `20210809155647_AddOpenId.cs` 文件可以看到 OpenId 这个属性（对应数据库表的列已经被添加）
 
-<img src="./images/add_migration_for_service_project-run-addopenid_file_content.png" width="600"/>
+![Image Text](./images/add_migration_for_service_project-run-addopenid_file_content.png)
 
 ## 更新 Senparc.Service 版本号
 
@@ -70,7 +70,7 @@ dotnet ef database update -c SystemServiceEntities_SqlServer -s ../Senparc.Web.D
 
 > 其中 SystemServiceEntities_SqlServer 根据数据库类型灵活调整
 
-<img src="./images/add_migration_for_service_project-run_database_update.png" />
+![Image Text](./images/add_migration_for_service_project-run_database_update.png)
 
 上图运行结果中：
 
@@ -80,13 +80,7 @@ dotnet ef database update -c SystemServiceEntities_SqlServer -s ../Senparc.Web.D
 
 ## 数据库表前后对比
 
-<table>
-<tr>
-<td><img src="./images/add_migration_for_service_project-database-old.png"/></td>
-<td><img src="./images/add_migration_for_service_project-database-new.png"/></td>
-</tr>
-<tr>
-<td>更新前</td>
-<td>更新后</td>
-</tr>
-<table>
+| 图片 | 状态 |
+| --- | --- |
+| ![Image Text](./images/add_migration_for_service_project-database-old.png) | 更新前 |
+| ![Image Text](./images/add_migration_for_service_project-database-new.png) | 更新后 |
