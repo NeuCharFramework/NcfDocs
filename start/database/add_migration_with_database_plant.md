@@ -36,34 +36,28 @@
 
 ## 原数据库表结构
 
-<image src="./images/.png">
+![Image Text](./images/origin-database-table-struct.png)
 
 ## 停机坪引用需要迁移的模块
 
-<image src="./images/add-refrence.png">
+![Image Text](./images/add-refrence.png)
 
 ## 使用模块生成器的迁移命令
 
-<image src="./images/use-module-migration-command.png">
+![Image Text](./images/use-module-migration-command.png)
 
-<image src="./images/xncf-module-add-migration.png">
+![Image Text](./images/xncf-module-add-migration.png)
 
-<image src="./images/add-migration-success.png">
+![Image Text](./images/add-migration-success.png)
 
 生成完成后，会显示
 
-<image src="./images/migration-file.png">
+![Image Text](./images/migration-file.png)
 
 ## 对比数据库
 
-<table>
-<tr>
-<td><img src="images/origin-database-table-struct.png"/></td>
-<td><img src="images/new-table-field.png"/></td>
-</tr>
-<tr>
-<td>更新前</td>
-<td>更新后</td>
-</tr>
-<table>
+| 图片 | 状态 |
+| --- | --- |
+| ![Image Text](./images/origin-database-table-struct.png) | 更新前 |
+| ![Image Text](./images/new-table-field.png) | 更新后 |
 

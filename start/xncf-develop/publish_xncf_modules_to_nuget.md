@@ -18,7 +18,9 @@
 
 <img src="./images/nuget-upload-package.png" />
 
-<img src="./images/nuget-upload-package-2.PNG" />
+等待上传结果
+
+<img src="./images/nuget-upload-package-2.png" />
 
 第五步：点击Submit，提交完成后，就交给nuget了，等待片刻，即可上线nuget包
 

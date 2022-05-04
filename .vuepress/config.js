@@ -82,7 +82,7 @@ module.exports = {
                     children: [
                         '/start/start-develop/get-ncf-template',
                         '/start/start-develop/run-ncf',
-                        '/start/start-develop/install',
+                        '/start/start-develop/install-app',
                         '/start/start-develop/admin-login',
                         '/start/start-develop/admin-background',
                         '/start/start-develop/admin-module-manage',
@@ -235,7 +235,7 @@ module.exports = {
                         children: [
                             '/start/start-develop/get-ncf-template',
                             '/start/start-develop/run-ncf',
-                            '/start/start-develop/install',
+                            '/start/start-develop/install-app',
                             '/start/start-develop/admin-login',
                             '/start/start-develop/admin-background',
                             '/start/start-develop/admin-module-manage',
@@ -383,7 +383,7 @@ module.exports = {
                         children: [
                             '/start/start-develop/get-ncf-template',
                             '/start/start-develop/run-ncf',
-                            '/start/start-develop/install',
+                            '/start/start-develop/install-app',
                             '/start/start-develop/admin-login',
                             '/start/start-develop/admin-background',
                             '/start/start-develop/admin-module-manage',
