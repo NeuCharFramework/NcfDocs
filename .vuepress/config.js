@@ -149,21 +149,26 @@ module.exports = {
             ],
             '/NcfPackageSources/': [
                 {
-                    title: '准备',
+                    title: 'NCF 基础库',
                     collapsable: false,
                     children: [
-                        '/NcfPackageSources/home/index'
+                        '/NcfPackageSources/libs/Senparc.Ncf.Core',
+                        '/NcfPackageSources/libs/Senparc.Ncf.Repository',
+                        '/NcfPackageSources/libs/Senparc.Ncf.Service',
+                        '/NcfPackageSources/libs/Senparc.Ncf.SMS',
+                        '/NcfPackageSources/libs/Senparc.Ncf.Mvc.UI',
+                        '/NcfPackageSources/libs/Senparc.Ncf.Log',
+                        '/NcfPackageSources/libs/Senparc.Ncf.Utility',
+                        '/NcfPackageSources/libs/Senparc.Ncf.XncfBase',
+                        '/NcfPackageSources/libs/Senparc.Ncf.AreaBase',
+                        '/NcfPackageSources/libs/Senparc.Ncf.DatabasePlant'
                     ]
                 },
                 {
-                    title: '快速开始',
+                    title: 'Senparc.Ncf.AreaBase',
                     collapsable: false,
                     children: [
-                        '/guide/quickstart/quickstart',
-                        '/guide/quickstart/clone',
-                        '/guide/quickstart/initDb',
-                        '/guide/quickstart/config',
-                        '/guide/quickstart/startup'
+                        '/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IxncfRegister'
                     ]
                 }
             ],
@@ -172,7 +177,7 @@ module.exports = {
                     title: '动态WebApi',
                     collapsable: false,
                     children: [
-                        '/DynamicWebApi/home/index'
+                        '/DynamicWebApi/home/demo'
                     ]
                 }
             ]
@@ -302,21 +307,26 @@ module.exports = {
                 ],
                 '/NcfPackageSources/': [
                     {
-                        title: '准备',
+                        title: 'NCF 基础库',
                         collapsable: false,
                         children: [
-                            '/NcfPackageSources/home/index'
+                            '/NcfPackageSources/libs/Senparc.Ncf.Core',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Repository',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Service',
+                            '/NcfPackageSources/libs/Senparc.Ncf.SMS',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Mvc.UI',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Log',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Utility',
+                            '/NcfPackageSources/libs/Senparc.Ncf.XncfBase',
+                            '/NcfPackageSources/libs/Senparc.Ncf.AreaBase',
+                            '/NcfPackageSources/libs/Senparc.Ncf.DatabasePlant'
                         ]
                     },
                     {
-                        title: '快速开始',
+                        title: 'Senparc.Ncf.AreaBase',
                         collapsable: false,
                         children: [
-                            '/guide/quickstart/quickstart',
-                            '/guide/quickstart/clone',
-                            '/guide/quickstart/initDb',
-                            '/guide/quickstart/config',
-                            '/guide/quickstart/startup'
+                            '/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IxncfRegister'
                         ]
                     }
                 ],
@@ -325,7 +335,7 @@ module.exports = {
                         title: '动态WebApi',
                         collapsable: false,
                         children: [
-                            '/DynamicWebApi/home/index'
+                            '/DynamicWebApi/home/demo'
                         ]
                     }
                 ]
@@ -450,21 +460,26 @@ module.exports = {
                 ],
                 '/NcfPackageSources/': [
                     {
-                        title: '准备',
+                        title: 'NCF 基础库',
                         collapsable: false,
                         children: [
-                            '/NcfPackageSources/home/index'
+                            '/NcfPackageSources/libs/Senparc.Ncf.Core',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Repository',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Service',
+                            '/NcfPackageSources/libs/Senparc.Ncf.SMS',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Mvc.UI',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Log',
+                            '/NcfPackageSources/libs/Senparc.Ncf.Utility',
+                            '/NcfPackageSources/libs/Senparc.Ncf.XncfBase',
+                            '/NcfPackageSources/libs/Senparc.Ncf.AreaBase',
+                            '/NcfPackageSources/libs/Senparc.Ncf.DatabasePlant'
                         ]
                     },
                     {
-                        title: '快速开始',
+                        title: 'Senparc.Ncf.AreaBase',
                         collapsable: false,
                         children: [
-                            '/guide/quickstart/quickstart',
-                            '/guide/quickstart/clone',
-                            '/guide/quickstart/initDb',
-                            '/guide/quickstart/config',
-                            '/guide/quickstart/startup'
+                            '/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IxncfRegister'
                         ]
                     }
                 ],
@@ -473,7 +488,7 @@ module.exports = {
                         title: '动态WebApi',
                         collapsable: false,
                         children: [
-                            '/DynamicWebApi/home/index'
+                            '/DynamicWebApi/home/demo'
                         ]
                     }
                 ]
