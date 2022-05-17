@@ -57,3 +57,6 @@ guide/
 ecosystem/
 SUMMARY.md
 /.vs
+
+.vuepress/dist/
+*.zip
