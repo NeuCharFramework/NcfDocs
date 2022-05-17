@@ -4,7 +4,7 @@
 
 ![Image text](./images/common_problem/mysql_engine_error.png)
 
-解决方案请参考：[如何切换Mysql](#sort=start&doc=database/appoint_database.md)
+解决方案请参考：[如何切换Mysql](/start/database/appoint_database.html)
 
 ## 如何修改默认数据库连接字符串
 
@@ -80,6 +80,6 @@ dotnet tool update --global dotnet-ef --version 3.0.0-preview7.19362.6
 
 ![Image text](./images/common_problem/generator_xncf_cli.png)
 
-在根据[XncfBuilder模块](#sort=start&doc=xncf-develop/create-xncf.md)去生成模块，以下图片中选本地已安装即可
+在根据[XncfBuilder模块](/start/xncf-develop/create-xncf.html)去生成模块，以下图片中选本地已安装即可
 
 ![Image text](./images/common_problem/xncf_builder_template_new.png)

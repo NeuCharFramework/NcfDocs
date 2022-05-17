@@ -11,8 +11,8 @@ PostgreSql
 ```
 ## 默认数据库配置
 
-NCF第一次拉取后默认配置为SQLServer，[配置方法](#sort=start&doc=database/setting.md)
+NCF第一次拉取后默认配置为SQLServer，[配置方法](/start/database/setting.html)
 
 ## 如何切换指定数据库
 
-[切换指定数据库](#sort=start&doc=database/appoint_database.md)
+[切换指定数据库](/start/database/appoint_database.html)

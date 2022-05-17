@@ -3,8 +3,8 @@
 ## 前言
 
 创建 Xncf 模块有自动和手动两种方式：
- 1. 手动方式即按照 [Xncf 的构成](#sort=start&doc=xncf-develop/about-xncf.md) 中的要求，创建 `Register` 类，并实现一系列的接口。
- > 手动创建方式可参考[这里](#sort=start&doc=developer/xncf_module.md)。
+ 1. 手动方式即按照 [Xncf 的构成](/start/xncf-develop/about-xncf.html) 中的要求，创建 `Register` 类，并实现一系列的接口。
+ > 手动创建方式可参考[这里](/start/developer/xncf_module.html)。
  2. 【推荐】使用 UI 可视化配置的方式自动创建模块。值得一提的是：这个用于创建 Xncf 模块的功能，也是由一个名为 Senparc.Xncf.XncfBuilder 的 Xncf 模块提供的。
 
 以下使用“0 代码”创建的方式，对使用可视化自动创建 Xncf 模块基础代码的方式进行介绍。

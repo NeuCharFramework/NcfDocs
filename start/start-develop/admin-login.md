@@ -4,4 +4,4 @@
 
 <img src="./images/admin-login-01.png" />
 
-输入正确的账号及密码，即可登录到[管理员后台](#sort=start&doc=start-develop/admin-background.md)。
+输入正确的账号及密码，即可登录到[管理员后台](/start/start-develop/admin-background.html)。
