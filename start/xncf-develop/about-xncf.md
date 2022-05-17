@@ -11,11 +11,11 @@
 > 也可以换一种说法：任何一个独立项目（Project）都可以升级成 Xncf 模块，只需要实现一些必须的接口。
 
 ### IXncfRegister 接口（必须）
-必须要包含的接口是：`IXncfRegister`（所属基础库：<a href="#sort=NcfPackageSources&doc=libs/Senparc.Ncf.XscfBase.md">Senparc.Ncf.XncfBase</a>）。
+必须要包含的接口是：`IXncfRegister`（所属基础库：<a href="/NcfPackageSources/libs/Senparc.Ncf.XscfBase.html">Senparc.Ncf.XncfBase</a>）。
 
 `IXncfRegister` 接口中包含了模块名称、全局唯一编号、版本号、菜单名称、图标等模块元数据信息，并且可以定义模块安装、卸载等过程中需要执行的代码。
 
-关于 `IXncfRegister` 接口的详细介绍请见：[IXncfRegister](#sort=NcfPackageSources&doc=libs/Senparc.Ncf.AreaBase/IXncfRegister.md)。
+关于 `IXncfRegister` 接口的详细介绍请见：[IXncfRegister](/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IXncfRegister.html)。
 
 为了方便开发者使用，NCF 默认提供了一个基于 `IXncfRegister` 接口的实现：`XncfRegisterBase`，因此，通常我们只需要在项目中，创建一个 `Register.cs` 类文件，然后继承 `XncfRegisterBase` 基类，并实现其指定的接口，即可使这个项目快速变成一个 Xncf 模块。
 

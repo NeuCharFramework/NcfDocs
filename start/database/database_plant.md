@@ -16,7 +16,7 @@ Plant 意为“停机坪”，这意味着当你准备“检修”模块的时�
 
 <img src="./images/database_plant-graph.png" width="80%"/>
 
-> [Senparc.Ncf.DatabasePlant](#sort=NcfPackageSources&doc=libs/Senparc.Ncf.DatabasePlant.md) 引用了 NCF 官方实现的所有数据库的 DatabaseConfiguration 的项目，如：Senparc.Ncf.Database.MySql、Senparc.Ncf.Database.SqlServer，等等。
+> [Senparc.Ncf.DatabasePlant](/NcfPackageSources/libs/Senparc.Ncf.DatabasePlant.html) 引用了 NCF 官方实现的所有数据库的 DatabaseConfiguration 的项目，如：Senparc.Ncf.Database.MySql、Senparc.Ncf.Database.SqlServer，等等。
 
 ## 原因
 
@@ -51,4 +51,4 @@ Plant 意为“停机坪”，这意味着当你准备“检修”模块的时�
 
 那么当模块没有引用任何数据库包的情况下，又是怎么在生产环境中明确指向并使用某个数据库的呢？
 
-请参考：[指定数据库](#sort=start&doc=database/appoint_database.md)
+请参考：[指定数据库](/start/database/appoint_database.html)

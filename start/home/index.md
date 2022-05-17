@@ -25,4 +25,4 @@ NcfPackageSources |[NcfPackageSources](https://github.com/NeuCharFramework/NcfPa
 
 ## 了解更多
 
-[开始](#sort=start&doc=instruction/about-ncf.md)
+[开始](/start/instruction/about-ncf.html)
