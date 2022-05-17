@@ -18,4 +18,4 @@ Plant 意为“车间”，对战斗机来说，更像是“停机坪”，这�
 
 ## 应用
 
- [Senparc.Ncf.DatabasePlant](#sort=start&doc=database/database_plant.md)
+ [Senparc.Ncf.DatabasePlant](/start/database/database_plant.html)

@@ -54,7 +54,7 @@ using Senparc.Ncf.Database.SqlServer;//根据需要添加或删除，使用需�
 
 <div style="color:red">【注意事项】：Mysql的引擎必须为 InnoDB ,如果设置的为Mylsam,则在运行时会报错，报错信息如下</div><br/>
 
-[修改Mysql的配置后，启动报错](#sort=start&doc=qa/common_problem.md)
+[修改Mysql的配置后，启动报错](/start/qa/common_problem.html)
 
 ## 如何快速切换Sqlite
 

@@ -1,6 +1,6 @@
 # 自动创建对的 Xncf 模块 Sample 详解
 
-在完成 [创建第一个 Xncf 模块](#sort=start&doc=xncf-develop/create-xncf.md) 操作之后，我们就得到了一个自定义的 Xncf 项目，其中包含了 Sample 示例代码，下面我们就来对这个项目进行代码层面的功能介绍，并尝试对齐进行修改，以演示如何在基础代码纸上，实现自己的业务逻辑。
+在完成 [创建第一个 Xncf 模块](/start/xncf-develop/create-xncf.html) 操作之后，我们就得到了一个自定义的 Xncf 项目，其中包含了 Sample 示例代码，下面我们就来对这个项目进行代码层面的功能介绍，并尝试对齐进行修改，以演示如何在基础代码纸上，实现自己的业务逻辑。
 
 
 ## 文件结构
@@ -47,7 +47,7 @@ MySenparc.Xncf.MyApp            |                       | MySenparc.Xncf.MyApp �
 
 ## Register.cs 注册文件
 
-在 [Xncf 的构成](#sort=start&doc=xncf-develop/about-xncf.md) 我们已经介绍了：每个 Xncf 模块都必须有一个类实现 `IXncfRegister` 接口，在这个项目中，就由 Register.cs 中的 Register 类来实现。
+在 [Xncf 的构成](/start/xncf-develop/about-xncf.html) 我们已经介绍了：每个 Xncf 模块都必须有一个类实现 `IXncfRegister` 接口，在这个项目中，就由 Register.cs 中的 Register 类来实现。
 
 为了让逻辑更加清楚，我们将 Register 类设置为部分类（partial class），分别用于实现 IXncfRegister、IAreaRegister 和 IXncfDatabase 三个接口。
 

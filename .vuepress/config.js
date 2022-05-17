@@ -46,7 +46,6 @@ module.exports = {
                 ]
             },
             { text: '上线实战', link: '/' },
-            { text: '捐赠', link: '/' },
             { text: 'Gitee', link: 'https://gitee.com/NeuCharFramework/NCF' }
         ],
         sidebar: {
