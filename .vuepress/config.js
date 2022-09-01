@@ -76,6 +76,7 @@ module.exports = {
                     title: '配置',
                     collapsable: false,
                     children: [
+                        '/start/developer/entrance',
                         '/start/database/setting',
                         '/start/config/mutiple-tenant',
                         '/start/config/redis'
