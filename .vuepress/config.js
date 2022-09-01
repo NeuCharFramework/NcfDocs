@@ -78,6 +78,8 @@ module.exports = {
                     children: [
                         '/start/developer/entrance',
                         '/start/database/setting',
+                        '/start/config/docker',
+                        '/start/config/dapr',
                         '/start/config/mutiple-tenant',
                         '/start/config/redis'
                     ]
