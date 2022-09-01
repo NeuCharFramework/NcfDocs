@@ -5,7 +5,7 @@
 
 ## 文件结构
 
-用于支撑 `MySenparc.Xncf.MyApp` 功能的项目文件结构如下：
+用于支撑 `Senparc.Xncf.Accounts` 功能的项目文件结构如下：
 
 <img src="./images/about-custom-xncf/01.png" />
 
@@ -13,36 +13,51 @@
 
 文件夹                            |    文件               |    说明
 --------------------------------|-----------------------|----------
-MySenparc.Xncf.MyApp            |                       | MySenparc.Xncf.MyApp 项目跟目录
-┣ App_Data                      |                       | App_Data 系统文件夹，此文件夹内的内容受访问保护，无法从 URL 直接访问
-┃ &nbsp; ┗ Database        |                       | XML 数据库文件夹，使用 [CO2NET](https://github.com/Senparc/Senparc.CO2NET) 的 XmlDataContext 自动读取，开发过程无需关心
-┃ &nbsp; &nbsp; &nbsp; ┗   | SenparcConfig.config  | 数据库连接字符串配置文件，自动读取
-┣ Areas                         |                       | 存放 Area 页面的文件夹（.NET 系统约定）
-┃ &nbsp; ┗ Admin           |                       | 存放管理员后台 Admin 页面文件，其下面的文件结构和常规 RazorPage 网站无异
-┣ Functions                     |                       |
-┃ &nbsp; ┗                 | MyFunction.cs         | 定义了一个 `MyFunction` 的执行方法（Function）
-┣ Migrations                    |                       | 存放数据库迁移代码的项目（自动生成）
-┃ &nbsp; ┣ Migrations.MySql |                       | MySQL 数据库的迁移文件（自动生成）
-┃ &nbsp; ┣ Migrations.SQLite |                      | SQLite 数据库的迁移文件（自动生成）
-┃ &nbsp; ┗ Migrations.SqlServer |                   | SQL Server 数据库的迁移文件（自动生成）
-┣ Models                        |                       | 存放实体模型的文件夹
-┃ &nbsp; ┗ DatabaseModel   |         | 存放数据库实体类
-┃ &nbsp; ┃ &nbsp; ┣ Dto   |     | 存放 Dto 类的文件夹
-┃ &nbsp; ┃ &nbsp; ┃ &nbsp; ┗   | ColorDto.cs    | Color 类的 Dto 类
-┃ &nbsp; ┃ &nbsp; ┣ Mapping   |     | 存放数据库映射（Mapping）定义的文件夹（EntityFramework）
-┃ &nbsp; ┃ &nbsp; ┃ &nbsp; ┗   | MyApp_ColorConfigurationMapping.cs    | Color 实体的 Mapping 定义
-┃ &nbsp; ┃ &nbsp; ┣  | Color.cs | 数据库实体类：Color
-┃ &nbsp; ┃ &nbsp; ┣  | MyAppSenparcEntities.cs | 当前 Xncf 模块的数据库上下文实体（DbContext），<br>同时作为 SQLite（in-memory 模式）的数据库上下文（DbConext）引导文件
-┃ &nbsp; ┃ &nbsp; ┗  | SenparcDbContextFactory.cs | 为 `MyAppSenparcEntities` 服务的设计时 DbContext 工厂（DesignTimeDbContextFactory）
-┃ &nbsp; ┗ MultipleDatabase|                       | 存放多数据库上下文的引导文件
-┃ &nbsp; &nbsp;  &nbsp; ┣  | MyAppSenparcEntities_MySql.cs | MySql 数据库的数据库上下文（DbConext）引导文件，**基类为MyAppSenparcEntities**
-┃ &nbsp; &nbsp;  &nbsp; ┗  | MyAppSenparcEntities_SqlServer.cs | SQL Server 数据库的数据库上下文（DbConext）引导文件，**基类为MyAppSenparcEntities**
-┣ Services                      |                       | 存放业务逻辑的服务层（Service）
-┃ &nbsp; ┗                 | ColorService.cs       | Color 领域的服务
-┣                               | Register.cs           | Xncf 模块注册类（部分类 - 实现 IXncfRegister 接口），提供 Xncf 模块基础能力
-┣                               | Register.Area.cs      | Xncf 模块注册类（部分类 - 实现 IAreaRegister 和 IXncfRazorRuntimeCompilation 接口），提供网页能力
-┗                               | Register.Database.cs           | Xncf 模块注册类（部分类 - 实现 IXncfDatabase 接口），提供数据库能力
+```
+Senparc.Xncf.Accounts        (项目根目录)
+    ACL        (防腐层)
+        Repository
+            AccountRepository.cs
+    App_Data        (系统文件夹，此文件夹内的内容受访问保护，无法从 URL 直接访问)
+        Database
+            SenparcConfig.config
+        SenparcTraceLog
+            SenparcTrace-20220522.log
+    Areas        (存放 Area 页面的文件夹（.NET 系统约定）)
+        Admin        (存放管理员后台 Admin 页面文件，其下面的文件结构和常规 RazorPage 网站无异)
+            Pages
+                Account
+                    Index.cshtml
+                Shared
+                    _ViewStart.cshtml
+    Domain        (领域目录)
+        Cache        (缓存目录)
+            FullAccountCache.cs
+        Migrations        (存放数据库迁移代码的项目（自动生成）)
+            MySql        (MySQL 数据库的迁移文件（自动生成）)
+            Oracle        (Oracle 数据库的迁移文件（自动生成）)
+            PostgreSQL        (PostgreSQL 数据库的迁移文件（自动生成）)
+            Sqlite        (Sqlite 数据库的迁移文件（自动生成）)
+            SqlServer        (SqlServer 数据库的迁移文件（自动生成）)
+        Models        (存放数据库实体类)
+            Dto        (存放 Dto 类的文件夹)
+            Mapping        (存放 自动映射 类的文件夹)
+            MultipleDatabase        (存放 多数据库工厂 类的文件夹)
+            Account.cs
+        OperationQueue
+            OperationQueue.cs
+        Services        (存放 业务 类的文件夹)
+            AccountService.cs        (Account的业务类)
+    OHS        (开放主机服务)
+        Local        (本地)
+            PL        (公共语言)
+        Remote        (远程)
+    Programs.cs
+    Register.cs        (Xncf 模块注册类（部分类 - 实现 IXncfRegister 接口），提供 Xncf 模块基础能力)
+    Register.Area.cs        (Xncf 模块注册类（部分类 - 实现 IAreaRegister 和 IXncfRazorRuntimeCompilation 接口），提供网页能力)
+    Register.Database.cs        (Xncf 模块注册类（部分类 - 实现 IXncfDatabase 接口），提供数据库能力)
 
+```
 > 提示：以上所有文件都是使用 XncfBuilder 模块自动生成的，无需做任何手动编写！
 
 ## Register.cs 注册文件
