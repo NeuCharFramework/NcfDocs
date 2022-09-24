@@ -4,7 +4,7 @@ heroImage: /logo.png
 heroText: ''
 actionText: 快速开始 →
 actionLink: /start/home/index
-footer: Apache License Version 2.0 | Copyright © 2019-2022 NeuCharFramework/NCF
+footer: Apache License Version 2.0 | Copyright © 2019-2022 NeuCharFramework/NCFDocs
 ---
 
 <div style="text-align: center">

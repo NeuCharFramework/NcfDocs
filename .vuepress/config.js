@@ -10,8 +10,8 @@ module.exports = {
     port: 8080,
     ga: 'UA-71886989-13',
     themeConfig: {
-        repo: 'NeuCharFramework/NCF',
-        docsDir: 'doc',
+        repo: 'NeuCharFramework/NCFDocs',
+        docsDir: '../../blob/main/',
         editLinks: true,
         editLinkText: '编辑此页面！',
         nav: [
