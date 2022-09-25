@@ -8,7 +8,7 @@ SQLServer
 MySql
 Sqlite
 PostgreSql
-Oracle(正在支持中)
+Oracle
 ```
 ## 默认数据库配置
 
