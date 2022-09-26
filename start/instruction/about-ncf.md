@@ -23,7 +23,7 @@ NCF 已全面兼容 .NET Core 3.1 和 .NET 5.0 、 .NET 6.0。
 
 ## 支持的数据库
 
-目前已支持 SQLite、SQL Server、MySQL、PostgreSQL 等数据库
+目前已支持 SQLite、SQL Server、MySQL、PostgreSQL、Oracle 等数据库
 
 ## 开源协议
 
