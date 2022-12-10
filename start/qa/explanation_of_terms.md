@@ -15,3 +15,7 @@
 | `Area` | 区域（页面） |
 | `Database` | 数据库 |
 | `Middleware` | 中间件 |
+| `ACL(Anti Corruption Layer)` | [防腐层](https://blog.csdn.net/muzizongheng/article/details/108871808) |
+| `OHS(Open Host Service)` | 开放主机服务 |
+| `PL(Publish Language)` | 开放语言 |
+| `Domain` | 领域 |

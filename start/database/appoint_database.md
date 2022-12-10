@@ -24,30 +24,44 @@
 找到第21行处，取消注释掉以下代码即可
 
 ```
-<PackageReference Include="Senparc.Ncf.Database.MySql" Version="0.6.128-beta1" />
+<PackageReference Include="Senparc.Ncf.Database.MySql" Version="0.11.3-beta7" />
 ```
 
 > Step3.修改启动文件的数据库选项
 
-找到\NCF\src\Senparc.Web\Startup.cs 文件
+找到\NCF\src\Senparc.Web\Program.cs 文件
 
-> > 定位到第12-14行，修改如下
+> > 定位到第1-6行，修改如下
 
 ```
-using Senparc.Ncf.Database.MySql;//根据需要添加或删除，使用需要引用 Senparc.Ncf.Database.MySql
-//using Senparc.Ncf.Database.Sqlite;//根据需要添加或删除，使用需要引用 Senparc.Ncf.Database.Sqlite
-using Senparc.Ncf.Database.SqlServer;//根据需要添加或删除，使用需要引用 Senparc.Ncf.Database.SqlServer
+//以下数据库模块的命名空间根据需要添加或删除
+using Senparc.Ncf.Database.MySql;         //使用需要引用包： Senparc.Ncf.Database.MySql
+//using Senparc.Ncf.Database.Sqlite;        //使用需要引用包： Senparc.Ncf.Database.Sqlite
+//using Senparc.Ncf.Database.PostgreSQL;    //使用需要引用包： Senparc.Ncf.Database.PostgreSQL
+//using Senparc.Ncf.Database.Oracle;          //使用需要引用包： Senparc.Ncf.Database.Oracle
+//using Senparc.Ncf.Database.SqlServer;       //使用需要引用包： Senparc.Ncf.Database.SqlServer
 ```
 
 打开引用Mysql的命名空间，其他的你可以根据自己的喜好决定是否注释，如果你开着也不影响正常运行
 
-> > 定位到第34-37行，修改如下
+> > 定位到第12-26行，修改如下
 
 ```
-            //指定数据库类型
-            //services.AddDatabase<SqliteMemoryDatabaseConfiguration>();//使用 SQLite 数据库
-            //services.AddDatabase<SQLServerDatabaseConfiguration>();//使用 SQLServer数据库
-            services.AddDatabase<MySqlDatabaseConfiguration>();//使用 MySQL 数据库
+//添加（注册） Ncf 服务（必须）
+builder.AddNcf<MySqlDatabaseConfiguration>();
+/*      AddNcf<TDatabaseConfiguration>() 泛型类型说明
+ *                
+ *                  方法                            |         说明
+ * -------------------------------------------------|-------------------------
+ *  AddNcf<SQLServerDatabaseConfiguration>()        |  使用 SQLServer 数据库
+ *  AddNcf<SqliteMemoryDatabaseConfiguration>()     |  使用 SQLite 数据库
+ *  AddNcf<MySqlDatabaseConfiguration>()            |  使用 MySQL 数据库
+ *  AddNcf<PostgreSQLDatabaseConfiguration>()       |  使用 PostgreSQL 数据库
+ *  AddNcf<OracleDatabaseConfiguration>()           |  使用 Oracle 数据库（V12+）
+ *  AddNcf<OracleDatabaseConfigurationForV11>()     |  使用 Oracle 数据库（V11+）
+ *  更多数据库可扩展，依次类推……
+ *  
+ */
 ```
 
 注释掉其他数据库的选项，打开Mysql的选项

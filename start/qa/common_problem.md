@@ -24,6 +24,14 @@
 
 2、正式版发布后，此连接字符串将会被加密，我们会提供加密工具。
 
+## 创建自定义Xncf模块后，报错“rzc generate exited with code -2147450730”
+![Image text](./images/common_problem/xncf_builder_error.png)
+
+解决方案：安装 `sdk dotnet 2.1`
+
+下载地址：https://dotnet.microsoft.com/en-us/download/dotnet/2.1
+
+
 ## .net命令dotnet ef执行报错
 
 错误信息：

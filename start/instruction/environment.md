@@ -6,19 +6,20 @@
 
 ## .NET 框架
 
-- .NET Core 3.1+ ，SDK下载地址：[https://dotnet.microsoft.com/download/dotnet-core/3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 - .NET 6 ，SDK下载地址：[https://dotnet.microsoft.com/en-us/download/dotnet/6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
-- .NET 6（基础库已经支持 .NET Standard 2.1，兼容 .NET 5 和 .NET 6），NCF 模板已经发布。
+- .NET 6（基础库已经支持 .NET Standard 2.1，兼容 .NET 5 和 .NET 6+），NCF 模板已经发布。
 
 ## 数据库
-- NCF 支持多数据库，目前已支持的有：SQLite、SQL Server、MySQL、PostgreSql，我们还将支持更多的数据库，包括：
-    - AzureCosmos
-    - Oracle
+- NCF 支持多数据库，目前已支持的有：SQLite、SQL Server、MySQL、PostgreSql、Oracle，我们还将支持更多的数据库，包括：
+    - Azure Cosmos DB
+    - DB2
     - 更多数据库欢迎告诉我们
 
-默认的数据库 ORM 框架为 EntityFrameworkCore（EFCore）。
+默认的数据库 ORM 框架为 Entity Framework Core（EF Core）。
 
-> 注意：如使用 EFCore - SQL Server，则需要使用 SQL Server 2012 或以上版本数据库
+> 注意：<br>
+> 1. 如使用 EF Core - SQL Server，则需要使用 SQL Server 2012 或以上版本数据库<br>
+> 2. 我们为 Oracle 提供了针对 V11 和 V12+ 两套配置方法，请根据所使用版本选用。
 
 ## 源码
 

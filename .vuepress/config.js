@@ -4,23 +4,14 @@ module.exports = {
     base: '/docs/',
     head: [
         ['link', { rel: 'shortcut icon', type: "image/x-icon", href: './favicon.ico' }],
-        ['script', {}, `
-            var _hmt = _hmt || [];
-            (function() {
-              var hm = document.createElement("script");
-              hm.src = "https://hm.baidu.com/hm.js?9d53390a6ba903e20fabf2e207b3e9bb";
-              var s = document.getElementsByTagName("script")[0];
-              s.parentNode.insertBefore(hm, s);
-            })();
-        `
-        ]
+        ['script', {}, ``]
     ],
     evergreen: true,
     port: 8080,
     ga: 'UA-71886989-13',
     themeConfig: {
-        repo: 'NeuCharFramework/NCF',
-        docsDir: 'doc',
+        repo: 'NeuCharFramework/NCFDocs',
+        docsDir: '../../blob/main/',
         editLinks: true,
         editLinkText: '编辑此页面！',
         nav: [
@@ -30,6 +21,7 @@ module.exports = {
                 items: [
                     {
                         text: "项目", items: [
+                            { text: '前后端分离版', link: '/Front/home/index' },
                             { text: '基础库源码解析', link: '/NcfPackageSources/home/index' },
                             { text: '动态WebApi', link: '/DynamicWebApi/home/index' }
                         ]
@@ -76,7 +68,10 @@ module.exports = {
                     title: '配置',
                     collapsable: false,
                     children: [
+                        '/start/developer/entrance',
                         '/start/database/setting',
+                        '/start/config/docker',
+                        '/start/config/dapr',
                         '/start/config/mutiple-tenant',
                         '/start/config/redis'
                     ]
@@ -127,6 +122,19 @@ module.exports = {
                         '/start/release/new_function',
                         '/start/release/update',
                         '/start/release/log'
+                    ]
+                }
+            ],
+            '/Front/': [
+                {
+                    title: '运行',
+                    collapsable: false,
+                    children: [
+                        '/Front/run/main',
+                        '/Front/run/database',
+                        '/Front/run/role',
+                        '/Front/run/webapi',
+                        '/Front/run/demo'
                     ]
                 }
             ],

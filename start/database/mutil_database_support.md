@@ -8,6 +8,7 @@ SQLServer
 MySql
 Sqlite
 PostgreSql
+Oracle
 ```
 ## 默认数据库配置
 
@@ -16,3 +17,7 @@ NCF第一次拉取后默认配置为SQLServer，[配置方法](/start/database/s
 ## 如何切换指定数据库
 
 [切换指定数据库](/start/database/appoint_database.html)
+
+## 数据库连接字符串大全
+
+[数据库连接字符串](https://www.connectionstrings.com/)
