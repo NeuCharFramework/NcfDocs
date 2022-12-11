@@ -1,6 +1,32 @@
 # 获取 NCF 模板源码
 
+## 从命令行安装（推荐）
+
+在已经安装了 .NET 运行时的开发环境中打开命令行，输入：
+
+```
+dotnet new install Senparc.NCF.Template
+```
+
+安装成功后，客户端提示：
+
+<img src="./images/get-ncf-template-05-install-package.png" />
+
+进入需要创建项目的文件夹，输入命令：
+
+```
+dotnet new NCF -n MyProject
+```
+
+<img src="./images/get-ncf-template-06-create-project.png" />
+
+> 其中，`MyProject` 为项目名称，可根据需要修改，如果不提供 `-n` 参数，则使用默认名称创建。
+
+
+
 ## 从源码地址获取源码
+
+以 Gitee 为例，还有几种从开源项目库获取源码的方式：
 
 以下两个代码托管地址，为 NCF 官方代码发布渠道：
 
@@ -8,8 +34,6 @@
 
  - Gitee：[https://gitee.com/NeuCharFramework/NCF](https://gitee.com/NeuCharFramework/NCF)
 
-
-以 Gitee 为例，有几种获取源码的方式：
 
 ### 方式一：直接下载 .zip 包
 
@@ -40,4 +64,3 @@
 <img src="./images/get-ncf-tempate-04-fork.png" />
 
 > 注：Fork 的库不会自动同步官方的源码，如需获得最新的源码，需要手动再次同步。
-

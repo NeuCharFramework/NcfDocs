@@ -24,7 +24,15 @@
 
 2、正式版发布后，此连接字符串将会被加密，我们会提供加密工具。
 
-## .net命令dotnet ef执行报错
+## 创建自定义 Xncf 模块后，报错“rzc generate exited with code -2147450730”
+![Image text](./images/common_problem/xncf_builder_error.png)
+
+解决方案：安装 `sdk dotnet 2.1`
+
+下载地址：https://dotnet.microsoft.com/en-us/download/dotnet/2.1
+
+
+## .NET CLI 命令 `dotnet ef` 执行报错
 
 错误信息：
 ```
@@ -44,7 +52,7 @@ dotnet ef database update
 
 解决办法：
 
-需要更新dotnet tool，使用的命令为：
+需要更新 `dotnet tool`，使用的命令为：
 ```
 dotnet tool update --global dotnet-ef --version 3.0.0-preview7.19362.6
 ```
@@ -70,11 +78,23 @@ dotnet tool update --global dotnet-ef --version 3.0.0-preview7.19362.6
 
 ## 使用2021-03-28以后的Developer/master分支版本在使用XncfBuilder模块后，执行生成，并未生成任何内容
 
-> 1.代码不是最新的（请拉取最新的代码）
+原因及解决方案：
 
-> 2.本地未安装XNCF命令
+ 1. 代码不是最新的：请[拉取最新的代码](/start/start-develop/get-ncf-template)。
 
->> 打开命令行工具，命令行中执行：dotnet new --install Senparc.Xncf.XncfBuilder.Template
+ 2. 本地未安装XNCF命令：
+
+ 打开命令行工具，命令行中执行：
+
+```
+dotnet new install Senparc.Xncf.XncfBuilder.Template
+```
+
+注：.NET 7 runtime 之前的 CLI 命令需要使用 `--install`：
+
+```
+dotnet new --install Senparc.Xncf.XncfBuilder.Template
+```
 
 执行完成后会看到以下内容
 
@@ -83,3 +103,5 @@ dotnet tool update --global dotnet-ef --version 3.0.0-preview7.19362.6
 在根据[XncfBuilder模块](/start/xncf-develop/create-xncf.html)去生成模块，以下图片中选本地已安装即可
 
 ![Image text](./images/common_problem/xncf_builder_template_new.png)
+
+3. .NET 7 的 CLI 有一个生成模板的 bug，请等待官方修复，或使用 .NET 6.0 的 CLI。

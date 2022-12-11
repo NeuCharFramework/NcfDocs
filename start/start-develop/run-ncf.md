@@ -1,4 +1,4 @@
-# 运行 NCF
+# 使用 Visual Studio 运行 NCF
 
 
 ## 第一步：打开解决方案

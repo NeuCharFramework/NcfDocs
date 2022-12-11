@@ -7,7 +7,7 @@
 
 用于支撑 `Senparc.Xncf.Accounts` 功能的项目文件结构如下：
 
-<img src="./images/about-custom-xncf/01.png" />
+<img src="./images/about-custom-xncf/module-struct.png" />
 
 其中的重要文件件和文件的作用如下：
 
