@@ -19,7 +19,7 @@ NeuCharFramework(NCF) 是一整套可用于构建基础项目的框架，包含�
 
 ## 支持的.NET Core版本
 
-NCF 已全面兼容 .NET Core 3.1 和 .NET 5.0 、 .NET 6.0。
+NCF 已全面兼容 .NET Core 3.1 和 .NET 5.0 、 .NET 6.0、.NET 7.0。
 
 ## 支持的数据库
 
@@ -44,7 +44,7 @@ NcfPackageSources |[https://github.com/NeuCharFramework/NcfPackageSources](https
 > 当前快速更新分支：[Developer](https://github.com/NeuCharFramework/NCF/tree/Developer)
 
 ## 说明
-> NCF 由盛派（Senparc）团队经过多年优化迭代的自用系统底层框架 SenparcCore 整理而来，经历了 .NET 3.5/4.5 众多系统的实战检验，并最终移植到 .NET Core（同时支持 .NET 5.0/6.0），高度模块化。NCF 目前已在多个 .NET Core 系统中稳定运行，在将其转型为开源项目的过程中，需要进行一系列的重构、注释完善和兼容性升级，目前尚处于雏形阶段，希望大家多提意见，我们会争取在最短的时间内优化并发布第一个试用版（Preview1），并在 .NET 6.0 正式发布时同步发布第一个正式版。感谢大家一直以来的支持，欢迎加入社区贡献者的行列！
+> NCF 由盛派（Senparc）团队经过多年优化迭代的自用系统底层框架 SenparcCore 整理而来，经历了 .NET 3.5/4.5 众多系统的实战检验，并最终移植到 .NET Core（同时支持 .NET 5.0/6.0/7.0），高度模块化。NCF 目前已在多个 .NET Core 系统中稳定运行，在将其转型为开源项目的过程中，需要进行一系列的重构、注释完善和兼容性升级，目前尚处于雏形阶段，希望大家多提意见，我们会争取在最短的时间内优化并发布第一个正式版。感谢大家一直以来的支持，欢迎加入社区贡献者的行列！
 
 > Preview1 版本中，我们将提供更加完善的模块化架构和辅助工具，当前源码已经可用于学习和测试使用。
 

@@ -12,7 +12,7 @@
 
 等待过程中按钮会变成
 
-<img src="./images/install-02.png" />
+<img src="./images/install-02-2.png" width="261" />
 
 阅读提示并点击确认，随后，即可看到安装成功的界面：
 
