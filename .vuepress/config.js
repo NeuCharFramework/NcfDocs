@@ -127,6 +127,13 @@ module.exports = {
             ],
             '/Front/': [
                 {
+                    title: '准备',
+                    collapsable: false,
+                    children: [
+                        '/Front/home/ready'
+                    ]
+                },
+                {
                     title: '运行',
                     collapsable: false,
                     children: [
