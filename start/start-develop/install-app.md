@@ -1,5 +1,7 @@
 # 安装
 
+## 开始安装
+
 首次启动 NCF Web 项目时，系统会提示安装：
 
 > 注意：默认运行的数据库为 SQL Server，如需更换其他数据库，请查看《[使用多数据库](/start/database/mutil_database_support.html)》。

@@ -3,7 +3,7 @@ module.exports = {
     description: '简单   灵活   可扩展',
     base: '/docs/',
     head: [
-        ['link', { rel: 'shortcut icon', type: "image/x-icon", href: './favicon.ico' }],
+        ['link', { rel: 'shortcut icon', type: "image/x-icon", href: '/favicon.ico' }],
         ['script', {}, ``]
     ],
     evergreen: true,
@@ -48,6 +48,7 @@ module.exports = {
                     children: [
                         '/start/instruction/about-ncf',
                         '/start/instruction/environment',
+                        '/start/instruction/front-mode',
                         '/start/instruction/index_xncf'
                     ]
                 },
@@ -127,6 +128,13 @@ module.exports = {
                 }
             ],
             '/Front/': [
+                {
+                    title: '准备',
+                    collapsable: false,
+                    children: [
+                        '/Front/home/ready'
+                    ]
+                },
                 {
                     title: '运行',
                     collapsable: false,
