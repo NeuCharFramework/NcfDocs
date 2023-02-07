@@ -63,11 +63,11 @@ namespace Senparc.Xncf.XncfBuilder
 
 接口名称           | 支持功能
 ------------------|--------
-IXscfFunction     | 函数（Function），即最小化完成一个任务的方法
-IXscfDatabase     | 数据库，支持多数据库
-IXscfRazorRuntimeCompilation  | 包含网页时，对 RazorPage 进行运行时编译
-IXscfMiddleware   | 定义一个 .NET Core 的中间件（Middleware）
-IXscfThread       | 支持后台线程
+IXncfFunction     | 函数（Function），即最小化完成一个任务的方法
+IXncfDatabase     | 数据库，支持多数据库
+IXncfRazorRuntimeCompilation  | 包含网页时，对 RazorPage 进行运行时编译
+IXncfMiddleware   | 定义一个 .NET Core 的中间件（Middleware）
+IXncfThread       | 支持后台线程
 
 每个接口具体的定义和最终效果都会在后续开发中介绍。
 
@@ -75,17 +75,17 @@ IXscfThread       | 支持后台线程
 <!-- 
 以下逐一介绍。
 
-#### IXscfFunction 接口（可选）
+#### IXncfFunction 接口（可选）
 
 
 
-#### IXscfDatabase 接口（可选）
+#### IXncfDatabase 接口（可选）
 
 
-#### IXscfRazorRuntimeCompilation 接口（可选）
+#### IXncfRazorRuntimeCompilation 接口（可选）
 
 
-#### IXscfMiddleware 接口（可选）
+#### IXncfMiddleware 接口（可选）
 
 
-#### IXscfThread 接口（可选） -->
+#### IXncfThread 接口（可选） -->
