@@ -119,3 +119,7 @@ dotnet new --install Senparc.Xncf.XncfBuilder.Template
 ![Image text](./images/common_problem/xncf_builder_template_new.png)
 
 3. .NET 7 的 CLI 有一个生成模板的 bug，请等待官方修复，或使用 .NET 6.0 的 CLI。
+
+## NeuChar Sample的地址
+
+[NeuChar-App-Sample](https://github.com/Senparc/NeuChar-App-Sample)
