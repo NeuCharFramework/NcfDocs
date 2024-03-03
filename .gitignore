@@ -60,3 +60,4 @@ SUMMARY.md
 
 .vuepress/dist/
 *.zip
+*.DS_Store
