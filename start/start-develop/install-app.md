@@ -30,6 +30,12 @@
 
 <img src="./images/install-04.png" />
 
+随后即可看到安装好的系统使用了自定义的管理员账号：
+
+<img src="./images/install-05.png" />
+
+![alt text](image.png)
+
 ## 登录管理员后台
 
 在安装完成界面点击【点击这里登录】按钮链接，即可进入[管理员后台登录](/start/start-develop/admin-login.html)页面。
