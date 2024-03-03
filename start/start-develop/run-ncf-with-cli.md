@@ -34,4 +34,4 @@ E:\...\Senparc.Web > dotnet run
 
 ## 首次启动安装
 
-当第一次启动时，系统会自动提示[安装](/start/start-develop/install.html)，安装完成后，安装界面将不再出现。
+当第一次启动时，系统会自动提示[安装](/start/start-develop/install-app.html)，安装完成后，安装界面将不再出现。
