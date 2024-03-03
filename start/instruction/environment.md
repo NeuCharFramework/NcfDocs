@@ -1,13 +1,13 @@
 # 环境要求
 
 ## IDE
-- Visual Studio 2019+
+- Visual Studio 2022+
 - VS Code 最新版本
 
 ## .NET 框架
 
-- .NET 6 ，SDK下载地址：[https://dotnet.microsoft.com/en-us/download/dotnet/6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
-- .NET 6（基础库已经支持 .NET Standard 2.1，兼容 .NET 5 和 .NET 6+），NCF 模板已经发布。
+- .NET 8 ，SDK下载地址：[https://dotnet.microsoft.com/en-us/download/dotnet/8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- .NET 8（基础库已经支持 .NET Standard 2.1，兼容 .NET 5 和 .NET 6+），NCF 模板已经发布。
 
 ## 数据库
 - NCF 支持多数据库，目前已支持的有：SQLite、SQL Server、MySQL、PostgreSql、Oracle，我们还将支持更多的数据库，包括：
