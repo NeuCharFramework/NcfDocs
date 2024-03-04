@@ -2,7 +2,7 @@
 
 入口文件 `Senparc.Web\Program.cs`
 
-进入到.Net6时代以后，入口的命名空间的引用全部都归集到了 `Senparc.Web\GlobalUsings.cs` 的文件中，内容如下
+进入到 .Net 6 时代以后，入口的命名空间的引用全部都归集到了 `Senparc.Web\GlobalUsings.cs` 的文件中，内容如下:
 
 ```
 global using Microsoft.AspNetCore.Builder;
@@ -22,7 +22,7 @@ global using Dapr.Client;
 ```
 {
   "sdk": {
-    "version": "6.0.100"
+    "version": "8.0.100"
   }
 }
 ```

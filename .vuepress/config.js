@@ -62,6 +62,7 @@ module.exports = {
                         '/start/start-develop/install-app',
                         '/start/start-develop/admin-login',
                         '/start/start-develop/admin-background',
+                        '/start/start-develop/appsettings',
                         '/start/start-develop/admin-module-manage',
                         '/start/start-develop/get-docs'
                     ]
@@ -72,6 +73,7 @@ module.exports = {
                     children: [
                         '/start/developer/entrance',
                         '/start/database/setting',
+                        '/start/config/appsettings',
                         '/start/config/docker',
                         '/start/config/dapr',
                         '/start/config/mutiple-tenant',
