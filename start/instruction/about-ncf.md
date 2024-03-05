@@ -17,13 +17,15 @@ NeuCharFramework(NCF) 是一整套可用于构建基础项目的框架，包含�
 ### 可扩展
 提供高度模块化的架构，1 键安装、1 秒集成。
 
-## 支持的.NET Core版本
+## 支持的 .NET 版本
 
 NCF 已全面兼容 .NET Core 3.1 和 .NET 5.0 、 .NET 6.0、.NET 7.0、.NET 8.0。
 
 ## 支持的数据库
 
-目前已支持 SQLite、SQL Server、MySQL、PostgreSQL、Oracle 等数据库
+目前已支持 SQLite、SQL Server、MySQL、PostgreSQL、Oracle 等数据库。
+
+[更多数据库设置信息](/start/database/setting)
 
 ## 开源协议
 

@@ -43,7 +43,7 @@ module.exports = {
         sidebar: {
             '/start/': [
                 {
-                    title: 'NCF概要',
+                    title: 'NCF 概要',
                     collapsable: false,
                     children: [
                         '/start/instruction/about-ncf',
@@ -53,7 +53,7 @@ module.exports = {
                     ]
                 },
                 {
-                    title: '开始开发',
+                    title: '准备开发',
                     collapsable: false,
                     children: [
                         '/start/start-develop/get-ncf-template',
