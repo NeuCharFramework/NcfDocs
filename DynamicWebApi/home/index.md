@@ -182,7 +182,7 @@ services.AddScoped<WeatherService>();
         };
     }
 
-然后，通过加单的 3 步，完成动态 API 的实现：
+然后，通过简单的 3 步，完成动态 API 的实现：
 
 第一步：安装 Senparc.CO2NET.WebApi 包：
 
