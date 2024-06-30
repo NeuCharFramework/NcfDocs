@@ -1,6 +1,8 @@
 # 数据库设置
 
-当下载好NCF后，那么如果你使用的是SQL Server数据库，则寻找到项目对应目录文件
+当下载好 NCF 后，默认使用的是 SQLite 本地数据库，您无需修改任何代码即可运行。
+
+如果您使用的是 SQL Server 数据库，则寻找到项目对应目录文件：
 
 C:\NCF\src\Senparc.Web\App_Data\DataBase\SenparcConfig.config
 
@@ -25,3 +27,9 @@ C:\NCF\src\Senparc.Web\App_Data\DataBase\SenparcConfig.config
     <ApplicationPath><![CDATA[/]]></ApplicationPath>
 </SenparcConfig>
 ```
+
+## 其他数据库
+
+请参考上述修改的方式，找到 `<Name>` 节点符合如 `Local-<数据库名称>` 的配置项，修改 `<ConnectionStringFull>` 节点的内容即可。
+
+> `Local` 字符串是默认的数据库名称，如果您需要使用其他数据库名称，请在 `appsettings.json` 中修改 `DatabaseName` 配置项。([详情](/start/config/appsettings.html#senparccoresetting-节点配置))
