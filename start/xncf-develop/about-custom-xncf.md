@@ -1,6 +1,8 @@
-# 自动创建对的 Xncf 模块 Sample 详解
+# Xncf 模块 Sample 详解
 
-在完成 [创建第一个 Xncf 模块](/start/xncf-develop/create-xncf.html) 操作之后，我们就得到了一个自定义的 Xncf 项目，其中包含了 Sample 示例代码，下面我们就来对这个项目进行代码层面的功能介绍，并尝试对齐进行修改，以演示如何在基础代码纸上，实现自己的业务逻辑。
+在完成 [创建第一个 Xncf 模块](/start/xncf-develop/create-xncf.html) 操作之后，我们就得到了一个自定义的 Xncf 项目，如果您在生成前选中了提供 Sample 的选项，Xncf 模块中会自动包含 Sample 示例代码。其中演示了大部分常用的功能，您只需参照相关做法即可完成开发。
+
+下面我们就来对这个项目进行代码层面的功能介绍，并尝试对齐进行修改，以演示如何在基础代码纸上，实现自己的业务逻辑。
 
 
 ## 文件结构
@@ -64,7 +66,7 @@ Senparc.Xncf.Accounts        (项目根目录)
 
 在 [Xncf 的构成](/start/xncf-develop/about-xncf.html) 我们已经介绍了：每个 Xncf 模块都必须有一个类实现 `IXncfRegister` 接口，在这个项目中，就由 Register.cs 中的 Register 类来实现。
 
-为了让逻辑更加清楚，我们将 Register 类设置为部分类（partial class），分别用于实现 IXncfRegister、IAreaRegister 和 IXncfDatabase 三个接口。
+为了让逻辑更加清楚，我们将 Register 类设置为部分类（partial class），分别用于实现 IXncfRegister、IAreaRegister 和 IXncfDatabase 等不同接口，以使代码更加清晰。
 
 ### Register.cs
 
@@ -175,15 +177,6 @@ namespace MySenparc.Xncf.MyApp
 ```
 除 Uid 为随机生成以外，其他参数都是按照创建模块时填写的信息自动生成的。
 
-### 函数列表
-
-Register.cs 还包含了一个定义当前模块执行函数(Function）的类型列表：
-
-``` C#
-        public override IList<Type> Functions => new Type[] { typeof(MyFunction) };
-```
-
-> 关于 MyFunction 会在下文详细介绍。
 
 ### 安装和更新方法
 
@@ -193,6 +186,7 @@ Register.cs 还包含了一个定义当前模块执行函数(Function）的类�
             //安装或升级版本时更新数据库
             await base.MigrateDatabaseAsync(serviceProvider);
 ```
+
 `base.MigrateDatabaseAsync()` 方法可以根据当前设置的数据库类型，自动匹配数据库迁移文件（Migration），并且自动安装到数据库中。
 
 接下去的代码对“安装”或“更新”状态做了判断，如果是新安装模块，那么尝试从数据库中获取第一个 Color 的实例对象，如果不存在，则新建一个。这样确保系统中始终有一条 Color 记录存在。

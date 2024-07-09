@@ -21,18 +21,7 @@ NCF 采用模块化的思想构建，在系统底层的支持库基础之上，�
 ## 模块代号
 NCF 的模块内部代号：`Xncf`，其中 `X` 即 Extension（可扩展）、Unknown（未知）之意，`ncf` 即表明此模块根植于 NCF 大框架。
 
-## 命名规则
-
-每一个 Xncf 模块都需要具备一个全局唯一的模块名称，格式如：
-
-> Senparc.Xncf.DatabaseToolkit
-
-此名称被 . 分成 3 个部分：
-| 部分   | 说明
-|-------|-------
-|Senparc| 组织名称，用于标记提供该模块的组织、公司或个人
-|Xncf   |  固定字符，表明这是一个 Xncf 模块
-|DatabaseToolkit |  功能描述，如同一个功能下还有子模块，可以继续用下划线`_`继续分割下一级，如：`Senparc.Xncf.DatabaseToolkit_Backup`
+更多模块命名规则请参考：[Xncf 的命名规则](/start/xncf-develop/about-xncf.html#xncf-的命名规则)。
 
 
 ## Q&A：是否可以不使用模块化开发？
