@@ -4,7 +4,7 @@
 
 在已经安装了 .NET 运行时的开发环境中打开命令行，输入：
 
-```
+```shell
 dotnet new install Senparc.NCF.Template
 ```
 
@@ -14,7 +14,7 @@ dotnet new install Senparc.NCF.Template
 
 进入需要创建项目的文件夹，输入命令：
 
-```
+```shell
 dotnet new NCF -n MyProject
 ```
 
