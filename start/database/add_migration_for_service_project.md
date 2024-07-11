@@ -56,7 +56,7 @@ dotnet ef migrations add AddOpenId -c SystemServiceEntities_SqlServer -o Migrati
 
 设置新的 Version 参数，如：
 
-```
+```csharp
 public override string Version => "0.3.4-beta4";
 ```
 

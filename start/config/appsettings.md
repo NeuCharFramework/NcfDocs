@@ -1,9 +1,19 @@
 
 # appsettings.json 配置
 
-`appsettings.json` 文件中包含了应用程序的大部分配置信息，位于 `Senparc.Web` 目录下。
+## 概述
 
-默认配置已经可以提供系统开发阶段的常规运行，请根据需要谨慎修改！
+`appsettings.json` 文件中包含了应用程序的大部分配置信息，位于 NCF  Web 模板的 `Senparc.Web` 目录下。
+
+`appsettings.json` 文件中包含了多个节点，其中 `SenparcCoreSetting`、`SenparcSetting`、`SenparcAiSetting` 为 NCF 框架的核心配置节点，其它节点为系统的业务配置节点。
+
+| 节点 | 说明 |
+| --- | --- |
+| SenparcCoreSetting | NCF 框架的核心配置节点 |
+| SenparcSetting | [CO2NET](https://github.com/Senparc/Senparc.CO2NET) 基础框架的全局配置节点，用于支持缓存等底层基础能力 |
+| SenparcAiSetting | [Senparc.AI](https://github.com/Senparc/Senparc.AI) 框架的 AI 配置节点，用于支撑 AI 能力 |
+
+> 默认配置项目已经可以提供系统开发阶段的常规运行，具体的参数值请根据需要谨慎修改！
 
 ## SenparcCoreSetting 节点配置
 

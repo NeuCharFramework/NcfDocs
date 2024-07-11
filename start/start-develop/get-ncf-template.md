@@ -4,10 +4,9 @@
 
 在已经安装了 .NET 运行时的开发环境中打开命令行，输入：
 
-```
+```shell
 dotnet new install Senparc.NCF.Template
 ```
-> 如果你本地的.NET SDK版本大于6.0.100，那么就需要使用 `dotnet new --install Senparc.NCF.Template`命令安装即可。
 
 安装成功后，客户端提示：
 
@@ -15,7 +14,7 @@ dotnet new install Senparc.NCF.Template
 
 进入需要创建项目的文件夹，输入命令：
 
-```
+```shell
 dotnet new NCF -n MyProject
 ```
 

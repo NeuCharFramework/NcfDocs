@@ -18,8 +18,8 @@
 
 点击顶部菜单【编译】>【开始执行（不调试）】，或快捷键 <kbd>Ctrl/Command</kbd> + <kbd>F5</kbd>
 
-> 注意：默认运行的数据库为 SQL Server，如需更换其他数据库，请查看《[使用多数据库](/start/database/mutil_database_support.html)》。
+> 注意：默认运行的数据库为 SQLite，因此您无需在此阶段配置数据库。如需更换其他数据库，请查看《[使用多数据库](/start/database/mutil_database_support.html)》。
 
 ## 完成启动
 
-稍等数秒后，即可完成 NCF Web 项目的启动，当第一次启动时，系统会自动提示[安装](/start/start-develop/install.html)，安装完成后，安装界面将不再出现。
+稍等数秒后，即可完成 NCF Web 项目的启动，当第一次启动时，系统会自动提示[安装](/start/start-develop/install-app.html)，安装完成后，安装界面将不再出现。

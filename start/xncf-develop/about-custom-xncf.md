@@ -1,6 +1,8 @@
-# 自动创建对的 Xncf 模块 Sample 详解
+# Xncf 模块 Sample 详解
 
-在完成 [创建第一个 Xncf 模块](/start/xncf-develop/create-xncf.html) 操作之后，我们就得到了一个自定义的 Xncf 项目，其中包含了 Sample 示例代码，下面我们就来对这个项目进行代码层面的功能介绍，并尝试对齐进行修改，以演示如何在基础代码纸上，实现自己的业务逻辑。
+在完成 [创建第一个 Xncf 模块](/start/xncf-develop/create-xncf.html) 操作之后，我们就得到了一个自定义的 Xncf 项目，如果您在生成前选中了提供 Sample 的选项，Xncf 模块中会自动包含 Sample 示例代码。其中演示了大部分常用的功能，您只需参照相关做法即可完成开发。
+
+下面我们就来对这个项目进行代码层面的功能介绍，并尝试对齐进行修改，以演示如何在基础代码纸上，实现自己的业务逻辑。
 
 
 ## 文件结构
@@ -64,13 +66,13 @@ Senparc.Xncf.Accounts        (项目根目录)
 
 在 [Xncf 的构成](/start/xncf-develop/about-xncf.html) 我们已经介绍了：每个 Xncf 模块都必须有一个类实现 `IXncfRegister` 接口，在这个项目中，就由 Register.cs 中的 Register 类来实现。
 
-为了让逻辑更加清楚，我们将 Register 类设置为部分类（partial class），分别用于实现 IXncfRegister、IAreaRegister 和 IXncfDatabase 三个接口。
+为了让逻辑更加清楚，我们将 Register 类设置为部分类（partial class），分别用于实现 IXncfRegister、IAreaRegister 和 IXncfDatabase 等不同接口，以使代码更加清晰。
 
 ### Register.cs
 
 `Register.cs` 文件定义了 Register 类，并且继承了系统默认实现 `IXncfRegister` 接口的抽象类 `XncfRegisterBase`，代码如下：
 
-```
+```csharp
 using Microsoft.Extensions.DependencyInjection;
 using MySenparc.Xncf.MyApp.Functions;
 using MySenparc.Xncf.MyApp.Models.DatabaseModel;
@@ -160,39 +162,31 @@ namespace MySenparc.Xncf.MyApp
 
 在实现 IXncfRegister 接口的代码中，定义了 Xncf 包的元数据信息：
 
-``` C#
-        public override string Name => "MySenparc.Xncf.MyApp";
+```csharp
+public override string Name => "MySenparc.Xncf.MyApp";
 
-        public override string Uid => "DD4E1973-7291-4E76-892F-E32A5CA57139";//必须确保全局唯一，生成后必须固定，已自动生成，也可自行修改
+public override string Uid => "DD4E1973-7291-4E76-892F-E32A5CA57139";//必须确保全局唯一，生成后必须固定，已自动生成，也可自行修改
 
-        public override string Version => "0.1";//必须填写版本号
+public override string Version => "0.1";//必须填写版本号
 
-        public override string MenuName => "自动生成地模块";
+public override string MenuName => "自动生成地模块";
 
-        public override string Icon => "fa fa-star";
+public override string Icon => "fa fa-star";
 
-        public override string Description => "这是一个使用 XncfBuilder 自动生成的模块";
+public override string Description => "这是一个使用 XncfBuilder 自动生成的模块";
 ```
 除 Uid 为随机生成以外，其他参数都是按照创建模块时填写的信息自动生成的。
 
-### 函数列表
-
-Register.cs 还包含了一个定义当前模块执行函数(Function）的类型列表：
-
-``` C#
-        public override IList<Type> Functions => new Type[] { typeof(MyFunction) };
-```
-
-> 关于 MyFunction 会在下文详细介绍。
 
 ### 安装和更新方法
 
 `InstallOrUpdateAsync()` 方法用于定义在模块被安装或更新的过程中，需要执行的代码。其中：
 
-``` 
-            //安装或升级版本时更新数据库
-            await base.MigrateDatabaseAsync(serviceProvider);
+```csharp
+//安装或升级版本时更新数据库
+await base.MigrateDatabaseAsync(serviceProvider);
 ```
+
 `base.MigrateDatabaseAsync()` 方法可以根据当前设置的数据库类型，自动匹配数据库迁移文件（Migration），并且自动安装到数据库中。
 
 接下去的代码对“安装”或“更新”状态做了判断，如果是新安装模块，那么尝试从数据库中获取第一个 Color 的实例对象，如果不存在，则新建一个。这样确保系统中始终有一条 Color 记录存在。
@@ -204,10 +198,12 @@ Register.cs 还包含了一个定义当前模块执行函数(Function）的类�
 `UninstallAsync()` 方法用于定义模块在删除时需要执行的代码。
 
 其中，获取数据库上下文实体的代码很关键：
-``` C#
+
+```csharp
 var mySenparcEntitiesType = this.TryGetXncfDatabaseDbContextType;
 MyAppSenparcEntities mySenparcEntities = serviceProvider.GetService(mySenparcEntitiesType) as MyAppSenparcEntities;
 ```
+
 > 第 1 行：获取当前的`数据库配置类`的类型（例如判断是 MySQL 还是 SQLServer）<br>
 > 第 2 行：根据第 1 行获得到的类型，获取 MyAppSenparcEntities，注意：这里虽然定义类型为 MyAppSenparcEntities，但实际获取到的可能是 MyAppSenparcEntities_MySql（当前配置为 MySQL 数据库） 或 MyAppSenparcEntities_SqlServer（当前配置为 SQL Server 数据库）。
 
@@ -220,7 +216,7 @@ MyAppSenparcEntities mySenparcEntities = serviceProvider.GetService(mySenparcEnt
 
 这两个接口的配置也非常简单，而且都是为网页服务，因此就写在了同一个文件中，代码如下：
 
-``` C#
+```csharp
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Senparc.CO2NET.Trace;
@@ -283,7 +279,7 @@ namespace MySenparc.Xncf.MyApp
 
 `Register.Database.cs` 也是 `Register.cs` 部分类的一个延伸，实现了数据库相关功能的配置。其代码也很简单：
 
-``` C#
+```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
