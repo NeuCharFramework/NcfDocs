@@ -1,0 +1,53 @@
+trigger:  
+- master  
+  
+pool:  
+  vmImage: 'windows-latest'  
+  
+variables:  
+  node_version: '14.21.1'  
+  
+steps:  
+- task: NodeTool@0  
+  inputs:  
+    versionSpec: '$(node_version)'  
+  displayName: 'Install Node.js'  
+  
+- script: |  
+    npm install -g yarn  
+    yarn install  
+  displayName: 'Install dependencies'  
+  
+- script: |  
+    yarn docs:build  
+  displayName: 'Build the project'  
+  
+- task: CopyFiles@2  
+  inputs:  
+    SourceFolder: '$(Build.SourcesDirectory)\.vuepress\dist'  
+    Contents: '**'  
+    TargetFolder: '$(Build.ArtifactStagingDirectory)\dist'  
+  displayName: 'Copy files to artifact staging directory'  
+  
+- task: PublishBuildArtifacts@1  
+  inputs:  
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)\dist'  
+    ArtifactName: 'dist'  
+  displayName: 'Publish build artifacts'  
+  
+- task: DownloadBuildArtifacts@0  
+  inputs:  
+    buildType: 'current'  
+    downloadType: 'single'  
+    artifactName: 'dist'  
+    downloadPath: '$(Build.ArtifactStagingDirectory)'  
+  displayName: 'Download build artifacts'  
+  
+- task: CopyFilesOverSSH@0  
+  inputs:  
+    sshEndpoint: 'NcfDoc' # 替换为你的SSH服务连接名称  
+    sourceFolder: '$(Build.ArtifactStagingDirectory)\dist'  
+    contents: '**'  
+    targetFolder: 'C:\website\NCF\wwwroot\ncf\sample\wwwroot\docs'  
+    cleanTargetFolder: true  
+  displayName: 'Copy files to Windows Server via SSH'  
