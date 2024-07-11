@@ -42,7 +42,7 @@
 
 源码如下：
 
-```
+```csharp
 using Senparc.Ncf.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -149,8 +149,7 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
 
 源码如下：
 
-```
-
+```csharp
 using Senparc.Ncf.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -237,7 +236,7 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel.Dto
 
 源码如下：
 
-```
+```csharp
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Senparc.Ncf.Core.Models.DataBaseModel;
 using Senparc.Ncf.XncfBase.Attributes;
@@ -258,7 +257,7 @@ namespace Senparc.Xncf.Admin.Models
 
 修改 \Models\DatabaseModel\AdminSenparcEntities.cs
 
-```
+```csharp
 using Microsoft.EntityFrameworkCore;
 using Senparc.Ncf.Database;
 using Senparc.Ncf.Core.Models;
@@ -297,9 +296,9 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
 
 ### html
 
-index.cshtml源码：
+index.cshtml 源码：
 
-```
+```razor
 @page
 @model Senparc.Xncf.Admin.Areas.Admin.Pages.User.IndexModel
 @{
@@ -445,8 +444,9 @@ index.cshtml源码：
 }
 ```
 
-index.cshtml.cs源码
-```
+index.cshtml.cs 源码
+
+```csharp
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -523,7 +523,7 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
 
 Edit.cshtml源码
 
-```
+```razor
 @page
 @model Senparc.Xncf.Admin.Areas.Admin.Pages.User.EditModel
 @{
@@ -533,7 +533,7 @@ Edit.cshtml源码
 
 Edit.cshtml.cs 源码
 
-```
+```csharp
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -593,7 +593,7 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
 
 源码如下：
 
-```
+```css
 .el-dialog .el-form-item .el-input,
 .el-dialog .el-form-item .el-textarea {
     width: 30rem;
@@ -663,8 +663,7 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
 
 源码如下:
 
-```
-
+```js
 new Vue({
     el: "#app",
     data() {
@@ -920,7 +919,7 @@ new Vue({
 
 源码如下：
 
-```
+```csharp
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Senparc.CO2NET.Trace;

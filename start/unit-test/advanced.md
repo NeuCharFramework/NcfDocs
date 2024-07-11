@@ -32,7 +32,7 @@ private static Action<Dictionary<Type, List<object>>> InitSeedData = seedData =>
 
 非常简单！我们可以直接为已经创造好的单元测试的构造函数，添加一个基类构造函数的调用 `base(null, InitSeedData)`：
 
-```C#
+```csharp
 public AdminUserInfoServiceTests() : base(null, InitSeedData)
 {
     // 无需修改
@@ -41,7 +41,7 @@ public AdminUserInfoServiceTests() : base(null, InitSeedData)
 
 然后我们创建一个单元测试来测试一下：
 
-```C#
+```csharp
 [TestMethod]
 public async Task MyTestMethod()
 {

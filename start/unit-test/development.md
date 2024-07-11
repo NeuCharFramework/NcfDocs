@@ -40,7 +40,7 @@ dotnet add package Senparc.Ncf.UnitTestExtension
 
 您可以按照常规单元测试的规则，创建一个单元测试文件，如：
 
-```C#
+```csharp
 [TestClass]
 public class AdminUserInfoServiceTests : BaseNcfUnitTest
 {
@@ -51,7 +51,7 @@ public class AdminUserInfoServiceTests : BaseNcfUnitTest
 
 为了给整个 Service 提供公共的对象，我们可以添加一个构造函数和私有变量：
 
-```C#
+```csharp
 AdminUserInfoService adminUserInfoService;
 public AdminUserInfoServiceTests()
 {
@@ -68,7 +68,7 @@ public AdminUserInfoServiceTests()
 
 接下来我们就可以针对 `AdminUserInfoService` 中的所有方法进行测试，例如：
 
-```C#
+```csharp
 [TestMethod]
 public async Task CreateAdminUserInfoTest()
 {

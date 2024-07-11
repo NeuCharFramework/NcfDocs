@@ -53,7 +53,7 @@ Xncf 项目的命名（通常也是 dll 的文件名），每一个 Xncf 模块�
 
 根据上述的要求，一个最小化的 Xncf 模块注册类，可能如下所示：
 
-``` C#
+```csharp
 using Senparc.Ncf.XncfBase;
 using System;
 using System.Collections.Generic;
@@ -86,7 +86,7 @@ namespace Senparc.Xncf.XncfBuilder
 
 您可以为 Register 类添加 [XncfOrder] 特性，来设置当前 XNCF 模块的载入次序。此特性构造函数内提供了排序的数字（`order` 参数），在系统载入时，按照降序排列（数字越大越在前），如：
 
-```
+```csharp
     [XncfRegister]
     [XncfOrder(4090)]
     public partial class Register : XncfRegisterBase, IXncfRegister
@@ -132,7 +132,7 @@ Register 类继承 IXncfDatabase 并实现接口方法后，即可激活数据�
 
 模板默认代码如下：
 
-```
+```csharp
     public partial class Register : IXncfDatabase  //注册 XNCF 模块数据库（按需选用）
     {
         #region IXncfDatabase 接口

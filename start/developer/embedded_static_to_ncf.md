@@ -32,7 +32,7 @@
 
 ## Register中增加嵌入资源注册服务
 
-```
+```csharp
 /* 此处必须增加
 using Microsoft.AspNetCore.Builder;
 using Senparc.CO2NET.RegisterServices;

@@ -1,4 +1,4 @@
-# 什么是WebApiEngine
+# 什么是 WebApiEngine
 
 WebApiEngine 是一个可用于动态 WebApi 生成的引擎，基于 .NET Core（包括 .NET 5、 .NET 6），用于解决前后端分离、微服务、异步 Web 请求场景下的 WebApi 的动态生成和管理，并全面兼容 Swagger。
 
@@ -51,7 +51,7 @@ dotnet new webapi
 
 此处的 API 还是需要手写 API 才能完成，打开 WeatherForecastController.cs 可以看到初始化内容：
 
-```
+```csharp
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -94,7 +94,7 @@ namespace WebApiSample.Controllers
 
 上述代码是在 Controller 里面直接演示了逻辑代码（包括数据查询），更多的情况，我们会把这些逻辑封装在 Service 中，并由 Controller 调用。如，创建 WeatherService.cs：
 
-```
+```csharp
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,7 +125,7 @@ namespace WebApiSample
 
 修改 WeatherForecastController.cs：
 
-```
+```csharp
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -153,7 +153,7 @@ namespace WebApiSample.Controllers
 
 注意：如果像上述代码 12 行中那样，使用构造函数注入 WeatherService，需要在 Startup.cs 中添加：
 
-```
+```csharp
 services.AddScoped<WeatherService>();
 ```
 

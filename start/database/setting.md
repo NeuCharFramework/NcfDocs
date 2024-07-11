@@ -8,7 +8,7 @@ C:\NCF\src\Senparc.Web\App_Data\DataBase\SenparcConfig.config
 
 ## 修改数据库连接字符串
 
-```
+```xml
 -- 默认方式
 <SenparcConfig>
     <Id>3</Id>

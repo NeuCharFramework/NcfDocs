@@ -1,6 +1,6 @@
 # IXncfRegister 接口
 
-``` C#
+```csharp
     public interface IXncfRegister
     {
         /// <summary>

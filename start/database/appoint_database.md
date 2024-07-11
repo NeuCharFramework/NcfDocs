@@ -10,7 +10,7 @@ NCF 可以通过便捷的方式，快速指定数据库指，切换完成后，�
 
 首先 在Senparc.Web\App_Data\DataBase 目录中找到 SenparcConfig.config 文件，修改 Mysql 节点为如下形式
 
-```
+```xml
 	<SenparcConfig>
 		<Id>4</Id>
 		<Name>Local-MySql</Name>
@@ -25,7 +25,7 @@ NCF 可以通过便捷的方式，快速指定数据库指，切换完成后，�
 
 添加以下 `Senparc.Ncf.Database.MySql` 引用：
 
-```
+```xml
 <PackageReference Include="Senparc.Ncf.Database.MySql" Version="0.11.3-beta7" />
 ```
 
@@ -37,7 +37,7 @@ NCF 可以通过便捷的方式，快速指定数据库指，切换完成后，�
 
 找到 `Senparc.Web\appsettings.json` 文件，修改 `SenparcCoreSetting` 节点下的 `DatabaseName` 由默认的 `Sqlite` 改为 `MySql`：
 
-```
+```json
   "SenparcCoreSetting": {
 	//...
 
@@ -53,13 +53,13 @@ NCF 可以通过便捷的方式，快速指定数据库指，切换完成后，�
 
 找到 `\NCF\src\Senparc.Web\Program.cs` 文件代码：
 
-```
+```csharp
 app.UseNcf<BySettingDatabaseConfiguration>();
 ```
 
 将 `BySettingDatabaseConfiguration` 改为 `MySqlDatabaseConfiguration`：
 
-```
+```csharp
 app.UseNcf<MySqlDatabaseConfiguration>();
 ```
 
