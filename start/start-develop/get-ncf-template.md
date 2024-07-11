@@ -7,7 +7,6 @@
 ```
 dotnet new install Senparc.NCF.Template
 ```
-> 如果你本地的.NET SDK版本大于6.0.100，那么就需要使用 `dotnet new --install Senparc.NCF.Template`命令安装即可。
 
 安装成功后，客户端提示：
 

@@ -9,7 +9,7 @@
 
 在单元测试类中，创建一个静态方法：
 
-```C#
+```csharp
 private static Action<Dictionary<Type, List<object>>> InitSeedData = seedData =>
 {
     var list = new List<object>();
@@ -55,6 +55,6 @@ public async Task MyTestMethod()
 
 运行测试结果：
 
-<img src="../images/unit-test-02.png" />
+<img src="./images/advenced-01.png" />
 
 通过测试可以看到，100 万条数据加上整个单元测试类的初始化时间只占了 0.2 秒左右，模拟的查询过程默认使用 Linq 的 lambda 查询，使用了 4.3 秒，这取决于 CPU 的性能，如果只是为了测试业务逻辑，您也可以降低种子数据的条数，通常情况下 1000 条已经够用。

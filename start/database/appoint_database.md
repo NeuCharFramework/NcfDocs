@@ -1,12 +1,14 @@
 # 指定数据库
 
-指定数据库指的是你可以根据自己的实际需要指定任意一种NCF支持的数据库进行切换，切换完成后，重新运行，数据库可以无缝迁移
+NCF 可以通过便捷的方式，快速指定数据库指，切换完成后，重新运行，数据库可以无缝迁移。
 
-## 如何快速切换Mysql
+以下以 MySQL 为例，介绍如何快速切换数据库。其他数据库操作方式一致，只需将过程中 `MySql` 改成对应数据库名称即可，当然您可能还需要设置对应正确的数据库连接字符串。
 
-> Step1.修改SenparcConfig.config
+## 如何快速切换 Mysql
 
-首先在Senparc.Web\App_Data\DataBase 目录中找到 SenparcConfig.config 文件，修改Mysql节点为如下形式
+### Step1.修改 SenparcConfig.config
+
+首先 在Senparc.Web\App_Data\DataBase 目录中找到 SenparcConfig.config 文件，修改 Mysql 节点为如下形式
 
 ```
 	<SenparcConfig>
@@ -19,65 +21,72 @@
 	</SenparcConfig>
 ```
 
-> Step2.修改Senparc.Web.csproj文件
+### Step2.修改 Senparc.Web.csproj 文件
 
-找到第21行处，取消注释掉以下代码即可
+添加以下 `Senparc.Ncf.Database.MySql` 引用：
 
 ```
 <PackageReference Include="Senparc.Ncf.Database.MySql" Version="0.11.3-beta7" />
 ```
 
-> Step3.修改启动文件的数据库选项
+### Step3.修改启动文件的数据库选项
 
-找到\NCF\src\Senparc.Web\Program.cs 文件
+#### 方法一：修改 appsettings.json 文件（推荐）
 
-> > 定位到第1-6行，修改如下
+此方法不修改任何需要编译的文件，只需要修改配置文件 `appsetting.json` 即可。
 
-```
-//以下数据库模块的命名空间根据需要添加或删除
-using Senparc.Ncf.Database.MySql;         //使用需要引用包： Senparc.Ncf.Database.MySql
-//using Senparc.Ncf.Database.Sqlite;        //使用需要引用包： Senparc.Ncf.Database.Sqlite
-//using Senparc.Ncf.Database.PostgreSQL;    //使用需要引用包： Senparc.Ncf.Database.PostgreSQL
-//using Senparc.Ncf.Database.Oracle;          //使用需要引用包： Senparc.Ncf.Database.Oracle
-//using Senparc.Ncf.Database.SqlServer;       //使用需要引用包： Senparc.Ncf.Database.SqlServer
-```
-
-打开引用Mysql的命名空间，其他的你可以根据自己的喜好决定是否注释，如果你开着也不影响正常运行
-
-> > 定位到第12-26行，修改如下
+找到 `Senparc.Web\appsettings.json` 文件，修改 `SenparcCoreSetting` 节点下的 `DatabaseName` 由默认的 `Sqlite` 改为 `MySql`：
 
 ```
-//添加（注册） Ncf 服务（必须）
-builder.AddNcf<MySqlDatabaseConfiguration>();
-/*      AddNcf<TDatabaseConfiguration>() 泛型类型说明
- *                
- *                  方法                            |         说明
- * -------------------------------------------------|-------------------------
- *  AddNcf<SQLServerDatabaseConfiguration>()        |  使用 SQLServer 数据库
- *  AddNcf<SqliteMemoryDatabaseConfiguration>()     |  使用 SQLite 数据库
- *  AddNcf<MySqlDatabaseConfiguration>()            |  使用 MySQL 数据库
- *  AddNcf<PostgreSQLDatabaseConfiguration>()       |  使用 PostgreSQL 数据库
- *  AddNcf<OracleDatabaseConfiguration>()           |  使用 Oracle 数据库（V12+）
- *  AddNcf<OracleDatabaseConfigurationForV11>()     |  使用 Oracle 数据库（V11+）
- *  更多数据库可扩展，依次类推……
- *  
- */
+  "SenparcCoreSetting": {
+	//...
+
+    "DatabaseName": "Local", // 对应：AppData/DataBase/SenparcConfig.config 中，所需要使用的数据库连接的 <SenparcConfig> 节点的 Name 前缀
+    "DatabaseType": "MySql"
+
+	//...
+  },
 ```
 
-注释掉其他数据库的选项，打开Mysql的选项
 
-<div style="color:red">【注意事项】：Mysql的引擎必须为 InnoDB ,如果设置的为Mylsam,则在运行时会报错，报错信息如下</div><br/>
+#### 方法二：通过修改代码实现：
 
-[修改Mysql的配置后，启动报错](/start/qa/common_problem.html)
+找到 `\NCF\src\Senparc.Web\Program.cs` 文件代码：
 
-## 如何快速切换Sqlite
+```
+app.UseNcf<BySettingDatabaseConfiguration>();
+```
 
-同切换Mysql
+将 `BySettingDatabaseConfiguration` 改为 `MySqlDatabaseConfiguration`：
 
-## 如何快速切换SqlServer
+```
+app.UseNcf<MySqlDatabaseConfiguration>();
+```
 
-同切换Mysql
+<div style="color:red">【注意事项】：由于 EFCore 基础库支持的原因，Mysql 的引擎必须为 InnoDB ,如果设置的为 Mylsam，则在运行时会报错，报错信息如下</div><br/>
 
-切换完成后，运行会显示
+> 异常处理：[修改 Mysql 的配置后，启动报错](/start/qa/common_problem.html)
+
+## 如何快速切换 SqlServer
+
+同切换 Mysql。
+
+切换完成后，运行会显示，下同。
 
 <img src="./images/switch-sqlserver.png" />
+
+## 如何快速切换 Sqlite
+
+同切换 Mysql。
+
+
+## 如何快速切换 Oracle
+
+同切换 Mysql。
+
+## 如何快速切换 达梦数据库（Dm）
+
+同切换 Mysql。
+
+
+

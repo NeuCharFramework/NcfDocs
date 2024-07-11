@@ -1,10 +1,12 @@
-# 关于NCF
+# 关于 NCF
 
 <img src="./images/logo.png" width="300" />
 
 NeuCharFramework(NCF) 是一整套可用于构建基础项目的框架，包含了基础的缓存、数据库、模型、验证及配套管理后台，模块化，具有高度的可扩展性和耐造性。
 
-当前版本：`0.7.0`
+NCF Web 项目模板：[![Senparc.NCF.Template](https://img.shields.io/nuget/vpre/Senparc.NCF.Template?label=Senparc.NCF.Template)](https://www.nuget.org/packages/Senparc.NCF.Template/)
+
+XNCF 模块模板：[![Senparc.Xncf.XncfBuilder.Template](https://img.shields.io/nuget/vpre/Senparc.Xncf.XncfBuilder.Template?label=Senparc.Xncf.XncfBuilder.Template)](https://www.nuget.org/packages/Senparc.Xncf.XncfBuilder.Template/)
 
 ## 理念：简单、灵活、可扩展
 
@@ -19,11 +21,11 @@ NeuCharFramework(NCF) 是一整套可用于构建基础项目的框架，包含�
 
 ## 支持的 .NET 版本
 
-NCF 已全面兼容 .NET Core 3.1 和 .NET 5.0 、 .NET 6.0、.NET 7.0、.NET 8.0。
+NCF 已全面兼容 .NET 8.0。
 
 ## 支持的数据库
 
-目前已支持 SQLite、SQL Server、MySQL、PostgreSQL、Oracle 等数据库。
+目前已支持 SQLite、SQL Server、MySQL、PostgreSQL、Oracle、达梦（Dm） 等数据库。
 
 [更多数据库设置信息](/start/database/setting)
 
@@ -37,7 +39,7 @@ Apache License V2.0
 
 |       | GitHub   |  Gitee    | 说明 
 |-------|----------|-----------|---------
-NCF 模板|[NCF](https://github.com/NeuCharFramework/NCF)|[NCF](https://gitee.com/NeuCharFramework/NCF)| 可直接用于开发的基础代码框架，常规开发只需要下载此项目。
+NCF Web 模板|[NCF](https://github.com/NeuCharFramework/NCF)|[NCF](https://gitee.com/NeuCharFramework/NCF)| 可直接用于开发的基础代码框架，常规开发只需要下载此项目。
 NcfPackageSources |[NcfPackageSources](https://github.com/NeuCharFramework/NcfPackageSources)  |[NcfPackageSources](https://gitee.com/NeuCharFramework/NcfPackageSources)| `NCF 模板`项目所引用的基础库代码，以 Nuget  包形式发布，被 `NCF 模板`引用，同样 100% 开源，如需深度开发或研究基础原理可以下载。
 
 注意：上述项目主分支为 GitHub 项目，Gitee 项目为镜像，更新可能存在延迟。

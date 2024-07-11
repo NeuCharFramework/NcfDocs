@@ -41,10 +41,10 @@ dotnet add package Senparc.Ncf.UnitTestExtension
 您可以按照常规单元测试的规则，创建一个单元测试文件，如：
 
 ```C#
-    [TestClass]
-    public class AdminUserInfoServiceTests : BaseNcfUnitTest
-    {
-    }
+[TestClass]
+public class AdminUserInfoServiceTests : BaseNcfUnitTest
+{
+}
 ```
 
 > `BaseNcfUnitTest` 是 NCF 提供的单元测试基类，来自于上一步安装的 `Senparc.Ncf.UnitTestExtension` 包。
@@ -96,5 +96,5 @@ public async Task CreateAdminUserInfoTest()
 
 运行单元测试，显示测试通过：
 
-<img src="../images/unit-test-01.png" />
+<img src="./images/development-01.png" />
 
