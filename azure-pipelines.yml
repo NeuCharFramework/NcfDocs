@@ -20,11 +20,11 @@ steps:
   
 - script: |  
     yarn --version  
-    vuepress --version  
+    npx vuepress --version  
   displayName: 'Check yarn and vuepress versions'  
   
 - script: |  
-    yarn docs:build  
+    npx vuepress build docs  
   displayName: 'Build the project'  
   
 - task: CopyFiles@2  
