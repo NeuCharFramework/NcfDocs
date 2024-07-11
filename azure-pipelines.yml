@@ -1,18 +1,18 @@
 trigger:  
   - main  
-  
 pool:  
   vmImage: 'windows-latest'  
-  
 variables:  
   node_version: '14.21.1'  
   system.debug: true  
-  
 steps:  
   - task: NodeTool@0  
     inputs:  
       versionSpec: '$(node_version)'  
     displayName: 'Install Node.js'  
+    
+  - script: npm config set registry https://registry.npmmirror.com/  
+    displayName: 'Set npm registry to https://registry.npmmirror.com/'  
   
   - script: npm install -g yarn  
     displayName: 'Install yarn globally'  
@@ -25,8 +25,8 @@ steps:
   
   - script: yarn --version  
     displayName: 'Check yarn version'  
-
-  - script: yarn list vue
+  
+  - script: yarn list vue  
     displayName: 'Check vue version'  
   
   - script: npx vuepress --version  
