@@ -19,6 +19,11 @@ steps:
   displayName: 'Install dependencies'  
   
 - script: |  
+    yarn --version  
+    vuepress --version  
+  displayName: 'Check yarn and vuepress versions'  
+  
+- script: |  
     yarn docs:build  
   displayName: 'Build the project'  
   
@@ -45,9 +50,9 @@ steps:
   
 - task: CopyFilesOverSSH@0  
   inputs:  
-    sshEndpoint: 'NcfDoc' # 替换为你的SSH服务连接名称  
+    sshEndpoint: 'NcfDoc'  # 使用指定的SSH服务连接名称  
     sourceFolder: '$(Build.ArtifactStagingDirectory)\dist'  
     contents: '**'  
-    targetFolder: 'C:\website\NCF\wwwroot\ncf\sample\wwwroot\docs'  
+    targetFolder: 'C:\website\NCF\wwwroot\ncf\sample\wwwroot\docs'  # 直接使用文件路径  
     cleanTargetFolder: true  
   displayName: 'Copy files to Windows Server via SSH'  
