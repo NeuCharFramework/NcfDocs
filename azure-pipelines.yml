@@ -20,10 +20,14 @@ steps:
     displayName: 'Install dependencies'  
   
   - script: |  
-      yarn --version  
+      echo "yarn version:"  
+      yarn --version
+      echo "vue version:"  
+      yarn list vue  
+      echo "vuepress version:"  
       npx vuepress --version  
     displayName: 'Check yarn and vuepress versions'  
-  
+
   - script: |  
       echo "Cleaning cache and reinstalling dependencies..."  
       npm cache clean --force  
