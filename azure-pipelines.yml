@@ -1,5 +1,5 @@
 trigger:  
-  - main
+  - main  
   
 pool:  
   vmImage: 'windows-latest'  
@@ -63,4 +63,4 @@ steps:
       contents: '**'  
       targetFolder: 'C:\website\NCF\wwwroot\ncf\sample\wwwroot\docs'  # 直接使用文件路径  
       cleanTargetFolder: true  
-    displayName: 'Copy files to Windows Server via SSH'  
+   
