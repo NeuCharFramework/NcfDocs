@@ -14,29 +14,32 @@ steps:
       versionSpec: '$(node_version)'  
     displayName: 'Install Node.js'  
   
-  - script: |  
-      npm install -g yarn && \  
-      yarn install && \  
-      yarn add vue-template-compiler@2.6.14  
+  - script: npm install -g yarn  
+    displayName: 'Install yarn globally'  
+  
+  - script: yarn install  
     displayName: 'Install dependencies'  
   
-  - script: |  
-      echo "Checking yarn version..." && \  
-      yarn --version && \  
-      echo "Checking vue version..." && \  
-      yarn list vue  
-      echo "Checking vuepress version..." && \  
-      npx vuepress --version  
-    displayName: 'Check yarn and vuepress versions'  
+  - script: yarn add vue-template-compiler@2.6.14  
+    displayName: 'Add vue-template-compiler'  
+  
+  - script: yarn --version  
+    displayName: 'Check yarn version'  
+
+  - script: yarn list vue
+    displayName: 'Check vue version'  
+  
+  - script: npx vuepress --version  
+    displayName: 'Check vuepress version'  
   
   - script: |  
-      echo "Cleaning cache and reinstalling dependencies..." && \  
-      npm cache clean --force && \  
+      echo "Cleaning cache and reinstalling dependencies..."  
+      npm cache clean --force  
       yarn install --force  
     displayName: 'Clean cache and reinstall dependencies'  
   
   - script: |  
-      echo "Building the project..." && \  
+      echo "Building the project..."  
       npx vuepress build .  
     displayName: 'Build the project'  
   
@@ -68,4 +71,4 @@ steps:
       contents: '**'  
       targetFolder: 'C:\website\NCF\wwwroot\ncf\sample\wwwroot\docs'  # 直接使用文件路径  
       cleanTargetFolder: true  
-    displayName: 'Copy files to Windows
+    displayName: 'Copy files to Windows Server via SSH'  
