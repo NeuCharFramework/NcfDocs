@@ -23,7 +23,8 @@ module.exports = {
                         text: "项目", items: [
                             { text: '前后端分离版', link: '/Front/home/index' },
                             { text: '基础库源码解析', link: '/NcfPackageSources/home/index' },
-                            { text: '动态WebApi', link: '/DynamicWebApi/home/index' }
+                            { text: '动态WebApi', link: '/DynamicWebApi/home/index' },
+                            { text: '站点部署', link: '/Deploy/home/index' }
                         ]
                     },
                     {
@@ -188,6 +189,29 @@ module.exports = {
                 {
                     title: '动态WebApi',
                     collapsable: false
+                }
+            ],
+            '/Deploy/': [
+                {
+                    title: 'Windows部署',
+                    collapsable: false,
+                    children: [
+                        '/Deploy/windows/ncf-website'
+                    ]
+                },
+                {
+                    title: 'Linux部署',
+                    collapsable: false,
+                    children: [
+                        '/Deploy/linux/ncf-website'
+                    ]
+                },
+                {
+                    title: 'Docker部署',
+                    collapsable: false,
+                    children: [
+                        '/Deploy/docker/ncf-website'
+                    ]
                 }
             ]
         }
