@@ -14,7 +14,7 @@ NeuCharFramework（以下简称 NCF） 是一整套可用于构建基础项目�
 
 |       | GitHub   |  Gitee    | 说明 
 |-------|----------|-----------|---------
-NCF 模板|[NCF](https://github.com/NeuCharFramework/NCF)|[NCF](https://gitee.com/NeuCharFramework/NCF)| 可直接用于开发的基础代码框架，常规开发只需要下载此项目。
+NCF 模板|[NCF](https://github.com/NeuCharFramework/NCF)|[NCF](https://gitee.com/NeuCharFramework/NCF)| 可直接用于开发的基础代码框架，常规开发只需要下载此项目或[使用模板创建项目](/start/start-develop/get-ncf-template.html#从命令行安装-推荐)。
 NcfPackageSources |[NcfPackageSources](https://github.com/NeuCharFramework/NcfPackageSources)  |[NcfPackageSources](https://gitee.com/NeuCharFramework/NcfPackageSources)| `NCF 模板`项目所引用的基础库代码，以 Nuget  包形式发布，被 `NCF 模板`引用，同样 100% 开源，如需深度开发或研究基础原理可以下载。
 
 <b>当前快速更新分支：[Developer](https://github.com/NeuCharFramework/NCF/tree/Developer)</b>

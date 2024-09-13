@@ -9,10 +9,11 @@ MySql
 Sqlite
 PostgreSql
 Oracle
+Dm（达梦）
 ```
 ## 默认数据库配置
 
-NCF第一次拉取后默认配置为SQLServer，[配置方法](/start/database/setting.html)
+NCF 第一次拉取后默认配置为 Sqlite，[配置方法](/start/database/setting.html)
 
 ## 如何切换指定数据库
 

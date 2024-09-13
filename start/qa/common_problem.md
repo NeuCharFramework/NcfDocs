@@ -1,5 +1,19 @@
 # NCF常见问题
 
+## 编译报错的问题
+
+问题：rzc generate exited with code 2.
+
+![Image text](./images/common_problem/xncf_builder_error_02.png)
+
+解决方案请参考：
+
+![Image text](./images/common_problem/xncf_builder_error_02_solution.png)
+
+```
+<LangVersion>preview</LangVersion>
+```
+
 ## 修改Mysql的配置后，启动报错
 
 ![Image text](./images/common_problem/mysql_engine_error.png)
@@ -105,3 +119,7 @@ dotnet new --install Senparc.Xncf.XncfBuilder.Template
 ![Image text](./images/common_problem/xncf_builder_template_new.png)
 
 3. .NET 7 的 CLI 有一个生成模板的 bug，请等待官方修复，或使用 .NET 6.0 的 CLI。
+
+## NeuChar Sample的地址
+
+[NeuChar-App-Sample](https://github.com/Senparc/NeuChar-App-Sample)

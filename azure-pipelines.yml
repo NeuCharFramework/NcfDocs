@@ -1,0 +1,74 @@
+trigger:  
+  - main  
+pool:  
+  vmImage: 'windows-latest'  
+variables:  
+  node_version: '14.21.1'  
+  system.debug: true  
+steps:  
+  - task: NodeTool@0  
+    inputs:  
+      versionSpec: '$(node_version)'  
+    displayName: 'Install Node.js'  
+    
+  - script: npm config set registry https://registry.npmmirror.com/  
+    displayName: 'Set npm registry to https://registry.npmmirror.com/'  
+  
+  - script: npm install -g yarn  
+    displayName: 'Install yarn globally'  
+  
+  - script: yarn install  
+    displayName: 'Install dependencies'  
+  
+  - script: yarn add vue-template-compiler@2.6.14  
+    displayName: 'Add vue-template-compiler'  
+  
+  - script: yarn --version  
+    displayName: 'Check yarn version'  
+  
+  - script: yarn list vue  
+    displayName: 'Check vue version'  
+  
+  - script: npx vuepress --version  
+    displayName: 'Check vuepress version'  
+  
+  - script: |  
+      echo "Cleaning cache and reinstalling dependencies..."  
+      npm cache clean --force  
+      yarn install --force  
+    displayName: 'Clean cache and reinstall dependencies'  
+  
+  - script: |  
+      echo "Building the project..."  
+      npx vuepress build .  
+    displayName: 'Build the project'  
+  
+  - task: CopyFiles@2  
+    inputs:  
+      SourceFolder: '$(Build.SourcesDirectory)\.vuepress\dist'  
+      Contents: '**'  
+      TargetFolder: '$(Build.ArtifactStagingDirectory)\dist'  
+    displayName: 'Copy files to artifact staging directory'  
+  
+  - task: PublishBuildArtifacts@1  
+    inputs:  
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)\dist'  
+      ArtifactName: 'dist'  
+    displayName: 'Publish build artifacts'  
+  
+  - task: DownloadBuildArtifacts@0  
+    inputs:  
+      buildType: 'current'  
+      downloadType: 'single'  
+      artifactName: 'dist'  
+      downloadPath: '$(Build.ArtifactStagingDirectory)'  
+    displayName: 'Download build artifacts'  
+  
+  - task: CopyFilesOverSSH@0  
+    inputs:  
+      sshEndpoint: 'NcfDoc'  # 使用指定的SSH服务连接名称  
+      sourceFolder: '$(Build.ArtifactStagingDirectory)\dist'  
+      contents: '**'  
+      targetFolder: 'C:\website\NCF\wwwroot\ncf\sample\wwwroot\docs'  # 直接使用文件路径  
+      cleanTargetFolder: true  
+    displayName: 'Copy files to Windows Server via SSH'  

@@ -4,7 +4,7 @@
 
 进入到 .Net 6 时代以后，入口的命名空间的引用全部都归集到了 `Senparc.Web\GlobalUsings.cs` 的文件中，内容如下:
 
-```
+```csharp
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.Extensions.Hosting;
@@ -19,7 +19,7 @@ global using Dapr.Client;
 
 主要看 `Senparc.Web\global.json` 这个文件，内容如下
 
-```
+```json
 {
   "sdk": {
     "version": "8.0.100"

@@ -1,6 +1,6 @@
 # 环境要求
 
-## 编辑器
+## 支持编辑器
 - Visual Studio 2022+
 - VS Code 最新版本
 - JetBrains Rider
