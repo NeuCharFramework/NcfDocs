@@ -49,10 +49,10 @@ export default defineUserConfig({
 
   // configure default theme
   theme: defaultTheme({
-    hostname: 'https://v2.vuepress.vuejs.org',
-    logo: '/images/hero.png',
-    repo: 'vuepress/core',
-    docsRepo: 'vuepress/docs',
+    hostname: 'https://www.ncf.pub',
+    logo: '/images/logo.png',
+    repo: 'NeuCharFramework/NCF',
+    docsRepo: 'NeuCharFramework/NcfDocs',
     docsDir: 'docs',
 
     // theme-level locales config
