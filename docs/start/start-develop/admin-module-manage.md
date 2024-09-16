@@ -1,4 +1,4 @@
-## Module Management
+# Module Management
 
 Open 【Extension Modules】&gt;【Module Management】 to see the management page for all modules:
 
