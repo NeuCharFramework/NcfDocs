@@ -13,11 +13,11 @@ NeuCharFramework 为开发者提供了`前后端一体（Razor Page）`以及`�
 
 ### 使用 Visual Studio
 
-详细介绍：[使用 Visual Studio 运行 NCF](start/start-develop/run-ncf)
+详细介绍：[使用 Visual Studio 运行 NCF](../start-develop/run-ncf)
 
 ### 使用命令行或 Visual Studio Code
 
-详细介绍：[使用 CLI 运行 NCF](/start/start-develop/run-ncf-with-cli)
+详细介绍：[使用 CLI 运行 NCF](../start-develop/run-ncf-with-cli)
 
 ## 前后端分离方案
 

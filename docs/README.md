@@ -4,31 +4,29 @@ title: Home
 heroImage: /images/logo.png
 actions:
   - text: Get Started
-    link: /guide/getting-started.html
+    link: /start/start-develop/get-ncf-template.html
     type: primary
-
-  - text: Introduction
-    link: /guide/introduction.html
+  - text: Project Introduction
+    link: /start/instruction/about-ncf.html
     type: secondary
-
 features:
-  - title: Simplicity First
-    details: Minimal setup with markdown-centered project structure helps you focus on writing.
-
-  - title: Vue-Powered
-    details: Enjoy the dev experience of Vue, use Vue components in markdown, and develop custom themes with Vue.
-
-  - title: Performant
-    details: VuePress generates pre-rendered static HTML for each page, and runs as an SPA once a page is loaded.
-
-  - title: Themes
-    details: Providing a default theme out of the box. You can also choose a community theme or create your own one.
-
-  - title: Plugins
-    details: Flexible plugin API, allowing plugins to provide lots of plug-and-play features for your site.
-
-  - title: Bundlers
-    details: Recommended bundler is Vite, while Webpack is also supported. Choose the one you like!
-
-footer: MIT Licensed | Copyright © 2018-present VuePress Community
+  - title: Quick Setup
+    details: Provides a framework template, ready to use, and one-click installation.
+  - title: AI Native Framework
+    details: Built with AI, offering an intelligent development experience. Also integrates basic AI capabilities for easy AI application development.
+  - title: Modular Design
+    details: Highly modular design, freely combinable and extensible. Each functional module can be developed, tested, integrated, and deployed independently.
+  - title: Multi-Database Support
+    details: Supports various databases like SQL Server, MySQL, SQLite, PostgreSQL, Oracle, and DM (Dameng), with easy extensibility.
+  - title: High Performance
+    details: Over 10 years of enterprise-level system optimization experience, high performance, high availability. Many systems with over 5 million daily PV are in use.
+  - title: DDD Pattern
+    details: Developed based on strict Domain-Driven Design (DDD) patterns to adapt flexibly to changes.
+  - title: Dapr Support
+    details: Supports Dapr microservice framework for quick microservice implementation.
+  - title: Backward Compatibility
+    details: Supports traditional development and single-machine deployment modes besides microservices and distributed systems, with no additional learning cost.
+  - title: Community Support
+    details: Maintained and supported by the core team of the Senparc Developer Community, with long-term upgrades and maintenance.
+footer: Apache License 2.0 | Copyright © 2018-present Senparc Developer Community
 ---

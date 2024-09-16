@@ -1,7 +1,7 @@
 ---
 home: true
 title: 首页
-heroImage: /zh/images/logo.png
+heroImage: /images/logo.png
 actions:
   - text: 快速上手
     link: /zh/start/start-develop/get-ncf-template.html

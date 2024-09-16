@@ -30,7 +30,7 @@ NCF 已全面兼容 .NET 8.0。
 
 目前已支持 SQLite、SQL Server、MySQL、PostgreSQL、Oracle、达梦（Dm） 等数据库。
 
-[更多数据库设置信息](/start/database/setting)
+[更多数据库设置信息](../../start/database/setting)
 
 ## 开源协议
 

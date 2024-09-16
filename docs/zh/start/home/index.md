@@ -25,4 +25,4 @@ NeuCharFramework（以下简称 NCF） 是一整套可用于构建基础项目�
 
 ## 了解更多
 
-[开始](/start/instruction/about-ncf.html)
+[开始](../instruction/about-ncf.html)
