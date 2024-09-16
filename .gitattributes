@@ -2,6 +2,7 @@
 *.txt text eol=crlf
 
 *.png binary
+*.PNG binary
 *.jpg binary
 *.jpeg binary
 *.ico binary

@@ -253,7 +253,7 @@ The above path by default includes (exposes) the class to which the GetWeatherFo
 
 > Tip:
 
-> To prevent interface name conflicts and facilitate intuitive positioning, the last segment of the interface path naming (WeatherForecast*MyApi) is currently not configurable. The rule is: <ClassName>*<MethodName>.
+> To prevent interface name conflicts and facilitate intuitive positioning, the last segment of the interface path naming (WeatherForecast\*MyApi) is currently not configurable. The rule is: ClassName\*MethodName.
 
 > Of course, if there is a real name conflict, WebApiEngine will automatically modify it.
 

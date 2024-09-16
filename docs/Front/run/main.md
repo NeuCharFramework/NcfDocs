@@ -18,7 +18,7 @@ Execute npm run dev
 
 Run the login page
 
-<img src="./images/login.png" />
+<img src="../home/images/login.jpg" />
 
 Display the main page
 

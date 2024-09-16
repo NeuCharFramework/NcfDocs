@@ -26,9 +26,11 @@
 
 2.直接编辑 `<ConnectionStringFull>` 节点下的连接字符串，例如：
 
+```xml
     <ConnectionStringFull>
         <![CDATA[Server=.\;Database=NCF;User ID=sa;Pwd=sa;Trusted_Connection=True;integrated security=True;]]>
     </ConnectionStringFull>
+```
 
 ![Image text](./images/common_problem/modify_database_connectstring.png)
 

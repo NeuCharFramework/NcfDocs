@@ -26,9 +26,11 @@ For the solution, please refer to: [How to switch Mysql](/start/database/appoint
 
 2. Directly edit the connection string under the `<ConnectionStringFull>` node, for example:
 
+```xml
 <ConnectionStringFull>
     <![CDATA[Server=.\;Database=NCF;User ID=sa;Pwd=sa;Trusted_Connection=True;integrated security=True;]]>
 </ConnectionStringFull>
+```
 
 ![Image text](./images/common_problem/modify_database_connectstring.png)
 

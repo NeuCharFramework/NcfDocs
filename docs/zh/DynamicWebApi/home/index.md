@@ -253,7 +253,7 @@ services.AddScoped<WeatherService>();
 
 > 小贴士：
 
-> 为了防止接口名称重合和便于直观定位，接口路径最后一段命名（WeatherForecast*MyApi）目前不可设置，规则为：<类名>*<方法名>。
+> 为了防止接口名称重合和便于直观定位，接口路径最后一段命名（WeatherForecast\*MyApi）目前不可设置，规则为：<类名>\*<方法名>。
 
 > 当然如果真的出现重名，WebApiEngine 也会自动修改。
 

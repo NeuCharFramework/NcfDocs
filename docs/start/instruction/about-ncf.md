@@ -53,7 +53,7 @@ Note: The main branch of the above projects is the GitHub project, and the Gitee
 
 > NCF is derived from the self-use system underlying framework SenparcCore, which has been optimized and iterated by the Senparc team for many years. It has undergone practical tests in numerous systems of .NET Framework 3.5/4.5 and has finally been ported to .NET Core (supporting .NET 5.0/6.0/7.0/8.0). It is highly modular. NCF is currently running stably in many medium and large applications. Thank you for your continuous support. We welcome your suggestions and feedback, or join the ranks of community contributors!
 
-<center><img src="https://weixin.senparc.com/images/NCF/login.jpg" /></center>
+<center><img src="https://weixin.senparc.com/images/NCF/login.png" /></center>
 
 > We welcome third-party open-source components to provide their solutions, which we will test and integrate into NCF.
 

@@ -18,7 +18,7 @@
 
 运行登录页面
 
-<img src="./images/login.png" />
+<img src="../home/images/login.jpg" />
 
 显示主页
 

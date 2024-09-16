@@ -12,7 +12,7 @@ Redis 通常被称为数据结构服务器，因为值（value）可以是字符
 
 首先找到`Senparc.Web` 项目下的appsetting.json文件
 
-<img src="./images/config-redis.png" />
+<img src="./images/config-redis1.png" />
 
 配置好以后，我们可以运行程序，看一下Redis的变化
 
@@ -22,6 +22,6 @@ Redis 通常被称为数据结构服务器，因为值（value）可以是字符
 
 可以看到
 
-<img src="./images/redis-change-001.png" />
+<img src="./images/redis-change-01.png" />
 
-<img src="./images/redis-change-002.png" />
+<img src="./images/redis-change-02.png" />

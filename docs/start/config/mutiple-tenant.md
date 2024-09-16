@@ -8,19 +8,19 @@ Multi-Tenant means that multiple different tenants can use the same system simul
 
 First, locate the appsetting.json file under the `Senparc.Web` project.
 
-<img src="./images/config-mutil-tenant.png" />
+<img src="./images/config-mutil-tenant1.png" />
 
 ## Correspondence of Multi-Tenant Data Tables in System Modules
 
 After the database is generated, a multi-tenant table will be automatically created, as shown below:
 
-<img src="./images/mutil-tenant-table.png" />
+<img src="./images/mutil-tenant-table1.png" />
 
 ## Changes in Other Tables in the Database
 
 After the database is generated, a field will be created in each table, as shown below:
 
-<img src="./images/mutil-tenant-table-field.png" />
+<img src="./images/mutil-tenant-table-field1.png" />
 
 ## Correspondence
 

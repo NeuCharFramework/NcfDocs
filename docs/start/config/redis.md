@@ -12,7 +12,7 @@ Redis is often referred to as a data structure server because values can be of t
 
 First, find the `Senparc.Web` project's appsetting.json file
 
-<img src="./images/config-redis.png" />
+<img src="./images/config-redis1.png" />
 
 After configuring, we can run the program and observe the changes in Redis.
 
@@ -22,6 +22,6 @@ After configuring, we can run the program and observe the changes in Redis.
 
 You can see
 
-<img src="./images/redis-change-001.png" />
+<img src="./images/redis-change-01.png" />
 
-<img src="./images/redis-change-002.png" />
+<img src="./images/redis-change-02.png" />

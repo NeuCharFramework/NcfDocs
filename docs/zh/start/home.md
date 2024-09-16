@@ -4,7 +4,7 @@
 
 NeuCharFramework（以下简称 NCF） 是一整套可用于构建基础项目的 DDD 框架，包含了基础的缓存、数据库、模型、验证及配套管理后台，支持多数据库，高度模块化，具有高度的可扩展性。
 
-<center><img src="./images/login.jpg" /></center>
+<center><img src="./home/images/login.jpg" /></center>
 
 ## 源码地址
 
