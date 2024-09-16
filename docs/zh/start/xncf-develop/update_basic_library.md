@@ -6,31 +6,31 @@
 
 第一步:双击项目名称打开项目文件进行编辑
 
-<img src="./images/double-click-project.png" />
+<img src="./images/double-click-project1.png" />
 
 即可打开
 
-<img src="./images/opened-project-file.png" />
+<img src="./images/opened-project-file1.png" />
 
 第二步:找到你要想要更新的基础库的名称
 
-<img src="./images/find-library-name.png" />
+<img src="./images/find-library-name1.png" />
 
 第三步:打开nuget，将基础库的名字输入进去，查询库最新的版本号是多少
 
-<img src="./images/search-package-name-for-nuget.png" />
+<img src="./images/search-package-name-for-nuget1.png" />
 
 点击打开
 
-<img src="./images/select-package.png" />
+<img src="./images/select-package1.png" />
 
 可以看到很多个版本，这里可以选择最新的
 
-<img src="./images/select-last-new-version.png" />
+<img src="./images/select-last-new-version1.png" />
 
 第四步:修改项目文件中引用的基础库的版本号
 
-<img src="./images/update-library-version.png" />
+<img src="./images/update-library-version1.png" />
 
 ## 如何使用本地编译的基础库
 

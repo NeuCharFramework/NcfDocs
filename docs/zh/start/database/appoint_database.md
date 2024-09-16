@@ -72,7 +72,7 @@ app.UseNcf<MySqlDatabaseConfiguration>();
 
 切换完成后，运行会显示，下同。
 
-<img src="./images/switch-sqlserver.png" />
+<img src="./images/switch-sqlserver1.png" />
 
 ## 如何快速切换 Sqlite
 

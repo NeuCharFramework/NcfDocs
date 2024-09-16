@@ -6,11 +6,11 @@ Xncf 模块使用版本号来识别版本更新。
 
 找到Xncf模块中的Register文件
 
-<img src="./images/update-xncf/project_folder.png" />
+<img src="./images/update-xncf/project_folder1.png" />
 
 修改文件中的Version号
 
-<img src="./images/update-xncf/modify_version_number.png" />
+<img src="./images/update-xncf/modify_version_number1.png" />
 
 ## 如何在 NCF 项目中更新模块？
 

@@ -6,11 +6,11 @@ Xncf modules use version numbers to identify version updates.
 
 Find the Register file in the Xncf module
 
-<img src="./images/update-xncf/project_folder.png" />
+<img src="./images/update-xncf/project_folder1.png" />
 
 Modify the Version number in the file
 
-<img src="./images/update-xncf/modify_version_number.png" />
+<img src="./images/update-xncf/modify_version_number1.png" />
 
 ## How to update the module in the NCF project?
 

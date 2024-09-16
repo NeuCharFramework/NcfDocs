@@ -72,7 +72,7 @@ Same as switching to MySQL.
 
 After switching, running will display, the same below.
 
-<img src="./images/switch-sqlserver.png" />
+<img src="./images/switch-sqlserver1.png" />
 
 ## How to Quickly Switch to Sqlite
 
