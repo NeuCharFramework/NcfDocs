@@ -1,2 +1,0 @@
-# Senparc.Ncf.XncfBase
-

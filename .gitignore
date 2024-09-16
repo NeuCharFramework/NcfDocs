@@ -1,16 +1,13 @@
-# Prerequisites
-*.d
+# VuePress files
+docs/.vuepress/.temp/
+docs/.vuepress/.cache/
+docs/.vuepress/dist/
 
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+# Node modules
+node_modules/
 
-# Linker output
-*.ilk
-*.map
-*.exp
+# MacOS Desktop Services Store
+.DS_Store
 
 # Precompiled Headers
 *.gch
