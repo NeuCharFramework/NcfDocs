@@ -1,7 +1,7 @@
 {
-  "name": "VuePress",
-  "short_name": "VuePress",
-  "description": "Vue-powered Static Site Generator",
+  "name": "NeuCharFramework",
+  "short_name": "NCF",
+  "description": "An AI-enabled, out-of-the-box modular development framework",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#fff",
