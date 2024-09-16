@@ -1,6 +1,6 @@
 # 获取 NCF 模板源码
 
-## 从命令行安装（推荐）
+## 方法一：从命令行安装（推荐）
 
 在已经安装了 .NET 运行时的开发环境中打开命令行，输入：
 
@@ -22,15 +22,17 @@ dotnet new NCF -n MyProject
 
 > 其中，`MyProject` 为项目名称，可根据需要修改，如果不提供 `-n` 参数，则使用默认名称创建。
 
-## 从源码地址获取源码
-
-以 Gitee 为例，还有几种从开源项目库获取源码的方式：
+## 方法二：从源码地址获取源码
 
 以下两个代码托管地址，为 NCF 官方代码发布渠道：
 
 - GitHub：[https://github.com/NeuCharFramework/NCF](https://github.com/NeuCharFramework/NCF)
 
 - Gitee：[https://gitee.com/NeuCharFramework/NCF](https://gitee.com/NeuCharFramework/NCF)
+
+> 💡 说明：Gitee 的代码是从 GitHub 镜像而来，可能存在延迟，因此如果您希望获取最新版本的代码，可从 GitHub 站点获取，操作方法类似。
+
+下面以 Gitee 为例，GitHub 站点操作类似。
 
 ### 方式一：直接下载 .zip 包
 

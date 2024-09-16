@@ -46,7 +46,7 @@ export const navbarEn: NavbarConfig = [
     children: [],
   },
   {
-    text: 'Open Source Repositories',
+    text: 'Open Source Repos',
     children: [
       {
         text: 'Gitee',
