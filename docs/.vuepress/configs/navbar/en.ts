@@ -42,7 +42,7 @@ export const navbarEn: NavbarConfig = [
     ],
   },
   {
-    text: 'Deployment Practice',
+    text: 'Practice',
     children: [],
   },
   {
