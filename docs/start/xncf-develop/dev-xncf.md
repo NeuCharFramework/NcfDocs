@@ -460,5 +460,5 @@ using Senparc.Xncf.Admin.Services;
 
 namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
 {
-    public class IndexModel : Senparc.Ncf.AreaBase.Admin.Admin
+    public class IndexModel : Senparc.Ncf.AreaBase.Admin
 ```

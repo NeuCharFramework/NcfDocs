@@ -15,7 +15,7 @@ https://github.com/Senparc/Senparc.AI#%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%BD%BF%E7%94
 ## 2023-03-10 Update
 
 ```
-ChatGPT + Dall&#183;E + Senparc Weixin SDK + NeuCharFramework, realizing a WeChat robot (group) solution based on modular architecture, will be fully open source, plug and play.
+ChatGPT + Dall·E + Senparc Weixin SDK + NeuCharFramework, realizing a WeChat robot (group) solution based on modular architecture, will be fully open source, plug and play.
 ```
 
 ## 2023-03-06 Update

@@ -1,27 +1,27 @@
-# Update Xncf Module
+# 更新 Xncf 模块
 
-Xncf modules use version numbers to identify version updates.
+Xncf 模块使用版本号来标识版本更新。
 
-## How to update the version number in the code?
+## 如何在代码中更新版本号？
 
-Find the Register file in the Xncf module
+找到 Xncf 模块中的 Register 文件
 
 <img src="./images/update-xncf/project_folder1.png" />
 
-Modify the Version number in the file
+修改文件中的 Version 号
 
 <img src="./images/update-xncf/modify_version_number1.png" />
 
-## How to update the module in the NCF project?
+## 如何在 NCF 项目中更新模块？
 
-You only need to reference the latest dll (or install the nuget package), and the system backend will automatically scan for version updates:
+只需要引用最新的 dll（或安装 nuget 包），系统后台会自动扫描版本更新：
 
-`【Module Management】page`
+`【模块管理】页面`
 
 <img src="https://weixin.senparc.com/images/NCF/XncfModules/08.png" />
 
-or `Module Details page`
+或 `模块详情页面`
 
 <img src="https://weixin.senparc.com/images/NCF/XncfModules/09.png" />
 
-Click 【Install Now】 to complete the upgrade to the new version!
+点击【立即安装】完成升级到新版本！

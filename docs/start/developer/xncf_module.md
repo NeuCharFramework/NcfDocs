@@ -460,4 +460,4 @@ NCF Base Library Official Nuget Package Source Code
             /// <summary>
             /// Used to find the App_Data folder to get the database connection string configuration information
             /// </summary>
-            public override string RootDictionaryPath
+            public override string Root
