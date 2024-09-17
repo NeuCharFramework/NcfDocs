@@ -1,45 +1,45 @@
-# 实现自己的业务逻辑
+# Implement Your Own Business Logic
 
-## 建立需求
+## Establish Requirements
 
-下面我们举例来实现一下User的功能
+Let's take an example to implement the User functionality.
 
-## 数据库
+## Database
 
-首先我们先确定一下表所需要的字段
+First, let's determine the fields needed for the table.
 
-### 数据库设计
+### Database Design
 
-| 表名称               | 表注释 |
-| -------------------- | ------ |
-| `Senparc_Admin_User` | 用户   |
+| Table Name           | Table Comment |
+| -------------------- | ------------- |
+| `Senparc_Admin_User` | User          |
 
-### Senparc_Admin_User(用户表)
+### Senparc_Admin_User (User Table)
 
-| 字段名称         | 数据类型 | 注释             | 类型长度 | 注释详细说明 |
-| ---------------- | -------- | ---------------- | -------- | ------------ |
-| `Id`             | int      | 主键Id           | -        |
-| `Flag`           | bool     | 标识             | -        |
-| `AddTime`        | DateTime | 添加时间         | -        |
-| `LastUpdateTime` | DateTime | 最后更新时间     | -        |
-| `AdminRemark`    | string   | 管理员备注       | 50       |
-| `Remark`         | string   | 备注             | 50       |
-| `UnionId`        | string   | 微信UnionId      | 50       |
-| `WxOpenId`       | string   | 微信OpenId       | 50       |
-| `WxNickName`     | string   | 微信昵称         | 100      |
-| `Thumb`          | string   | 头像             | 200      |
-| `Gender`         | int      | 性别(1-男;2-女;) | -        |
-| `Country`        | string   | 国家             | 100      |
-| `Province`       | string   | 省份             | 100      |
-| `City`           | string   | 城市             | 100      |
+| Field Name       | Data Type | Comment                    | Length | Detailed Comment |
+| ---------------- | --------- | -------------------------- | ------ | ---------------- |
+| `Id`             | int       | Primary Key Id             | -      |
+| `Flag`           | bool      | Flag                       | -      |
+| `AddTime`        | DateTime  | Add Time                   | -      |
+| `LastUpdateTime` | DateTime  | Last Update Time           | -      |
+| `AdminRemark`    | string    | Admin Remark               | 50     |
+| `Remark`         | string    | Remark                     | 50     |
+| `UnionId`        | string    | WeChat UnionId             | 50     |
+| `WxOpenId`       | string    | WeChat OpenId              | 50     |
+| `WxNickName`     | string    | WeChat Nickname            | 100    |
+| `Thumb`          | string    | Avatar                     | 200    |
+| `Gender`         | int       | Gender (1-Male; 2-Female;) | -      |
+| `Country`        | string    | Country                    | 100    |
+| `Province`       | string    | Province                   | 100    |
+| `City`           | string    | City                       | 100    |
 
-## 创建Model
+## Create Model
 
-在路径自定义的Xncf Module下
+In the custom path of the Xncf Module
 
-创建\Models\DatabaseModel\User.cs
+Create \Models\DatabaseModel\User.cs
 
-源码如下：
+The source code is as follows:
 
 ```csharp
 using Senparc.Ncf.Core.Models;
@@ -54,9 +54,9 @@ using Senparc.Xncf.Admin.Models.DatabaseModel.Dto;
 namespace Senparc.Xncf.Admin.Models.DatabaseModel
 {
     /// <summary>
-    /// User 实体类
+    /// User entity class
     /// </summary>
-    [Table(Register.DATABASE_PREFIX + nameof(User))]//必须添加前缀，防止全系统中发生冲突
+    [Table(Register.DATABASE_PREFIX + nameof(User))]//Must add prefix to prevent conflicts in the entire system
     [Serializable]
     public class User : EntityBase<string>
     {
@@ -94,48 +94,48 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
         }
 
         /// <summary>
-        /// 微信UnionId
+        /// WeChat UnionId
         /// </summary>
         [MaxLength(50)]
         public string UnionId { get; set; }
 
         /// <summary>
-        /// 微信OpenId
+        /// WeChat OpenId
         /// </summary>
         [MaxLength(50)]
         public string WxOpenId { get; set; }
 
         /// <summary>
-        /// 微信昵称
+        /// WeChat Nickname
         /// </summary>
         [MaxLength(100)]
         public string WxNickName { get; set; }
 
         /// <summary>
-        /// 头像
+        /// Avatar
         /// </summary>
         [MaxLength(200)]
         public string Thumb { get; set; }
 
         /// <summary>
-        /// 性别(1-男;2-女;)
+        /// Gender (1-Male; 2-Female;)
         /// </summary>
         public int Gender { get; set; }
 
         /// <summary>
-        /// 国家
+        /// Country
         /// </summary>
         [MaxLength(100)]
         public string Country { get; set; }
 
         /// <summary>
-        /// 省份
+        /// Province
         /// </summary>
         [MaxLength(100)]
         public string Province { get; set; }
 
         /// <summary>
-        /// 城市
+        /// City
         /// </summary>
         [MaxLength(100)]
         public string City { get; set; }
@@ -144,9 +144,9 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
 }
 ```
 
-创建 \Models\DatabaseModel\Dto\UserDto.cs
+Create \Models\DatabaseModel\Dto\UserDto.cs
 
-源码如下：
+The source code is as follows:
 
 ```csharp
 using Senparc.Ncf.Core.Models;
@@ -179,68 +179,67 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel.Dto
 
         public string Id { get; set; }
 
-        /// <summary>
-        /// 微信UnionId
-        /// </summary>
+        /// &lt;summary&gt;
+        /// WeChat UnionId
+        /// &lt;/summary&gt;
         [MaxLength(50)]
         public string UnionId { get; set; }
 
-        /// <summary>
-        /// 微信OpenId
-        /// </summary>
+        /// &lt;summary&gt;
+        /// WeChat OpenId
+        /// &lt;/summary&gt;
         [MaxLength(50)]
         public string WxOpenId { get; set; }
 
-        /// <summary>
-        /// 微信昵称
-        /// </summary>
+        /// &lt;summary&gt;
+        /// WeChat Nickname
+        /// &lt;/summary&gt;
         [MaxLength(100)]
         public string WxNickName { get; set; }
 
-        /// <summary>
-        /// 头像
-        /// </summary>
+        /// &lt;summary&gt;
+        /// Avatar
+        /// &lt;/summary&gt;
         [MaxLength(200)]
         public string Thumb { get; set; }
 
-        /// <summary>
-        /// 性别(1-男;2-女;)
-        /// </summary>
+        /// &lt;summary&gt;
+        /// Gender (1-Male; 2-Female;)
+        /// &lt;/summary&gt;
         public int Gender { get; set; }
 
-        /// <summary>
-        /// 国家
-        /// </summary>
+        /// &lt;summary&gt;
+        /// Country
+        /// &lt;/summary&gt;
         [MaxLength(100)]
         public string Country { get; set; }
 
-        /// <summary>
-        /// 省份
-        /// </summary>
+        /// &lt;summary&gt;
+        /// Province
+        /// &lt;/summary&gt;
         [MaxLength(100)]
         public string Province { get; set; }
 
-        /// <summary>
-        /// 城市
-        /// </summary>
+        /// &lt;summary&gt;
+        /// City
+        /// &lt;/summary&gt;
         [MaxLength(100)]
         public string City { get; set; }
 
     }
 }
-
 ```
 
-创建 \Models\DatabaseModel\Mapping\Admin_UserConfigurationMapping.cs
+Create \Models\DatabaseModel\Mapping\Admin_UserConfigurationMapping.cs
+Create \Models\DatabaseModel\Mapping\Admin_UserConfigurationMapping.cs
 
-源码如下：
+The source code is as follows:
 
 ```csharp
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Senparc.Ncf.Core.Models.DataBaseModel;
 using Senparc.Ncf.XncfBase.Attributes;
 using Senparc.Xncf.Admin.Models.DatabaseModel;
-
 namespace Senparc.Xncf.Admin.Models
 {
     [XncfAutoConfigurationMapping]
@@ -254,7 +253,7 @@ namespace Senparc.Xncf.Admin.Models
 }
 ```
 
-修改 \Models\DatabaseModel\AdminSenparcEntities.cs
+Modify \Models\DatabaseModel\AdminSenparcEntities.cs
 
 ```csharp
 using Microsoft.EntityFrameworkCore;
@@ -285,23 +284,23 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
 
 ```
 
-## 网页部分
+## Web Page Section
 
-模块中的网页部分在
+The web page section in the module is located at
 
 <img src="./images/xncf-module-area1.png" />
 
-页面可以根据自己的实际需要去排版
+The page layout can be adjusted according to your actual needs.
 
 ### html
 
-index.cshtml 源码：
+index.cshtml source code:
 
 ```razor
 @page
 @model Senparc.Xncf.Admin.Areas.Admin.Pages.User.IndexModel
 @{
-    ViewData["Title"] = "用户页面";
+    ViewData["Title"] = "User Page";
     Layout = "_Layout_Vue";
 }
 
@@ -310,22 +309,22 @@ index.cshtml 源码：
 }
 
 @section breadcrumbs {
-    <el-breadcrumb-item>扩展模块</el-breadcrumb-item>
-    <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-    <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+    <el-breadcrumb-item>Extension Module</el-breadcrumb-item>
+    <el-breadcrumb-item>User Management</el-breadcrumb-item>
+    <el-breadcrumb-item>User List</el-breadcrumb-item>
 }
 
 <div>
     <div class="admin-role">
         <el-row class="filter-condition" :gutter="18">
-            <el-col :span="4"><el-input v-model="keyword" placeholder="请输入关键字"></el-input></el-col>
+            <el-col :span="4"><el-input v-model="keyword" placeholder="Please enter keyword"></el-input></el-col>
             <el-col :span="6">
-                <el-button type="primary" @@click="handleSearch()">查询</el-button>
-                <el-button type="primary" @@click="resetCondition()">重置</el-button>
+                <el-button type="primary" @@click="handleSearch()">Search</el-button>
+                <el-button type="primary" @@click="resetCondition()">Reset</el-button>
             </el-col>
         </el-row>
         <div class="filter-container">
-            <el-button class="filter-item" size="mini" type="primary" icon="el-icon-plus" @@click="handleEdit('','','add')">新增</el-button>
+            <el-button class="filter-item" size="mini" type="primary" icon="el-icon-plus" @@click="handleEdit('', '', 'add')">Add</el-button>
         </div>
         <el-table :data="tableData"
                   style="width: 100%;margin-bottom: 20px;"
@@ -333,39 +332,39 @@ index.cshtml 源码：
                   border
                   ref="multipleTable"
                   @@selection-change="handleSelectionChange">
-            <el-table-column label="序号" width="65">
+            <el-table-column label="No." width="65">
                 <template scope="scope">
                     <el-radio :label="scope.$index" v-model="radio" @@change.native="getCurrentRow(scope.row)"></el-radio>
                 </template>
             </el-table-column>
 
-            <el-table-column prop="unionId" align="left" label="微信UnionId"></el-table-column>
-            <el-table-column prop="wxOpenId" align="left" label="微信OpenId"></el-table-column>
-            <el-table-column prop="wxNickName" align="left" label="微信昵称"></el-table-column>
-            <el-table-column prop="thumb" align="center" label="头像">
+            <el-table-column prop="unionId" align="left" label="WeChat UnionId"></el-table-column>
+            <el-table-column prop="wxOpenId" align="left" label="WeChat OpenId"></el-table-column>
+            <el-table-column prop="wxNickName" align="left" label="WeChat Nickname"></el-table-column>
+            <el-table-column prop="thumb" align="center" label="Avatar">
                 <template slot-scope="scope">
                     <a :href="scope.row.thumb ? scope.row.thumb : 'demo.png'" target="_blank">
                         <img :src="scope.row.thumb ? scope.row.thumb : 'demo.png'">
                     </a>
                 </template>
             </el-table-column>
-            <el-table-column prop="gender" align="left" label="性别"></el-table-column>
-            <el-table-column prop="country" align="left" label="国家"></el-table-column>
-            <el-table-column prop="province" align="left" label="省份"></el-table-column>
-            <el-table-column prop="city" align="left" label="城市"></el-table-column>
+            <el-table-column prop="gender" align="left" label="Gender"></el-table-column>
+            <el-table-column prop="country" align="left" label="Country"></el-table-column>
+            <el-table-column prop="province" align="left" label="Province"></el-table-column>
+            <el-table-column prop="city" align="left" label="City"></el-table-column>
             <el-table-column align="center"
-                             label="添加时间">
+                             label="Add Time">
                 <template slot-scope="scope">
                     {{formaTableTime(scope.row.addTime)}}
                 </template>
             </el-table-column>
-            <el-table-column label="操作" align="center" fixed="right" width="150">
+            <el-table-column label="Actions" align="center" fixed="right" width="150">
                 <template slot-scope="scope">
                     <el-button size="mini"
                                type="primary"
-                               @@click="handleEdit(scope.$index, scope.row,'edit')">编辑</el-button>
-                    <el-popconfirm placement="top" title="确认删除此用户吗？" @@on-confirm="handleDelete(scope.$index, scope.row)">
-                        <el-button size="mini" type="danger" slot="reference">删除</el-button>
+                               @@click="handleEdit(scope.$index, scope.row, 'edit')">Edit</el-button>
+                    <el-popconfirm placement="top" title="Are you sure to delete this user?" @@on-confirm="handleDelete(scope.$index, scope.row)">
+                        <el-button size="mini" type="danger" slot="reference">Delete</el-button>
                     </el-popconfirm>
                 </template>
             </el-table-column>
@@ -375,7 +374,7 @@ index.cshtml 源码：
                     :page.sync="listQuery.pageIndex"
                     :limit.sync="listQuery.pageSize"
                     @@pagination="getList"></pagination>
-        <!--编辑、新增-->
+        <!-- Edit, Add -->
         <el-dialog :title="dialog.title"
                    :visible.sync="dialog.visible"
                    :close-on-click-modal="false"
@@ -387,19 +386,19 @@ index.cshtml 源码：
                      label-position="left"
                      label-width="100px"
                      style="max-width: 200px; margin-left:50px;">
-                <el-form-item label="微信UnionId" prop="unionId">
-                    <el-input v-model="dialog.data.unionId" clearable placeholder="请输入微信UnionId" />
+                <el-form-item label="WeChat UnionId" prop="unionId">
+                    <el-input v-model="dialog.data.unionId" clearable placeholder="Please enter WeChat UnionId" />
                 </el-form-item>
 
-                <el-form-item label="微信OpenId" prop="wxOpenId">
-                    <el-input v-model="dialog.data.wxOpenId" clearable placeholder="请输入微信OpenId" />
+                <el-form-item label="WeChat OpenId" prop="wxOpenId">
+                    <el-input v-model="dialog.data.wxOpenId" clearable placeholder="Please enter WeChat OpenId" />
                 </el-form-item>
 
-                <el-form-item label="微信昵称" prop="wxNickName">
-                    <el-input v-model="dialog.data.wxNickName" clearable placeholder="请输入微信昵称" />
+                <el-form-item label="WeChat Nickname" prop="wxNickName">
+                    <el-input v-model="dialog.data.wxNickName" clearable placeholder="Please enter WeChat Nickname" />
                 </el-form-item>
 
-                <el-form-item label="头像">
+                <el-form-item label="Avatar">
                     <el-upload action="@Model.UpFileUrl"
                                list-type="picture-card"
                                show-file-list="true"
@@ -409,30 +408,30 @@ index.cshtml 源码：
                                :on-preview="handlePictureCardPreview"
                                :on-remove="handleRemove">
                         <i class="el-icon-plus"></i>
-                        <div class="el-upload__tip" slot="tip">不能超过100MB</div>
+                        <div class="el-upload__tip" slot="tip">Cannot exceed 100MB</div>
                     </el-upload>
                     <img width="100%" :src="dialogImageUrl" alt="">
-                    <el-input class="hidden" v-model="dialog.data.thumb" clearable placeholder="头像" />
+                    <el-input class="hidden" v-model="dialog.data.thumb" clearable placeholder="Avatar" />
                 </el-form-item>
-                <el-form-item label="性别">
-                    <el-input v-model="dialog.data.gender" clearable placeholder="请输入性别" />
-                </el-form-item>
-
-                <el-form-item label="国家" prop="country">
-                    <el-input v-model="dialog.data.country" clearable placeholder="请输入国家" />
+                <el-form-item label="Gender">
+                    <el-input v-model="dialog.data.gender" clearable placeholder="Please enter gender" />
                 </el-form-item>
 
-                <el-form-item label="省份" prop="province">
-                    <el-input v-model="dialog.data.province" clearable placeholder="请输入省份" />
+                <el-form-item label="Country" prop="country">
+                    <el-input v-model="dialog.data.country" clearable placeholder="Please enter country" />
                 </el-form-item>
 
-                <el-form-item label="城市" prop="city">
-                    <el-input v-model="dialog.data.city" clearable placeholder="请输入城市" />
+                <el-form-item label="Province" prop="province">
+                    <el-input v-model="dialog.data.province" clearable placeholder="Please enter province" />
+                </el-form-item>
+
+                <el-form-item label="City" prop="city">
+                    <el-input v-model="dialog.data.city" clearable placeholder="Please enter city" />
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @@click="dialog.visible=false">取消</el-button>
-                <el-button :loading="dialog.updateLoading" :disabled="dialog.disabled" type="primary" @@click="updateData">确认</el-button>
+                <el-button @@click="dialog.visible=false">Cancel</el-button>
+                <el-button :loading="dialog.updateLoading" :disabled="dialog.disabled" type="primary" @@click="updateData">Confirm</el-button>
             </div>
         </el-dialog>
     </div>
@@ -443,7 +442,7 @@ index.cshtml 源码：
 }
 ```
 
-index.cshtml.cs 源码
+index.cshtml.cs source code
 
 ```csharp
 using System;
@@ -471,35 +470,35 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
         public string UpFileUrl { get; set; }
         public string BaseUrl { get; set; }
 
-        public IndexModel(Lazy<XncfModuleService> xncfModuleService, UserService userService, IServiceProvider serviceProvider) : base(xncfModuleService)
+        public IndexModel(Lazy&lt;XncfModuleService&gt; xncfModuleService, UserService userService, IServiceProvider serviceProvider) : base(xncfModuleService)
         {
-            CurrentMenu = "User";
+            CurrentMenu = &quot;User&quot;;
             this._userService = userService;
             this._serviceProvider = serviceProvider;
         }
 
         [BindProperty(SupportsGet = true)]
         public int PageIndex { get; set; } = 1;
-        public PagedList<Models.DatabaseModel.User> User { get; set; }
+        public PagedList&lt;Models.DatabaseModel.User&gt; User { get; set; }
 
         public Task OnGetAsync()
         {
-            BaseUrl = $"{Request.Scheme}://{Request.Host.Value}";
-            UpFileUrl = $"{BaseUrl}/api/v1/common/upload";
+            BaseUrl = $&quot;{Request.Scheme}://{Request.Host.Value}&quot;;
+            UpFileUrl = $&quot;{BaseUrl}/api/v1/common/upload&quot;;
             return Task.CompletedTask;
         }
 
-        public async Task<IActionResult> OnGetUserAsync(string keyword, string orderField, int pageIndex, int pageSize)
+        public async Task&lt;IActionResult&gt; OnGetUserAsync(string keyword, string orderField, int pageIndex, int pageSize)
         {
-            var seh = new SenparcExpressionHelper<Models.DatabaseModel.User>();
-            seh.ValueCompare.AndAlso(!string.IsNullOrEmpty(keyword), _ => _.WxNickName.Contains(keyword));
+            var seh = new SenparcExpressionHelper&lt;Models.DatabaseModel.User&gt;();
+            seh.ValueCompare.AndAlso(!string.IsNullOrEmpty(keyword), _ =&gt; _.WxNickName.Contains(keyword));
             var where = seh.BuildWhereExpression();
             var response = await _userService.GetObjectListAsync(pageIndex, pageSize, where, orderField);
             return Ok(new
             {
                 response.TotalCount,
                 response.PageIndex,
-                List = response.Select(_ => new
+                List = response.Select(_ =&gt; new
                 {
                     _.Id,
                     _.LastUpdateTime,
@@ -520,17 +519,17 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
 }
 ```
 
-Edit.cshtml源码
+Edit.cshtml source code
 
 ```razor
 @page
 @model Senparc.Xncf.Admin.Areas.Admin.Pages.User.EditModel
 @{
-    ViewData["Title"] = $"{ (!string.IsNullOrEmpty(Model.Id.ToString()) ? "编辑" : "新增")}用户";
+    ViewData["Title"] = $"{ (!string.IsNullOrEmpty(Model.Id.ToString()) ? "Edit" : "Add")} User";
 }
 ```
 
-Edit.cshtml.cs 源码
+Edit.cshtml.cs source code
 
 ```csharp
 using System;
@@ -583,14 +582,13 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
         }
     }
 }
-
 ```
 
 ### style
 
-创建 \wwwroot\css\Admin\User\User.css
+Create \wwwroot\css\Admin\User\User.css
 
-源码如下：
+The source code is as follows:
 
 ```css
 .el-dialog .el-form-item .el-input,
@@ -664,9 +662,9 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
 
 ### javascript
 
-创建 \wwwroot\js\Admin\Pages\User\user.js
+Create \wwwroot\js\Admin\Pages\User\user.js
 
-源码如下:
+The source code is as follows:
 
 ```js
 new Vue({
@@ -684,11 +682,11 @@ new Vue({
       config: {
         initialFrameHeight: 500,
       },
-      //分页参数
+      // Pagination parameters
       paginationQuery: {
         total: 5,
       },
-      //分页接口传参
+      // Pagination interface parameters
       listQuery: {
         pageIndex: 1,
         pageSize: 20,
@@ -699,14 +697,14 @@ new Vue({
       multipleSelection: '',
       radio: '',
       props: { multiple: true },
-      // 表格数据
+      // Table data
       tableData: [],
       uid: '',
       fileList: [],
       dialogImageUrl: '',
       dialogVisible: false,
       dialog: {
-        title: '新增用户',
+        title: 'Add User',
         visible: false,
         data: {
           id: '',
@@ -721,12 +719,16 @@ new Vue({
         },
         rules: {
           name: [
-            { required: true, message: '用户名称为必填项', trigger: 'blur' },
+            {
+              required: true,
+              message: 'User name is required',
+              trigger: 'blur',
+            },
           ],
         },
         updateLoading: false,
         disabled: false,
-        checkStrictly: true, // 是否严格的遵守父子节点不互相关联
+        checkStrictly: true, // Whether to strictly follow the parent-child node association
       },
     }
   },
@@ -736,7 +738,7 @@ new Vue({
   },
   watch: {
     'dialog.visible': function (val, old) {
-      // 关闭dialog，清空
+      // Close dialog, clear data
       if (!val) {
         this.dialog.data = {
           id: '',
@@ -771,26 +773,26 @@ new Vue({
       that.fileList = fileList
       if (res.code == 200) {
         that.$notify({
-          title: '成功',
-          message: '恭喜你，上传成功',
+          title: 'Success',
+          message: 'Upload successful',
           type: 'success',
         })
         that.dialog.data.cover = res.data
       } else {
         that.$notify.error({
-          title: '失败',
-          message: '上传失败，请重新上传',
+          title: 'Failure',
+          message: 'Upload failed, please try again',
         })
       }
     },
     uploadError() {
       let that = this
       that.$notify.error({
-        title: '失败',
-        message: '上传失败，请重新上传',
+        title: 'Failure',
+        message: 'Upload failed, please try again',
       })
     },
-    // 获取列表
+    // Get list
     async getList() {
       let that = this
       let { pageIndex, pageSize, keyword, orderField } = that.listQuery
@@ -810,17 +812,17 @@ new Vue({
           that.paginationQuery.total = res.data.data.totalCount
         })
     },
-    // 编辑 // 新增用户 // 增加下一级
+    // Edit // Add user // Add next level
     handleEdit(index, row, flag) {
       let that = this
       that.dialog.visible = true
       if (flag === 'add') {
-        // 新增
-        that.dialog.title = '新增用户'
+        // Add
+        that.dialog.title = 'Add User'
         that.dialogImageUrl = ''
         return
       }
-      // 编辑
+      // Edit
       let {
         id,
         unionId,
@@ -844,10 +846,10 @@ new Vue({
         city,
       }
       if (flag === 'edit') {
-        that.dialog.title = '编辑用户'
+        that.dialog.title = 'Edit User'
       }
     },
-    // 设置父级菜单默认显示 递归
+    // Set default display for parent menu recursively
     recursionFunc(row, source, dest) {
       if (row.categoryId === null) {
         return
@@ -862,12 +864,12 @@ new Vue({
         }
       }
     },
-    // 更新新增、编辑
+    // Update add, edit
     updateData() {
       let that = this
       that.dialog.updateLoading = true
       that.$refs['dataForm'].validate((valid) => {
-        // 表单校验
+        // Form validation
         if (valid) {
           that.dialog.updateLoading = true
           let data = {
@@ -886,7 +888,7 @@ new Vue({
               that.getList()
               that.$notify({
                 title: 'Success',
-                message: '成功',
+                message: 'Success',
                 type: 'success',
                 duration: 2000,
               })
@@ -896,7 +898,7 @@ new Vue({
         }
       })
     },
-    // 删除
+    // Delete
     handleDelete(index, row) {
       let that = this
       let ids = [row.id]
@@ -905,7 +907,7 @@ new Vue({
           that.getList()
           that.$notify({
             title: 'Success',
-            message: '删除成功',
+            message: 'Deleted successfully',
             type: 'success',
             duration: 2000,
           })
@@ -928,11 +930,11 @@ new Vue({
 })
 ```
 
-## 权限配置
+## Permission Configuration
 
-修改 \Register.Area.cs
+Modify \Register.Area.cs
 
-源码如下：
+The source code is as follows:
 
 ```csharp
 using Microsoft.AspNetCore.Hosting;
@@ -952,27 +954,27 @@ using System.Reflection;
 
 namespace Senparc.Xncf.Admin
 {
-	public partial class Register : IAreaRegister, //注册 XNCF 页面接口（按需选用）
-									IXncfRazorRuntimeCompilation  //赋能 RazorPage 运行时编译
+	public partial class Register : IAreaRegister, // Register XNCF page interface (optional)
+									IXncfRazorRuntimeCompilation  // Enable RazorPage runtime compilation
 	{
-		#region IAreaRegister 接口
+		#region IAreaRegister Interface
 
 		public string HomeUrl => "/Admin/Admin/Index";
 
 		public List<AreaPageMenuItem> AareaPageMenuItems => new List<AreaPageMenuItem>() {
-			 new AreaPageMenuItem(GetAreaHomeUrl(),"首页","fa fa-laptop"),
-			 //新增的菜单
-			 new AreaPageMenuItem(GetAreaUrl($"/Admin/User/Index"),"用户","fa fa-bookmark-o"),
+			 new AreaPageMenuItem(GetAreaHomeUrl(),"Home","fa fa-laptop"),
+			 // New menu
+			 new AreaPageMenuItem(GetAreaUrl($"/Admin/User/Index"),"User","fa fa-bookmark-o"),
 		};
 
 		public IMvcBuilder AuthorizeConfig(IMvcBuilder builder, IHostEnvironment env)
 		{
 			builder.AddRazorPagesOptions(options =>
 			{
-				//此处可配置页面权限
+				// Configure page permissions here
 			});
 
-			SenparcTrace.SendCustomLog("Admin 启动", "完成 Area:AllTheCode.Xncf.Admin 注册");
+			SenparcTrace.SendCustomLog("Admin Startup", "Completed Area:AllTheCode.Xncf.Admin Registration");
 
 			return builder;
 		}
@@ -989,12 +991,11 @@ namespace Senparc.Xncf.Admin
 
         #endregion
 
-        #region IXncfRazorRuntimeCompilation 接口
+        #region IXncfRazorRuntimeCompilation Interface
         public string LibraryPath => Path.GetFullPath(Path.Combine(SiteConfig.WebRootPath, "..", "..", "Senparc.Xncf.Admin"));
 		#endregion
 	}
 }
-
 ```
 
-根据以上的创建方法可以完成系统中任何需要的功能。
+Based on the above creation methods, you can complete any required functionality in the system.
