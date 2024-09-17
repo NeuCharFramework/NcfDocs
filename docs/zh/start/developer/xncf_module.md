@@ -35,6 +35,7 @@ NCF 底层支持库官方 Nuget 包源码
 
 > 6.完成自定义方法
 
+```csharp
     public MyFunction(IServiceProvider serviceProvider) : base(serviceProvider)
     {
     }
@@ -136,6 +137,7 @@ NCF 底层支持库官方 Nuget 包源码
             result.Message = $"计算结果：{calcResult}。计算过程请看日志";
         });
     }
+```
 
 > 7.在Register中注册自定义的方法类
 
@@ -161,6 +163,7 @@ NCF 底层支持库官方 Nuget 包源码
 
 > 2.Senparc.Xncf.ExtensionAreaTemplate新建模型Color类
 
+```csharp
     using Senparc.Ncf.Core.Models;
     using Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel.Dto;
     using System;
@@ -242,11 +245,13 @@ NCF 底层支持库官方 Nuget 包源码
             }
         }
     }
+```
 
 > 3.Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel.Dto新建ColorDto类
 
 ![Image text](./images/xncf_module/page_create_dto_file_path.png)
 
+```csharp
     using Senparc.Ncf.Core.Models;
 
     namespace Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel.Dto
@@ -269,11 +274,13 @@ NCF 底层支持库官方 Nuget 包源码
             private ColorDto() { }
         }
     }
+```
 
 > 4.AutoMapperConfigs增加以下代码
 
 ![Image text](./images/xncf_module/page_create_mapping_file_path.png)
 
+```csharp
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
     using Senparc.Ncf.Core.Models.DataBaseModel;
     using Senparc.Ncf.XncfBase.Attributes;
@@ -291,11 +298,13 @@ NCF 底层支持库官方 Nuget 包源码
             }
         }
     }
+```
 
 > 5.Senparc.Xncf.ExtensionAreaTemplate.Areas.ExtensionAreaTemplate.Pages下建立页面，更改Index继承为Senparc.Ncf.AreaBase.Admin.AdminXncfModulePageModelBase
 
 ![Image text](./images/xncf_module/page_create_pages_file_path.png)
 
+```csharp
     using Microsoft.AspNetCore.Mvc;
     using Senparc.Ncf.Core.Enums;
     using Senparc.Ncf.Service;
@@ -352,11 +361,13 @@ NCF 底层支持库官方 Nuget 包源码
             }
         }
     }
+```
 
 > 6.增加Service类
 
 ![Image text](./images/xncf_module/page_create_service_file_path.png)
 
+```csharp
     using Senparc.Ncf.Core.Enums;
     using Senparc.Ncf.Repository;
     using Senparc.Ncf.Service;
@@ -411,11 +422,13 @@ NCF 底层支持库官方 Nuget 包源码
             //TODO: 更多业务方法可以写到这里
         }
     }
+```
 
 > 7.Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel中ExtensionAreaTemplateSenparcEntities里面增加
 
 ![Image text](./images/xncf_module/page_create_entity_file_path.png)
 
+```csharp
     using Microsoft.EntityFrameworkCore;
     using Senparc.Ncf.XncfBase;
     using Senparc.Ncf.XncfBase.Database;
@@ -440,11 +453,13 @@ NCF 底层支持库官方 Nuget 包源码
             //}
         }
     }
+```
 
 > 8.在Senparc.Web下执行
 
 ![Image text](./images/xncf_module/page_dbcontext.png)
 
+```csharp
     using Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel;
     using Senparc.Ncf.XncfBase.Database;
     using System;
@@ -463,12 +478,15 @@ NCF 底层支持库官方 Nuget 包源码
             public override string RootDictionaryPath => Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\"/*项目根目录*/, "..\\Senparc.Web"/*找到 Web目录，以获取统一的数据库连接字符串配置*/);
         }
     }
+```
 
 > 9.根据实际的Entities的名称，添加数据库更新命令
 
 ![Image text](./images/xncf_module/page_entity_name.png)
 
+```shell
     add-migration Xncf_AreaTemplate_Init2 -Context ExtensionAreaTemplateSenparcEntities
+```
 
 > 10.更新新加的数据库表及字段，只需要运行NCF主程序，更新此引用的模块，或者重新安装此模块即可
 

@@ -1,4 +1,4 @@
-## Publish Local Nuget Package
+# Publish Local Nuget Package
 
 > 1. Open project properties
 
