@@ -50,6 +50,7 @@ export const sidebarEn: SidebarConfig = {
         '/start/xncf-develop/invoke-between-modules',
         '/start/xncf-develop/publish_xncf_modules_to_nuget',
         '/start/xncf-develop/update_basic_library',
+        '/start/developer/xncf_module',
         '/start/developer/embedded_static_to_ncf',
         '/start/developer/issue_local_nuget',
         '/start/developer/advanced',

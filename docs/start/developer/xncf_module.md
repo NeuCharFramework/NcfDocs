@@ -1,6 +1,6 @@
 # Xncf Module Development
 
-NCF Base Library Official Nuget Package Source Code
+NCF Underlying Support Library Official Nuget Package Source Code
 
 ## Xncf Single Function Execution Module Development
 
@@ -18,14 +18,14 @@ NCF Base Library Official Nuget Package Source Code
 
 > 4. Configure the necessary content in Register
 
-| Name        | Description                                                                                      |
-| ----------- | ------------------------------------------------------------------------------------------------ |
-| Name        | Module name                                                                                      |
-| Uid         | Global unique identifier, preferably generated using a tool                                      |
-| Version     | Module version number (used to identify updates)                                                 |
-| MenuName    | Name displayed in the menu after installation in NCF                                             |
-| Icon        | Icon displayed next to the menu [Font Icons](https://colorlib.com/polygon/gentelella/icons.html) |
-| Description | Description of the module, can be used to understand the specific functions before installation  |
+| Name        | Description                                                                                     |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| Name        | Module name                                                                                     |
+| Uid         | Global unique identifier, preferably generated using a tool                                     |
+| Version     | Module version number (used to identify updates)                                                |
+| MenuName    | Name displayed in the menu after installation in NCF                                            |
+| Icon        | [Font icon](https://colorlib.com/polygon/gentelella/icons.html) displayed next to the menu      |
+| Description | Description of the module, can be used to understand the specific functions before installation |
 
 ![Image text](./images/xncf_module/register_content.png)
 
@@ -35,6 +35,7 @@ NCF Base Library Official Nuget Package Source Code
 
 > 6. Complete the custom method
 
+```csharp
     public MyFunction(IServiceProvider serviceProvider) : base(serviceProvider)
     {
     }
@@ -43,27 +44,27 @@ NCF Base Library Official Nuget Package Source Code
     {
         [Required]
         [MaxLength(50)]
-        [Description("Name||Parameter name before the double vertical line, parameter comment after the double vertical line")]
+        [Description("Name||The parameter name before the double vertical line, the parameter comment after the double vertical line")]
         public string Name { get; set; }
 
         [Required]
-        [Description("Number||Number1")]
+        [Description("Number||Number 1")]
         public int Number1 { get; set; }
 
 
         [Required]
-        [Description("Number||Number2")]
+        [Description("Number||Number 2")]
         public int Number2 { get; set; }
 
-        [Description("Operator||")]//Drop-down list
+        [Description("Operator||")]//Dropdown list
         public SelectionList Operator { get; set; } = new SelectionList(SelectionType.DropDownList, new[] {
-                new SelectionItem("+","Addition","Number1 + Number2",false),
-                new SelectionItem("-","Subtraction","Number1 - Number2",true),
-                new SelectionItem("×","Multiplication","Number1 × Number2",false),
-                new SelectionItem("÷","Division","Number1 ÷ Number2",false)
+                new SelectionItem("+","Addition","Number 1 + Number 2",false),
+                new SelectionItem("-","Subtraction","Number 1 - Number 2",true),
+                new SelectionItem("×","Multiplication","Number 1 × Number 2",false),
+                new SelectionItem("÷","Division","Number 1 ÷ Number 2",false)
         });
 
-        [Description("Calculate Power||")]//Checkbox
+        [Description("Calculate Power||")]//Checkbox list
         public SelectionList Power { get; set; } = new SelectionList(SelectionType.CheckBoxList, new[] {
                 new SelectionItem("2","Square","Calculate the square after the above result",false),
                 new SelectionItem("3","Cube","Calculate the cube after the above result",false)
@@ -136,6 +137,7 @@ NCF Base Library Official Nuget Package Source Code
             result.Message = $"Calculation result: {calcResult}. Please see the log for the calculation process";
         });
     }
+```
 
 > 7. Register the custom method class in Register
 
@@ -143,7 +145,7 @@ NCF Base Library Official Nuget Package Source Code
 
 > 8. Publish Nuget, detailed steps to publish Nuget
 
-## Xncf Custom Page Function Module Development
+## Xncf Custom Module Development with Page Functionality
 
 > 1. Create a new DotnetCore Class Library project and enter the project name
 
@@ -151,7 +153,7 @@ NCF Base Library Official Nuget Package Source Code
 
 ![Image text](./images/xncf_module/page_create_dotnet_core_class_library_input_name.png)
 
-> > 1.1 Directory name as follows
+> > 1.1 The directory name is as follows
 
 ![Image text](./images/xncf_module/page_folder_struct.png)
 
@@ -161,6 +163,7 @@ NCF Base Library Official Nuget Package Source Code
 
 > 2. Create a new Color model class in Senparc.Xncf.ExtensionAreaTemplate
 
+```csharp
     using Senparc.Ncf.Core.Models;
     using Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel.Dto;
     using System;
@@ -220,11 +223,11 @@ NCF Base Library Official Nuget Package Source Code
             public void Random()
             {
                 //Randomly generate color codes
-                var radom = new Random();
-                Func<int> getRadomColorCode = () => radom.Next(0, 255);
-                Red = getRadomColorCode();
-                Green = getRadomColorCode();
-                Blue = getRadomColorCode();
+                var random = new Random();
+                Func<int> getRandomColorCode = () => random.Next(0, 255);
+                Red = getRandomColorCode();
+                Green = getRandomColorCode();
+                Blue = getRandomColorCode();
             }
 
             public void Brighten()
@@ -242,11 +245,13 @@ NCF Base Library Official Nuget Package Source Code
             }
         }
     }
+```
 
 > 3. Create a new ColorDto class in Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel.Dto
 
 ![Image text](./images/xncf_module/page_create_dto_file_path.png)
 
+```csharp
     using Senparc.Ncf.Core.Models;
 
     namespace Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel.Dto
@@ -269,11 +274,13 @@ NCF Base Library Official Nuget Package Source Code
             private ColorDto() { }
         }
     }
+```
 
 > 4. Add the following code to AutoMapperConfigs
 
 ![Image text](./images/xncf_module/page_create_mapping_file_path.png)
 
+```csharp
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
     using Senparc.Ncf.Core.Models.DataBaseModel;
     using Senparc.Ncf.XncfBase.Attributes;
@@ -291,11 +298,13 @@ NCF Base Library Official Nuget Package Source Code
             }
         }
     }
+```
 
-> 5. Create pages under Senparc.Xncf.ExtensionAreaTemplate.Areas.ExtensionAreaTemplate.Pages and change Index inheritance to Senparc.Ncf.AreaBase.Admin.AdminXncfModulePageModelBase
+> 5. Create pages under Senparc.Xncf.ExtensionAreaTemplate.Areas.ExtensionAreaTemplate.Pages and change the inheritance of Index to Senparc.Ncf.AreaBase.Admin.AdminXncfModulePageModelBase
 
 ![Image text](./images/xncf_module/page_create_pages_file_path.png)
 
+```csharp
     using Microsoft.AspNetCore.Mvc;
     using Senparc.Ncf.Core.Enums;
     using Senparc.Ncf.Service;
@@ -352,11 +361,13 @@ NCF Base Library Official Nuget Package Source Code
             }
         }
     }
+```
 
 > 6. Add Service class
 
 ![Image text](./images/xncf_module/page_create_service_file_path.png)
 
+```csharp
     using Senparc.Ncf.Core.Enums;
     using Senparc.Ncf.Repository;
     using Senparc.Ncf.Service;
@@ -411,11 +422,13 @@ NCF Base Library Official Nuget Package Source Code
             //TODO: More business methods can be written here
         }
     }
+```
 
 > 7. Add to ExtensionAreaTemplateSenparcEntities in Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel
 
 ![Image text](./images/xncf_module/page_create_entity_file_path.png)
 
+```csharp
     using Microsoft.EntityFrameworkCore;
     using Senparc.Ncf.XncfBase;
     using Senparc.Ncf.XncfBase.Database;
@@ -434,17 +447,19 @@ NCF Base Library Official Nuget Package Source Code
             //DOT REMOVE OR MODIFY THIS LINE 请勿移除或修改本行 - Entities Point
             //ex. public DbSet<Color> Colors { get; set; }
 
-            //If there is no special need, the OnModelCreating method does not need to be written, it has been required to register in Register
+            //If there is no special need, the OnModelCreating method does not need to be written, it has already been required to register in Register
             //protected override void OnModelCreating(ModelBuilder modelBuilder)
             //{
             //}
         }
     }
+```
 
 > 8. Execute under Senparc.Web
 
 ![Image text](./images/xncf_module/page_dbcontext.png)
 
+```csharp
     using Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel;
     using Senparc.Ncf.XncfBase.Database;
     using System;
@@ -460,4 +475,21 @@ NCF Base Library Official Nuget Package Source Code
             /// <summary>
             /// Used to find the App_Data folder to get the database connection string configuration information
             /// </summary>
-            public override string RootDictionaryPath
+            public override string RootDictionaryPath => Path.Combine(AppContext.BaseDirectory, &quot;..\\..\\..\\&quot;/*Project root directory*/, &quot;..\\Senparc.Web&quot;/*Find the Web directory to get the unified database connection string configuration*/);
+        }
+    }
+```
+
+> 9. Add database update commands according to the actual name of the Entities
+
+![Image text](./images/xncf_module/page_entity_name.png)
+
+```shell
+add-migration Xncf_AreaTemplate_Init2 -Context ExtensionAreaTemplateSenparcEntities
+```
+
+> 10. To update the newly added database tables and fields, just run the NCF main program, update the referenced module, or reinstall the module
+
+## Welcome to contribute code!
+
+[NeuCharFramework](https://github.com/NeuCharFramework/NCF)

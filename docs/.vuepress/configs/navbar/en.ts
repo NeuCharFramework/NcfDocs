@@ -42,11 +42,11 @@ export const navbarEn: NavbarConfig = [
     ],
   },
   {
-    text: 'Deployment Practice',
+    text: 'Practice',
     children: [],
   },
   {
-    text: 'Open Source Repositories',
+    text: 'Open Source Repos',
     children: [
       {
         text: 'Gitee',

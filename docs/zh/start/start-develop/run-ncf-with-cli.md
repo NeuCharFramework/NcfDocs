@@ -14,7 +14,7 @@
 E:\...\Senparc.Web > dotnet run
 ```
 
-> 注意：默认运行的数据库为 SQL Server，如需更换其他数据库，请查看《[使用多数据库](/start/database/mutil_database_support.html)》。
+> 注意：默认运行的数据库为 SQLite，如需更换其他数据库，请查看《[使用多数据库](../database/mutil_database_support.html)》。
 
 ## 完成启动
 
@@ -32,4 +32,4 @@ E:\...\Senparc.Web > dotnet run
 
 ## 首次启动安装
 
-当第一次启动时，系统会自动提示[安装](/start/start-develop/install-app.html)，安装完成后，安装界面将不再出现。
+当第一次启动时，系统会自动提示[安装](./install-app.html)，安装完成后，安装界面将不再出现。

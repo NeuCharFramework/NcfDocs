@@ -2,7 +2,7 @@
 
 ## Establish Requirements
 
-Below we will demonstrate how to implement the User functionality.
+Let's take an example to implement the User functionality.
 
 ## Database
 
@@ -16,22 +16,22 @@ First, let's determine the fields needed for the table.
 
 ### Senparc_Admin_User (User Table)
 
-| Field Name       | Data Type | Comment                   | Length | Detailed Comment |
-| ---------------- | --------- | ------------------------- | ------ | ---------------- |
-| `Id`             | int       | Primary Key Id            | -      |
-| `Flag`           | bool      | Flag                      | -      |
-| `AddTime`        | DateTime  | Added Time                | -      |
-| `LastUpdateTime` | DateTime  | Last Update Time          | -      |
-| `AdminRemark`    | string    | Admin Remark              | 50     |
-| `Remark`         | string    | Remark                    | 50     |
-| `UnionId`        | string    | WeChat UnionId            | 50     |
-| `WxOpenId`       | string    | WeChat OpenId             | 50     |
-| `WxNickName`     | string    | WeChat Nickname           | 100    |
-| `Thumb`          | string    | Avatar                    | 200    |
-| `Gender`         | int       | Gender (1-Male;2-Female;) | -      |
-| `Country`        | string    | Country                   | 100    |
-| `Province`       | string    | Province                  | 100    |
-| `City`           | string    | City                      | 100    |
+| Field Name       | Data Type | Comment                    | Length | Detailed Comment |
+| ---------------- | --------- | -------------------------- | ------ | ---------------- |
+| `Id`             | int       | Primary Key Id             | -      |
+| `Flag`           | bool      | Flag                       | -      |
+| `AddTime`        | DateTime  | Add Time                   | -      |
+| `LastUpdateTime` | DateTime  | Last Update Time           | -      |
+| `AdminRemark`    | string    | Admin Remark               | 50     |
+| `Remark`         | string    | Remark                     | 50     |
+| `UnionId`        | string    | WeChat UnionId             | 50     |
+| `WxOpenId`       | string    | WeChat OpenId              | 50     |
+| `WxNickName`     | string    | WeChat Nickname            | 100    |
+| `Thumb`          | string    | Avatar                     | 200    |
+| `Gender`         | int       | Gender (1-Male; 2-Female;) | -      |
+| `Country`        | string    | Country                    | 100    |
+| `Province`       | string    | Province                   | 100    |
+| `City`           | string    | City                       | 100    |
 
 ## Create Model
 
@@ -39,7 +39,7 @@ In the custom path of the Xncf Module
 
 Create \Models\DatabaseModel\User.cs
 
-Source code as follows:
+The source code is as follows:
 
 ```csharp
 using Senparc.Ncf.Core.Models;
@@ -56,7 +56,7 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
     /// <summary>
     /// User entity class
     /// </summary>
-    [Table(Register.DATABASE_PREFIX + nameof(User))] // Must add prefix to prevent conflicts in the entire system
+    [Table(Register.DATABASE_PREFIX + nameof(User))]//Must add prefix to prevent conflicts in the entire system
     [Serializable]
     public class User : EntityBase<string>
     {
@@ -118,7 +118,7 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
         public string Thumb { get; set; }
 
         /// <summary>
-        /// Gender (1-Male;2-Female;)
+        /// Gender (1-Male; 2-Female;)
         /// </summary>
         public int Gender { get; set; }
 
@@ -146,7 +146,7 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
 
 Create \Models\DatabaseModel\Dto\UserDto.cs
 
-Source code as follows:
+The source code is as follows:
 
 ```csharp
 using Senparc.Ncf.Core.Models;
@@ -179,50 +179,50 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel.Dto
 
         public string Id { get; set; }
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// WeChat UnionId
-        /// </summary>
+        /// &lt;/summary&gt;
         [MaxLength(50)]
         public string UnionId { get; set; }
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// WeChat OpenId
-        /// </summary>
+        /// &lt;/summary&gt;
         [MaxLength(50)]
         public string WxOpenId { get; set; }
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// WeChat Nickname
-        /// </summary>
+        /// &lt;/summary&gt;
         [MaxLength(100)]
         public string WxNickName { get; set; }
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Avatar
-        /// </summary>
+        /// &lt;/summary&gt;
         [MaxLength(200)]
         public string Thumb { get; set; }
 
-        /// <summary>
-        /// Gender (1-Male;2-Female;)
-        /// </summary>
+        /// &lt;summary&gt;
+        /// Gender (1-Male; 2-Female;)
+        /// &lt;/summary&gt;
         public int Gender { get; set; }
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Country
-        /// </summary>
+        /// &lt;/summary&gt;
         [MaxLength(100)]
         public string Country { get; set; }
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// Province
-        /// </summary>
+        /// &lt;/summary&gt;
         [MaxLength(100)]
         public string Province { get; set; }
 
-        /// <summary>
+        /// &lt;summary&gt;
         /// City
-        /// </summary>
+        /// &lt;/summary&gt;
         [MaxLength(100)]
         public string City { get; set; }
 
@@ -231,15 +231,15 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel.Dto
 ```
 
 Create \Models\DatabaseModel\Mapping\Admin_UserConfigurationMapping.cs
+Create \Models\DatabaseModel\Mapping\Admin_UserConfigurationMapping.cs
 
-Source code as follows:
+The source code is as follows:
 
 ```csharp
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Senparc.Ncf.Core.Models.DataBaseModel;
 using Senparc.Ncf.XncfBase.Attributes;
 using Senparc.Xncf.Admin.Models.DatabaseModel;
-
 namespace Senparc.Xncf.Admin.Models
 {
     [XncfAutoConfigurationMapping]
@@ -275,21 +275,22 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
 
         public DbSet<User> Users { get; set; }
 
-        //If there are no special needs, the OnModelCreating method does not need to be written, it has already been required to register in Register
+        //如无特殊需需要，OnModelCreating 方法可以不用写，已经在 Register 中要求注册
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{
         //}
     }
 }
+
 ```
 
-## Web Page Part
+## Web Page Section
 
-The web page part of the module is in
+The web page section in the module is located at
 
 <img src="./images/xncf-module-area1.png" />
 
-The page can be laid out according to your actual needs.
+The page layout can be adjusted according to your actual needs.
 
 ### html
 
@@ -316,14 +317,14 @@ index.cshtml source code:
 <div>
     <div class="admin-role">
         <el-row class="filter-condition" :gutter="18">
-            <el-col :span="4"><el-input v-model="keyword" placeholder="Please enter a keyword"></el-input></el-col>
+            <el-col :span="4"><el-input v-model="keyword" placeholder="Please enter keyword"></el-input></el-col>
             <el-col :span="6">
                 <el-button type="primary" @@click="handleSearch()">Search</el-button>
                 <el-button type="primary" @@click="resetCondition()">Reset</el-button>
             </el-col>
         </el-row>
         <div class="filter-container">
-            <el-button class="filter-item" size="mini" type="primary" icon="el-icon-plus" @@click="handleEdit('','','add')">Add</el-button>
+            <el-button class="filter-item" size="mini" type="primary" icon="el-icon-plus" @@click="handleEdit('', '', 'add')">Add</el-button>
         </div>
         <el-table :data="tableData"
                   style="width: 100%;margin-bottom: 20px;"
@@ -352,7 +353,7 @@ index.cshtml source code:
             <el-table-column prop="province" align="left" label="Province"></el-table-column>
             <el-table-column prop="city" align="left" label="City"></el-table-column>
             <el-table-column align="center"
-                             label="Added Time">
+                             label="Add Time">
                 <template slot-scope="scope">
                     {{formaTableTime(scope.row.addTime)}}
                 </template>
@@ -361,8 +362,8 @@ index.cshtml source code:
                 <template slot-scope="scope">
                     <el-button size="mini"
                                type="primary"
-                               @@click="handleEdit(scope.$index, scope.row,'edit')">Edit</el-button>
-                    <el-popconfirm placement="top" title="Are you sure you want to delete this user?" @@on-confirm="handleDelete(scope.$index, scope.row)">
+                               @@click="handleEdit(scope.$index, scope.row, 'edit')">Edit</el-button>
+                    <el-popconfirm placement="top" title="Are you sure to delete this user?" @@on-confirm="handleDelete(scope.$index, scope.row)">
                         <el-button size="mini" type="danger" slot="reference">Delete</el-button>
                     </el-popconfirm>
                 </template>
@@ -460,5 +461,541 @@ using Senparc.Xncf.Admin.Services;
 
 namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
 {
-    public class IndexModel : Senparc.Ncf.AreaBase.Admin.Admin
+    public class IndexModel : Senparc.Ncf.AreaBase.Admin.AdminXncfModulePageModelBase
+    {
+        private readonly UserService _userService;
+        private readonly IServiceProvider _serviceProvider;
+        public UserDto userDto { get; set; }
+        public string Token { get; set; }
+        public string UpFileUrl { get; set; }
+        public string BaseUrl { get; set; }
+
+        public IndexModel(Lazy&lt;XncfModuleService&gt; xncfModuleService, UserService userService, IServiceProvider serviceProvider) : base(xncfModuleService)
+        {
+            CurrentMenu = &quot;User&quot;;
+            this._userService = userService;
+            this._serviceProvider = serviceProvider;
+        }
+
+        [BindProperty(SupportsGet = true)]
+        public int PageIndex { get; set; } = 1;
+        public PagedList&lt;Models.DatabaseModel.User&gt; User { get; set; }
+
+        public Task OnGetAsync()
+        {
+            BaseUrl = $&quot;{Request.Scheme}://{Request.Host.Value}&quot;;
+            UpFileUrl = $&quot;{BaseUrl}/api/v1/common/upload&quot;;
+            return Task.CompletedTask;
+        }
+
+        public async Task&lt;IActionResult&gt; OnGetUserAsync(string keyword, string orderField, int pageIndex, int pageSize)
+        {
+            var seh = new SenparcExpressionHelper&lt;Models.DatabaseModel.User&gt;();
+            seh.ValueCompare.AndAlso(!string.IsNullOrEmpty(keyword), _ =&gt; _.WxNickName.Contains(keyword));
+            var where = seh.BuildWhereExpression();
+            var response = await _userService.GetObjectListAsync(pageIndex, pageSize, where, orderField);
+            return Ok(new
+            {
+                response.TotalCount,
+                response.PageIndex,
+                List = response.Select(_ =&gt; new
+                {
+                    _.Id,
+                    _.LastUpdateTime,
+                    _.Remark,
+                    _.UnionId,
+                    _.WxOpenId,
+                    _.WxNickName,
+                    _.Thumb,
+                    _.Gender,
+                    _.Country,
+                    _.Province,
+                    _.City,
+                    _.AddTime
+                })
+            });
+        }
+    }
+}
 ```
+
+Edit.cshtml source code
+
+```razor
+@page
+@model Senparc.Xncf.Admin.Areas.Admin.Pages.User.EditModel
+@{
+    ViewData["Title"] = $"{ (!string.IsNullOrEmpty(Model.Id.ToString()) ? "Edit" : "Add")} User";
+}
+```
+
+Edit.cshtml.cs source code
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Senparc.Ncf.Service;
+using Senparc.CO2NET.Trace;
+using Senparc.CO2NET.Extensions;
+using Senparc.Xncf.Admin.Models.DatabaseModel.Dto;
+using Senparc.Xncf.Admin.Services;
+
+namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
+{
+    public class EditModel : Senparc.Ncf.AreaBase.Admin.AdminXncfModulePageModelBase
+    {
+        private readonly UserService _userService;
+        public EditModel(UserService userService, Lazy<XncfModuleService> xncfModuleService) : base(xncfModuleService)
+        {
+            CurrentMenu = "User";
+            _userService = userService;
+        }
+
+        [BindProperty(SupportsGet = true)]
+        public string Id { get; set; }
+        public UserDto UserDto { get; set; }
+
+        /// <summary>
+        /// Handler=Save
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> OnPostSaveAsync([FromBody] UserDto userDto)
+        {
+            if (userDto == null)
+            {
+                return Ok(false);
+            }
+            await _userService.CreateOrUpdateAsync(userDto);
+            return Ok(true);
+        }
+
+        public async Task<IActionResult> OnPostDeleteAsync([FromBody] string[] ids)
+        {
+            var entity = await _userService.GetFullListAsync(_ => ids.Contains(_.Id));
+            await _userService.DeleteAllAsync(entity);
+            IEnumerable<string> unDeleteIds = ids.Except(entity.Select(_ => _.Id));
+            return Ok(unDeleteIds);
+        }
+    }
+}
+```
+
+### style
+
+Create \wwwroot\css\Admin\User\User.css
+
+The source code is as follows:
+
+```css
+.el-dialog .el-form-item .el-input,
+.el-dialog .el-form-item .el-textarea {
+  width: 30rem;
+}
+
+.el-form-item__content {
+  width: 30rem;
+}
+
+.filter-condition {
+  margin-bottom: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.col-thumb img {
+  width: 6rem;
+  height: 4rem;
+}
+
+.col-file video {
+  width: 8rem;
+  height: 5rem;
+}
+
+.col-file audio {
+  width: 10rem;
+  height: 5rem;
+}
+
+.item .item-left {
+  text-align: right;
+  padding-right: 1rem;
+  background: #909399;
+  color: #fff;
+  height: 2rem;
+  line-height: 2rem;
+}
+
+.item .item-right {
+  text-align: left;
+  padding-left: 1rem;
+  /*background: #909399;*/
+  border: 1px solid #909399;
+  color: #000;
+  height: 2rem;
+  line-height: 2rem;
+}
+
+.item-right img,
+.item-right video {
+  width: 15rem;
+  -webkit-filter: drop-shadow(
+    10px 10px 10px rgba(0, 0, 0, 0.5)
+  ); /*考虑浏览器兼容性：兼容 Chrome, Safari, Opera */
+  filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.5));
+}
+
+.el-row {
+  padding-bottom: 1rem;
+}
+
+.el-form-item {
+  margin-bottom: 5px;
+}
+```
+
+### javascript
+
+Create \wwwroot\js\Admin\Pages\User\user.js
+
+The source code is as follows:
+
+```js
+new Vue({
+  el: '#app',
+  data() {
+    var validateCode = (rule, value, callback) => {
+      callback()
+    }
+    return {
+      defaultMSG: null,
+      editorData: '',
+      form: {
+        content: '',
+      },
+      config: {
+        initialFrameHeight: 500,
+      },
+      // Pagination parameters
+      paginationQuery: {
+        total: 5,
+      },
+      // Pagination interface parameters
+      listQuery: {
+        pageIndex: 1,
+        pageSize: 20,
+        keyword: '',
+        orderField: '',
+      },
+      keyword: '',
+      multipleSelection: '',
+      radio: '',
+      props: { multiple: true },
+      // Table data
+      tableData: [],
+      uid: '',
+      fileList: [],
+      dialogImageUrl: '',
+      dialogVisible: false,
+      dialog: {
+        title: 'Add User',
+        visible: false,
+        data: {
+          id: '',
+          unionId: '',
+          wxOpenId: '',
+          wxNickName: '',
+          thumb: '',
+          gender: 0,
+          country: '',
+          province: '',
+          city: '',
+        },
+        rules: {
+          name: [
+            {
+              required: true,
+              message: 'User name is required',
+              trigger: 'blur',
+            },
+          ],
+        },
+        updateLoading: false,
+        disabled: false,
+        checkStrictly: true, // Whether to strictly follow the parent-child node association
+      },
+    }
+  },
+  created: function () {
+    let that = this
+    that.getList()
+  },
+  watch: {
+    'dialog.visible': function (val, old) {
+      // Close dialog, clear data
+      if (!val) {
+        this.dialog.data = {
+          id: '',
+          unionId: '',
+          wxOpenId: '',
+          wxNickName: '',
+          thumb: '',
+          gender: 0,
+          country: '',
+          province: '',
+          city: '',
+        }
+        this.dialog.updateLoading = false
+        this.dialog.disabled = false
+      }
+    },
+  },
+  methods: {
+    handleChange(value) {
+      console.log(value)
+    },
+    handleRemove(file, fileList) {
+      log(file, fileList, 2)
+    },
+    handlePictureCardPreview(file) {
+      let that = this
+      that.dialogImageUrl = file.url
+      that.dialogVisible = true
+    },
+    uploadSuccess(res, file, fileList) {
+      let that = this
+      that.fileList = fileList
+      if (res.code == 200) {
+        that.$notify({
+          title: 'Success',
+          message: 'Upload successful',
+          type: 'success',
+        })
+        that.dialog.data.cover = res.data
+      } else {
+        that.$notify.error({
+          title: 'Failure',
+          message: 'Upload failed, please try again',
+        })
+      }
+    },
+    uploadError() {
+      let that = this
+      that.$notify.error({
+        title: 'Failure',
+        message: 'Upload failed, please try again',
+      })
+    },
+    // Get list
+    async getList() {
+      let that = this
+      let { pageIndex, pageSize, keyword, orderField } = that.listQuery
+      if (orderField == '' || orderField == undefined) {
+        orderField = 'AddTime Desc'
+      }
+      if (that.keyword != '' && that.keyword != undefined) {
+        keyword = that.keyword
+      }
+
+      await service
+        .get(
+          `/Admin/User/Index?handler=User&pageIndex=${pageIndex}&pageSize=${pageSize}&keyword=${keyword}&orderField=${orderField}`,
+        )
+        .then((res) => {
+          that.tableData = res.data.data.list
+          that.paginationQuery.total = res.data.data.totalCount
+        })
+    },
+    // Edit // Add user // Add next level
+    handleEdit(index, row, flag) {
+      let that = this
+      that.dialog.visible = true
+      if (flag === 'add') {
+        // Add
+        that.dialog.title = 'Add User'
+        that.dialogImageUrl = ''
+        return
+      }
+      // Edit
+      let {
+        id,
+        unionId,
+        wxOpenId,
+        wxNickName,
+        thumb,
+        gender,
+        country,
+        province,
+        city,
+      } = row
+      that.dialog.data = {
+        id,
+        unionId,
+        wxOpenId,
+        wxNickName,
+        thumb,
+        gender,
+        country,
+        province,
+        city,
+      }
+      if (flag === 'edit') {
+        that.dialog.title = 'Edit User'
+      }
+    },
+    // Set default display for parent menu recursively
+    recursionFunc(row, source, dest) {
+      if (row.categoryId === null) {
+        return
+      }
+      for (let i in source) {
+        let ele = source[i]
+        if (row.categoryId === ele.id) {
+          this.recursionFunc(ele, this.categoryData, dest)
+          dest.push(ele.id)
+        } else {
+          this.recursionFunc(row, ele.children, dest)
+        }
+      }
+    },
+    // Update add, edit
+    updateData() {
+      let that = this
+      that.dialog.updateLoading = true
+      that.$refs['dataForm'].validate((valid) => {
+        // Form validation
+        if (valid) {
+          that.dialog.updateLoading = true
+          let data = {
+            Id: that.dialog.data.id,
+            UnionId: that.dialog.data.unionId,
+            WxOpenId: that.dialog.data.wxOpenId,
+            WxNickName: that.dialog.data.wxNickName,
+            Thumb: that.dialog.data.thumb,
+            Gender: that.dialog.data.gender,
+            Country: that.dialog.data.country,
+            Province: that.dialog.data.province,
+            City: that.dialog.data.city,
+          }
+          service.post('/Admin/User/Edit?handler=Save', data).then((res) => {
+            if (res.data.success) {
+              that.getList()
+              that.$notify({
+                title: 'Success',
+                message: 'Success',
+                type: 'success',
+                duration: 2000,
+              })
+              that.dialog.visible = false
+            }
+          })
+        }
+      })
+    },
+    // Delete
+    handleDelete(index, row) {
+      let that = this
+      let ids = [row.id]
+      service.post('/Admin/User/edit?handler=Delete', ids).then((res) => {
+        if (res.data.success) {
+          that.getList()
+          that.$notify({
+            title: 'Success',
+            message: 'Deleted successfully',
+            type: 'success',
+            duration: 2000,
+          })
+        }
+      })
+    },
+    getCurrentRow(row) {
+      let that = this
+      that.multipleSelection = row
+    },
+    handleSearch() {
+      let that = this
+      that.getList()
+    },
+    resetCondition() {
+      let that = this
+      that.keyword = ''
+    },
+  },
+})
+```
+
+## Permission Configuration
+
+Modify \Register.Area.cs
+
+The source code is as follows:
+
+```csharp
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Senparc.CO2NET.Trace;
+using Senparc.Ncf.Core.Areas;
+using Senparc.Ncf.Core.Config;
+using System;
+using Senparc.Ncf.XncfBase;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Senparc.CO2NET.RegisterServices;
+using Microsoft.Extensions.FileProviders;
+using System.Reflection;
+
+namespace Senparc.Xncf.Admin
+{
+	public partial class Register : IAreaRegister, // Register XNCF page interface (optional)
+									IXncfRazorRuntimeCompilation  // Enable RazorPage runtime compilation
+	{
+		#region IAreaRegister Interface
+
+		public string HomeUrl => "/Admin/Admin/Index";
+
+		public List<AreaPageMenuItem> AareaPageMenuItems => new List<AreaPageMenuItem>() {
+			 new AreaPageMenuItem(GetAreaHomeUrl(),"Home","fa fa-laptop"),
+			 // New menu
+			 new AreaPageMenuItem(GetAreaUrl($"/Admin/User/Index"),"User","fa fa-bookmark-o"),
+		};
+
+		public IMvcBuilder AuthorizeConfig(IMvcBuilder builder, IHostEnvironment env)
+		{
+			builder.AddRazorPagesOptions(options =>
+			{
+				// Configure page permissions here
+			});
+
+			SenparcTrace.SendCustomLog("Admin Startup", "Completed Area:AllTheCode.Xncf.Admin Registration");
+
+			return builder;
+		}
+
+        public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService)
+        {
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new ManifestEmbeddedFileProvider(Assembly.GetExecutingAssembly(), "wwwroot")
+            });
+
+            return base.UseXncfModule(app, registerService);
+        }
+
+        #endregion
+
+        #region IXncfRazorRuntimeCompilation Interface
+        public string LibraryPath => Path.GetFullPath(Path.Combine(SiteConfig.WebRootPath, "..", "..", "Senparc.Xncf.Admin"));
+		#endregion
+	}
+}
+```
+
+Based on the above creation methods, you can complete any required functionality in the system.

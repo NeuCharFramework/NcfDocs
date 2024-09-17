@@ -14,13 +14,13 @@ Modify the Version number in the file
 
 ## How to update the module in the NCF project?
 
-You only need to reference the latest dll (or install the nuget package), and the system backend will automatically scan for version updates:
+Simply reference the latest dll (or install the nuget package), and the system backend will automatically scan for version updates:
 
 `【Module Management】page`
 
 <img src="https://weixin.senparc.com/images/NCF/XncfModules/08.png" />
 
-or `Module Details page`
+or `Module Details Page`
 
 <img src="https://weixin.senparc.com/images/NCF/XncfModules/09.png" />
 

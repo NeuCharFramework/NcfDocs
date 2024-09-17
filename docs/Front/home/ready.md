@@ -136,7 +136,7 @@ After installing the corresponding NodeJs using either of the above methods, ope
 
 ## Project operation:
 
-Open the NCF project folder under src\front-end\admin-main folder. (Recommended: vscode)
+Open the NCF project folder under src/front-end/admin-main folder. (Recommended: vscode)
 
 admin-main file directory:
 

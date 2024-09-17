@@ -4,7 +4,7 @@
 
 首次启动 NCF Web 项目时，系统会提示安装：
 
-> 注意：默认运行的数据库为 SQL Server，如需更换其他数据库，请查看《[使用多数据库](/start/database/mutil_database_support.html)》。
+> 注意：默认运行的数据库为 SQLite，如需更换其他数据库，请查看《[使用多数据库](../database/mutil_database_support.html)》。
 
 <img src="./images/install-01.png" />
 
@@ -36,4 +36,4 @@
 
 ## 登录管理员后台
 
-在安装完成界面点击【点击这里登录】按钮链接，即可进入[管理员后台登录](/start/start-develop/admin-login.html)页面。
+在安装完成界面点击【点击这里登录】按钮链接，即可进入[管理员后台登录](./admin-login.html)页面。
