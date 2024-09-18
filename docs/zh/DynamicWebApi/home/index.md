@@ -21,7 +21,7 @@ WebApiEngine 完全开源，可商用。承载于 Senparc.CO2NET.WebApi 库，�
 
 或使用命令行，免去创建项目的其他步骤：
 
-```
+```bash
 dotnet new webapi
 ```
 
@@ -251,7 +251,7 @@ services.AddScoped<WeatherService>();
 | ------------------------------------------------------ | --------------------------------------------------------- |
 | <img src="./images/set-param-for-attribute-tag.png" /> | <img src="./images/set-controlleabled-path-prefix.png" /> |
 
-> 小贴士：
+> 小贴士：<br>
 
 > 为了防止接口名称重合和便于直观定位，接口路径最后一段命名（WeatherForecast\*MyApi）目前不可设置，规则为：<类名>\*<方法名>。
 
@@ -303,11 +303,11 @@ WebApiEngine 会自动处理重名的 API
 
 class 上的特性标签同样会自动配置，其规则如下：
 
-1.如果 class 设置了特性标签（如 [Authorize]），则下属所有的方法也将继承对应特性；
+1. 如果 class 设置了特性标签（如 [Authorize]），则下属所有的方法也将继承对应特性；
 
-2.如果下属方法具有和 class 一样的特性标签，将完全覆盖 class 的特性设置；
+2. 如果下属方法具有和 class 一样的特性标签，将完全覆盖 class 的特性设置；
 
-3.集成特性标签的顺序，为先按顺序添加 class 的标签，后按顺序添加方法的标签（注此顺序为 CustomAttributeData.GetCustomAttributes() 获得到的顺序）；
+3. 集成特性标签的顺序，为先按顺序添加 class 的标签，后按顺序添加方法的标签（注此顺序为 CustomAttributeData.GetCustomAttributes() 获得到的顺序）；
 
 测试：
 
