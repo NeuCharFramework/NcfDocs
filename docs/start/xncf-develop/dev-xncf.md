@@ -179,50 +179,50 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel.Dto
 
         public string Id { get; set; }
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// WeChat UnionId
-        /// &lt;/summary&gt;
+        /// </summary>
         [MaxLength(50)]
         public string UnionId { get; set; }
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// WeChat OpenId
-        /// &lt;/summary&gt;
+        /// </summary>
         [MaxLength(50)]
         public string WxOpenId { get; set; }
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// WeChat Nickname
-        /// &lt;/summary&gt;
+        /// </summary>
         [MaxLength(100)]
         public string WxNickName { get; set; }
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// Avatar
-        /// &lt;/summary&gt;
+        /// </summary>
         [MaxLength(200)]
         public string Thumb { get; set; }
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// Gender (1-Male; 2-Female;)
-        /// &lt;/summary&gt;
+        /// </summary>
         public int Gender { get; set; }
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// Country
-        /// &lt;/summary&gt;
+        /// </summary>
         [MaxLength(100)]
         public string Country { get; set; }
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// Province
-        /// &lt;/summary&gt;
+        /// </summary>
         [MaxLength(100)]
         public string Province { get; set; }
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// City
-        /// &lt;/summary&gt;
+        /// </summary>
         [MaxLength(100)]
         public string City { get; set; }
 

@@ -258,17 +258,17 @@ namespace Senparc.Xncf.ExtensionAreaTemplate.Models.DatabaseModel.Dto
 {
     public class ColorDto : DtoBase
     {
-        /// &lt;summary&gt;
+        /// <summary>
         /// Color code, 0-255
-        /// &lt;/summary&gt;
+        /// </summary>
         public int Red { get; private set; }
-        /// &lt;summary&gt;
+        /// <summary>
         /// Color code, 0-255
-        /// &lt;/summary&gt;
+        /// </summary>
         public int Green { get; private set; }
-        /// &lt;summary&gt;
+        /// <summary>
         /// Color code, 0-255
-        /// &lt;/summary&gt;
+        /// </summary>
         public int Blue { get; private set; }
 
         private ColorDto() { }
@@ -467,14 +467,14 @@ using System.IO;
 
 namespace Senparc.Xncf.ExtensionAreaTemplate
 {
-    /// &lt;summary&gt;
+    /// <summary>
     /// Design-time DbContext creation (only used for creating Code-First database Migrations during development, not executed in production)
-    /// &lt;/summary&gt;
+    /// </summary>
     public class SenparcDbContextFactory : SenparcDesignTimeDbContextFactoryBase&lt;ExtensionAreaTemplateSenparcEntities, Register&gt;
     {
-        /// &lt;summary&gt;
+        /// <summary>
         /// Used to find the App_Data folder to locate the database connection string configuration information
-        /// &lt;/summary&gt;
+        /// </summary>
         public override string RootDictionaryPath =&gt; Path.Combine(AppContext.BaseDirectory, &quot;..\\..\\..\\&quot;/*Project root directory*/, &quot;..\\Senparc.Web&quot;/*Find the Web directory to get the unified database connection string configuration*/);
     }
 }

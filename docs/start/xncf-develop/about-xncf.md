@@ -134,19 +134,19 @@ The default code in the template is as follows:
     {
         #region IXncfDatabase Interface
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// Database prefix
-        /// &lt;/summary&gt;
+        /// </summary>
         public const string DATABASE_PREFIX = &quot;Senparc_PromptRange_&quot;;
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// Database prefix
-        /// &lt;/summary&gt;
+        /// </summary>
         public string DatabaseUniquePrefix =&gt; DATABASE_PREFIX;
 
-        /// &lt;summary&gt;
+        /// <summary>
         /// Dynamically get the database context
-        /// &lt;/summary&gt;
+        /// </summary>
         public Type TryGetXncfDatabaseDbContextType =&gt; MultipleDatabasePool.Instance.GetXncfDbContextType(this);
 
         public void OnModelCreating(ModelBuilder modelBuilder)
