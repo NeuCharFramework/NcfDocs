@@ -14,6 +14,7 @@
 
 > 4.编辑需要生成Nuget文件的条件及必要参数
 
+```xml
     <Project Sdk="Microsoft.NET.Sdk">
       <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -62,6 +63,7 @@
     </ItemGroup>
 
     </Project>
+```
 
 > 5.重新生成项目
 

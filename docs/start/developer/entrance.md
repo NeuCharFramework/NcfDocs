@@ -2,7 +2,7 @@
 
 Entry file `Senparc.Web\Program.cs`
 
-After entering the .Net 6 era, all references to the entry namespace have been consolidated into the `Senparc.Web\GlobalUsings.cs` file, as follows:
+After entering the .Net 6 era, the references of the entry namespace have all been consolidated into the `Senparc.Web\GlobalUsings.cs` file, with the following content:
 
 ```csharp
 global using Microsoft.AspNetCore.Builder;
@@ -17,7 +17,7 @@ All namespaces that need to be commonly applied can be placed here.
 
 ## Project SDK Settings
 
-Mainly look at the `Senparc.Web\global.json` file, as follows:
+Mainly look at the `Senparc.Web\global.json` file, with the following content:
 
 ```json
 {

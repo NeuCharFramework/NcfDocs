@@ -5,7 +5,7 @@ Dapr is a portable, event-driven runtime that makes it easy for any developer to
 
 Reference documentation: [https://docs.dapr.io/](https://docs.dapr.io/)
 
-## Supported Dapr branches
+## Branches supporting Dapr
 
 Developer-front-DDD-Dapr-20211216
 

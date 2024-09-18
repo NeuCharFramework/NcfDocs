@@ -1,6 +1,6 @@
 # WebApi Interface
 
-Access the Api interface at: https://localhost:44311/swagger/index.html
+Access the Api interface address: https://localhost:44311/swagger/index.html
 
 This WebApi is automatically generated through [DynamicWebApi](/DynamicWebApi/home/index.html)
 

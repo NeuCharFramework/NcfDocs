@@ -1,6 +1,6 @@
 # Get NCF Template Source Code
 
-## Install from Command Line (Recommended)
+## Method 1: Install from Command Line (Recommended)
 
 Open the command line in a development environment where the .NET runtime is installed, and enter:
 
@@ -8,11 +8,11 @@ Open the command line in a development environment where the .NET runtime is ins
 dotnet new install Senparc.NCF.Template
 ```
 
-After successful installation, the client will prompt:
+After successful installation, the client prompts:
 
 <img src="./images/get-ncf-template-05-install-package.png" />
 
-Navigate to the folder where you want to create the project, and enter the command:
+Enter the folder where you need to create the project, and enter the command:
 
 ```shell
 dotnet new NCF -n MyProject
@@ -20,11 +20,9 @@ dotnet new NCF -n MyProject
 
 <img src="./images/get-ncf-template-06-create-project.png" />
 
-> Here, `MyProject` is the project name and can be modified as needed. If the `-n` parameter is not provided, the default name will be used.
+> Among them, `MyProject` is the project name, which can be modified as needed. If the `-n` parameter is not provided, the default name will be used to create.
 
-## Get Source Code from Source Address
-
-Taking Gitee as an example, there are several ways to get the source code from the open-source project repository:
+## Method 2: Get Source Code from Source Address
 
 The following two code hosting addresses are the official code release channels for NCF:
 
@@ -32,15 +30,19 @@ The following two code hosting addresses are the official code release channels 
 
 - Gitee: [https://gitee.com/NeuCharFramework/NCF](https://gitee.com/NeuCharFramework/NCF)
 
-### Method 1: Directly Download the .zip Package
+> 💡 Note: The code on Gitee is mirrored from GitHub and may have delays. Therefore, if you want to get the latest version of the code, you can get it from the GitHub site. The operation method is similar.
+
+Below is an example using Gitee, the operation on the GitHub site is similar.
+
+### Method 1: Directly Download .zip Package
 
 Open the project source address, click the [Clone/Download] button, and click the [Download ZIP] button to complete the NCF source code download.
 
 <img src="./images/get-ncf-tempate-01-download-from-gitee.png" />
 
-After the download is complete, unzip it to the specified location.
+After the download is complete, unzip it to the specified address.
 
-### Method 2: Use Git to Sync Locally
+### Method 2: Use Git to Sync to Local
 
 Open the project source address, click the [Clone/Download] button, and click the [Copy] button to get the git address, such as:
 
@@ -58,7 +60,7 @@ Paste the git address into [Repository Location], set the [Local Path] for stori
 
 ### Method 3: Fork First, Then Sync Git (Recommended)
 
-Open the project source address, click the [Fork] button in the upper right corner to make a copy of the official source code under your own account, and then repeat the above "Method 2" in your own forked project:
+Open the project source address, click the [Fork] button in the upper right corner to make a copy of the official source code under your own account, and then repeat the above "Method 2" under your own copy project:
 <img src="./images/get-ncf-tempate-04-fork.png" />
 
-> Note: The forked repository will not automatically sync with the official source code. To get the latest source code, you need to manually sync again.
+> Note: The Forked repository will not automatically sync the official source code. To get the latest source code, you need to manually sync again.

@@ -1,8 +1,8 @@
 # Embedding Static Resource Files into NCF
 
-Whether developing the frontend or backend, it is inevitable to use static resource files. The static resource files here refer to (html, css, js, etc. files).
+Whether developing the frontend or backend, it is inevitable to use static resource files. The static resource files referred to here are (html, css, js, etc.).
 
-Currently, our NCF uses the DDD (Domain-Driven Design) model for development, so we hope that developers can focus more on the business within their own developed modules. This way, they can seamlessly integrate with the official core NCF upgrades, avoiding more modifications and file migration work.
+Currently, our NCF uses the DDD (Domain-Driven Design) model for development, so we hope that developers can focus more on the business within their own development modules. This way, with the upgrade of the official core NCF, seamless integration can be achieved, avoiding more modifications and migration of files.
 
 ## Creating Static Resources
 
@@ -12,7 +12,7 @@ Establish static resources under `Xncf_Module`, as shown in the figure:
 
 ## Setting Static Resource Properties
 
-Select any static resource file, right-click, and choose Embedded Resource, as shown in the figure:
+Select any static resource file, right-click, and choose embedded resource, as shown in the figure:
 
 ![Image text](./images/embedded_static_to_ncf/resource_property.png)
 
@@ -33,7 +33,7 @@ Select any static resource file, right-click, and choose Embedded Resource, as s
 ## Adding Embedded Resource Registration Service in Register
 
 ```csharp
-/* Must add here
+/* This must be added
 using Microsoft.AspNetCore.Builder;
 using Senparc.CO2NET.RegisterServices;
 using Microsoft.Extensions.FileProviders;
@@ -53,17 +53,17 @@ public override IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegi
 }
 ```
 
-## Checking Whether Static Resources Have Been Embedded
+## Checking if Static Resources Have Been Embedded
 
 Right-click the project and rebuild
 
 ![Image text](./images/embedded_static_to_ncf/rebuild_project.png)
 
-Find the latest generated dll file in the corresponding Debug/Release directory
+In the corresponding Debug/Release directory, find the newly generated dll file
 
 ![Image text](./images/embedded_static_to_ncf/rebuild_project_dll.png)
 
-Open the .Net decompiler tool, drag the dll file in, and check whether the resources exist and whether the resource files you added are present. If they exist, it means the embedding was successful.
+Open the .Net decompiler tool, drag the dll file in, and check if the resources exist and if the resource files you added are present. If they are, it means the embedding was successful.
 
 ![Image text](./images/embedded_static_to_ncf/find_embedded_source.png)
 

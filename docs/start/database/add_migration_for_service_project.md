@@ -1,8 +1,8 @@
-# Update the database migration files (Migrations) for the Senparc.Service project
+# Update database migration files for the Senparc.Service project (Migrations)
 
 > Take updating the Senparc.Service project as an example for manual updates.
 
-Usually, updating the database migration files for Senparc.Service is necessary because certain entity information corresponding to the database has been added/modified/deleted in the NCF template project.
+Usually, updating the database migration files for Senparc.Service is because certain entity information corresponding to the database has been added/modified/deleted in the NCF template project.
 
 ## Modify the database using Code-First
 
@@ -12,7 +12,7 @@ For example, we added a property in the `AdminUserInfo` class:
 
 ## Generate migration files using EF Core's Add-Migration command
 
-Since the Senparc.Service project is not a standard XNCF module (essentially an XNCF module, but the file structure is relatively special), it cannot be directly operated in the Admin backend using the Senparc.Xncf.XncfBuilder module, otherwise, the system will generate files according to the XNCF directory structure (of course, this does not affect compilation).
+Since the Senparc.Service project is not a standard XNCF module (essentially it is an XNCF module, but the file structure is quite special), it cannot be directly operated using the Senparc.Xncf.XncfBuilder module in the Admin backend, otherwise, the system will generate files according to the XNCF directory structure (of course, this does not affect compilation).
 
 We can use the command line, taking CMD command line as an example, enter the Senparc.Service directory:
 
@@ -26,9 +26,9 @@ Enter the command:
 dotnet ef migrations add AddOpenId -c SystemServiceEntities_SqlServer -o Migrations/Migrations.SqlServer -s ../Senparc.Web.DatabasePlant
 ```
 
-> In the above command, `AddOpenId` is the name of this update and can be freely filled in. `SystemServiceEntities_SqlServer` refers to the database context (DbContext) implementation pointing to SQL Server. When we need to update the MySQL database simultaneously, we can replace it with `SystemServiceEntities_MySQL` (note the actual class name, the class name may not reflect the database type at all).
+> In the above command, `AddOpenId` is the name of this update and can be freely filled in. `SystemServiceEntities_SqlServer` refers to the database context (DbContext) implementation pointing to SQL Server. When we need to update the MySQL database at the same time, we can replace it with `SystemServiceEntities_MySQL` (note the actual class name, the class name may not fully reflect the database type).
 
-Executing the command will complete the migration file update for SQL Server:
+Executing the command will complete the SQL Server migration file update:
 
 ![Image Text](./images/add_migration_for_service_project-run_migrations_add.png)
 
@@ -40,15 +40,15 @@ In the above image:
 
 ③: Shows the updated SQL Server database type, DbContext context class name, and other information
 
-In VS, you can see that the `20210809155647_AddOpenId.cs` file has been created, and the snapshot file `SystemServiceEntities_SqlServerModelSnapshot.cs` has been updated:
+In VS, you can see the newly created `20210809155647_AddOpenId.cs` file and the updated snapshot file `SystemServiceEntities_SqlServerModelSnapshot.cs`:
 
 ![Image Text](./images/add_migration_for_service_project-run-files-added.png)
 
-Through the `20210809155647_AddOpenId.cs` file, you can see that the OpenId property (corresponding to the database table column) has been added.
+Through the `20210809155647_AddOpenId.cs` file, you can see that the OpenId property (corresponding to the column in the database table) has been added.
 
 ![Image Text](./images/add_migration_for_service_project-run-addopenid_file_content.png)
 
-## Update the Senparc.Service version number
+## Update the version number of Senparc.Service
 
 We recommend that after updating the content, you also update the version number of Senparc.Service, treating it the same as a regular XNCF.
 
@@ -72,13 +72,12 @@ dotnet ef database update -c SystemServiceEntities_SqlServer -s ../Senparc.Web.D
 
 ![Image Text](./images/add_migration_for_service_project-run_database_update.png)
 
-In the above image of the running result:
+In the above run result:
 
 ①: Execute the update database command
+②: Prompt to complete the latest migration update
 
-②: Prompt that the latest migration update is complete
-
-## Database table comparison before and after
+## Comparison of database tables before and after
 
 | Image                                                                      | Status        |
 | -------------------------------------------------------------------------- | ------------- |

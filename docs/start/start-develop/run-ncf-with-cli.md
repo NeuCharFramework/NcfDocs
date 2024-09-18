@@ -1,4 +1,4 @@
-# Using CLI to Run NCF
+# Running NCF Using CLI
 
 ## Step 1: Open Command Line Tool or Visual Studio Code
 
@@ -14,17 +14,17 @@ Navigate to the directory path where the Senparc.Web project (startup project) o
 E:\...\Senparc.Web > dotnet run
 ```
 
-> Note: The default database is SQL Server. If you need to switch to another database, please refer to [Using Multiple Databases](/start/database/mutil_database_support.html).
+> Note: The default database used is SQLite. If you need to switch to another database, please refer to [Using Multiple Databases](../database/mutil_database_support.html).
 
 ## Complete Startup
 
-After a few seconds, the NCF Web project will be successfully started.
+After waiting for a few seconds, the NCF Web project will be successfully started.
 
-Due to some behavior characteristics of the CLI command line, you may see a site address prompt at the end, or it may stay on the system startup log. This is normal:
+Due to some behavior characteristics of the CLI command line, you may see a site address prompt at the end, or it may stay on the system startup log, which is normal:
 
 <img src="./images/run-ncf-with-cli-02.png" />
 
-You just need to open `https://localhost:5001` in your browser to see the startup page:
+You just need to open `https://localhost:5001` directly in the browser to see the startup page:
 
 <img src="./images/run-ncf-with-cli-03.png" />
 
@@ -32,4 +32,4 @@ You just need to open `https://localhost:5001` in your browser to see the startu
 
 ## First Time Startup Installation
 
-When starting for the first time, the system will automatically prompt [installation](/start/start-develop/install-app.html). After the installation is complete, the installation interface will no longer appear.
+When starting for the first time, the system will automatically prompt for [installation](./install-app.html). After the installation is complete, the installation interface will no longer appear.

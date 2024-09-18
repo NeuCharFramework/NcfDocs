@@ -2,7 +2,7 @@
 
 ## Establish Requirements
 
-Let's take an example to implement the User functionality.
+Below we will give an example to implement the User functionality.
 
 ## Database
 
@@ -16,22 +16,22 @@ First, let's determine the fields needed for the table.
 
 ### Senparc_Admin_User (User Table)
 
-| Field Name       | Data Type | Comment                    | Length | Detailed Comment |
-| ---------------- | --------- | -------------------------- | ------ | ---------------- |
-| `Id`             | int       | Primary Key Id             | -      |
-| `Flag`           | bool      | Flag                       | -      |
-| `AddTime`        | DateTime  | Add Time                   | -      |
-| `LastUpdateTime` | DateTime  | Last Update Time           | -      |
-| `AdminRemark`    | string    | Admin Remark               | 50     |
-| `Remark`         | string    | Remark                     | 50     |
-| `UnionId`        | string    | WeChat UnionId             | 50     |
-| `WxOpenId`       | string    | WeChat OpenId              | 50     |
-| `WxNickName`     | string    | WeChat Nickname            | 100    |
-| `Thumb`          | string    | Avatar                     | 200    |
-| `Gender`         | int       | Gender (1-Male; 2-Female;) | -      |
-| `Country`        | string    | Country                    | 100    |
-| `Province`       | string    | Province                   | 100    |
-| `City`           | string    | City                       | 100    |
+| Field Name       | Data Type | Comment                    | Type Length | Detailed Comment |
+| ---------------- | --------- | -------------------------- | ----------- | ---------------- |
+| `Id`             | int       | Primary Key Id             | -           |
+| `Flag`           | bool      | Flag                       | -           |
+| `AddTime`        | DateTime  | Add Time                   | -           |
+| `LastUpdateTime` | DateTime  | Last Update Time           | -           |
+| `AdminRemark`    | string    | Admin Remark               | 50          |
+| `Remark`         | string    | Remark                     | 50          |
+| `UnionId`        | string    | WeChat UnionId             | 50          |
+| `WxOpenId`       | string    | WeChat OpenId              | 50          |
+| `WxNickName`     | string    | WeChat Nickname            | 100         |
+| `Thumb`          | string    | Avatar                     | 200         |
+| `Gender`         | int       | Gender (1-Male; 2-Female;) | -           |
+| `Country`        | string    | Country                    | 100         |
+| `Province`       | string    | Province                   | 100         |
+| `City`           | string    | City                       | 100         |
 
 ## Create Model
 
@@ -144,9 +144,9 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
 }
 ```
 
-Create \Models\DatabaseModel\Dto\UserDto.cs
+创建 \Models\DatabaseModel\Dto\UserDto.cs
 
-The source code is as follows:
+源码如下：
 
 ```csharp
 using Senparc.Ncf.Core.Models;
@@ -230,10 +230,10 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel.Dto
 }
 ```
 
-Create \Models\DatabaseModel\Mapping\Admin_UserConfigurationMapping.cs
-Create \Models\DatabaseModel\Mapping\Admin_UserConfigurationMapping.cs
+创建 \Models\DatabaseModel\Mapping\Admin_UserConfigurationMapping.cs
+创建 \Models\DatabaseModel\Mapping\Admin_UserConfigurationMapping.cs
 
-The source code is as follows:
+源码如下：
 
 ```csharp
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -253,7 +253,7 @@ namespace Senparc.Xncf.Admin.Models
 }
 ```
 
-Modify \Models\DatabaseModel\AdminSenparcEntities.cs
+修改 \Models\DatabaseModel\AdminSenparcEntities.cs
 
 ```csharp
 using Microsoft.EntityFrameworkCore;
@@ -290,7 +290,7 @@ The web page section in the module is located at
 
 <img src="./images/xncf-module-area1.png" />
 
-The page layout can be adjusted according to your actual needs.
+The page layout can be customized according to your actual needs.
 
 ### html
 
@@ -362,7 +362,7 @@ index.cshtml source code:
                 <template slot-scope="scope">
                     <el-button size="mini"
                                type="primary"
-                               @@click="handleEdit(scope.$index, scope.row, 'edit')">Edit</el-button>
+                               @@click="handleEdit(scope.$index, scope.row,'edit')">Edit</el-button>
                     <el-popconfirm placement="top" title="Are you sure to delete this user?" @@on-confirm="handleDelete(scope.$index, scope.row)">
                         <el-button size="mini" type="danger" slot="reference">Delete</el-button>
                     </el-popconfirm>
@@ -442,7 +442,7 @@ index.cshtml source code:
 }
 ```
 
-index.cshtml.cs source code
+index.cshtml.cs 源码
 
 ```csharp
 using System;
@@ -470,35 +470,35 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
         public string UpFileUrl { get; set; }
         public string BaseUrl { get; set; }
 
-        public IndexModel(Lazy&lt;XncfModuleService&gt; xncfModuleService, UserService userService, IServiceProvider serviceProvider) : base(xncfModuleService)
+        public IndexModel(Lazy<XncfModuleService> xncfModuleService, UserService userService, IServiceProvider serviceProvider) : base(xncfModuleService)
         {
-            CurrentMenu = &quot;User&quot;;
+            CurrentMenu = "User";
             this._userService = userService;
             this._serviceProvider = serviceProvider;
         }
 
         [BindProperty(SupportsGet = true)]
         public int PageIndex { get; set; } = 1;
-        public PagedList&lt;Models.DatabaseModel.User&gt; User { get; set; }
+        public PagedList<Models.DatabaseModel.User> User { get; set; }
 
         public Task OnGetAsync()
         {
-            BaseUrl = $&quot;{Request.Scheme}://{Request.Host.Value}&quot;;
-            UpFileUrl = $&quot;{BaseUrl}/api/v1/common/upload&quot;;
+            BaseUrl = $"{Request.Scheme}://{Request.Host.Value}";
+            UpFileUrl = $"{BaseUrl}/api/v1/common/upload";
             return Task.CompletedTask;
         }
 
-        public async Task&lt;IActionResult&gt; OnGetUserAsync(string keyword, string orderField, int pageIndex, int pageSize)
+        public async Task<IActionResult> OnGetUserAsync(string keyword, string orderField, int pageIndex, int pageSize)
         {
-            var seh = new SenparcExpressionHelper&lt;Models.DatabaseModel.User&gt;();
-            seh.ValueCompare.AndAlso(!string.IsNullOrEmpty(keyword), _ =&gt; _.WxNickName.Contains(keyword));
+            var seh = new SenparcExpressionHelper<Models.DatabaseModel.User>();
+            seh.ValueCompare.AndAlso(!string.IsNullOrEmpty(keyword), _ => _.WxNickName.Contains(keyword));
             var where = seh.BuildWhereExpression();
             var response = await _userService.GetObjectListAsync(pageIndex, pageSize, where, orderField);
             return Ok(new
             {
                 response.TotalCount,
                 response.PageIndex,
-                List = response.Select(_ =&gt; new
+                List = response.Select(_ => new
                 {
                     _.Id,
                     _.LastUpdateTime,
@@ -519,7 +519,7 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
 }
 ```
 
-Edit.cshtml source code
+Edit.cshtml源码
 
 ```razor
 @page
@@ -529,7 +529,7 @@ Edit.cshtml source code
 }
 ```
 
-Edit.cshtml.cs source code
+Edit.cshtml.cs 源码
 
 ```csharp
 using System;
@@ -582,13 +582,14 @@ namespace Senparc.Xncf.Admin.Areas.Admin.Pages.User
         }
     }
 }
+
 ```
 
 ### style
 
-Create \wwwroot\css\Admin\User\User.css
+创建 \wwwroot\css\Admin\User\User.css
 
-The source code is as follows:
+源码如下：
 
 ```css
 .el-dialog .el-form-item .el-input,
@@ -662,9 +663,9 @@ The source code is as follows:
 
 ### javascript
 
-Create \wwwroot\js\Admin\Pages\User\user.js
+创建 \wwwroot\js\Admin\Pages\User\user.js
 
-The source code is as follows:
+源码如下:
 
 ```js
 new Vue({
@@ -682,11 +683,11 @@ new Vue({
       config: {
         initialFrameHeight: 500,
       },
-      // Pagination parameters
+      //分页参数
       paginationQuery: {
         total: 5,
       },
-      // Pagination interface parameters
+      //分页接口传参
       listQuery: {
         pageIndex: 1,
         pageSize: 20,
@@ -697,14 +698,14 @@ new Vue({
       multipleSelection: '',
       radio: '',
       props: { multiple: true },
-      // Table data
+      // 表格数据
       tableData: [],
       uid: '',
       fileList: [],
       dialogImageUrl: '',
       dialogVisible: false,
       dialog: {
-        title: 'Add User',
+        title: '新增用户',
         visible: false,
         data: {
           id: '',
@@ -719,16 +720,12 @@ new Vue({
         },
         rules: {
           name: [
-            {
-              required: true,
-              message: 'User name is required',
-              trigger: 'blur',
-            },
+            { required: true, message: '用户名称为必填项', trigger: 'blur' },
           ],
         },
         updateLoading: false,
         disabled: false,
-        checkStrictly: true, // Whether to strictly follow the parent-child node association
+        checkStrictly: true, // 是否严格的遵守父子节点不互相关联
       },
     }
   },
@@ -738,7 +735,7 @@ new Vue({
   },
   watch: {
     'dialog.visible': function (val, old) {
-      // Close dialog, clear data
+      // 关闭dialog，清空
       if (!val) {
         this.dialog.data = {
           id: '',
@@ -773,26 +770,26 @@ new Vue({
       that.fileList = fileList
       if (res.code == 200) {
         that.$notify({
-          title: 'Success',
-          message: 'Upload successful',
+          title: '成功',
+          message: '恭喜你，上传成功',
           type: 'success',
         })
         that.dialog.data.cover = res.data
       } else {
         that.$notify.error({
-          title: 'Failure',
-          message: 'Upload failed, please try again',
+          title: '失败',
+          message: '上传失败，请重新上传',
         })
       }
     },
     uploadError() {
       let that = this
       that.$notify.error({
-        title: 'Failure',
-        message: 'Upload failed, please try again',
+        title: '失败',
+        message: '上传失败，请重新上传',
       })
     },
-    // Get list
+    // 获取列表
     async getList() {
       let that = this
       let { pageIndex, pageSize, keyword, orderField } = that.listQuery
@@ -812,17 +809,17 @@ new Vue({
           that.paginationQuery.total = res.data.data.totalCount
         })
     },
-    // Edit // Add user // Add next level
+    // 编辑 // 新增用户 // 增加下一级
     handleEdit(index, row, flag) {
       let that = this
       that.dialog.visible = true
       if (flag === 'add') {
-        // Add
-        that.dialog.title = 'Add User'
+        // 新增
+        that.dialog.title = '新增用户'
         that.dialogImageUrl = ''
         return
       }
-      // Edit
+      // 编辑
       let {
         id,
         unionId,
@@ -846,10 +843,10 @@ new Vue({
         city,
       }
       if (flag === 'edit') {
-        that.dialog.title = 'Edit User'
+        that.dialog.title = '编辑用户'
       }
     },
-    // Set default display for parent menu recursively
+    // 设置父级菜单默认显示 递归
     recursionFunc(row, source, dest) {
       if (row.categoryId === null) {
         return
@@ -864,12 +861,12 @@ new Vue({
         }
       }
     },
-    // Update add, edit
+    // 更新新增、编辑
     updateData() {
       let that = this
       that.dialog.updateLoading = true
       that.$refs['dataForm'].validate((valid) => {
-        // Form validation
+        // 表单校验
         if (valid) {
           that.dialog.updateLoading = true
           let data = {
@@ -888,7 +885,7 @@ new Vue({
               that.getList()
               that.$notify({
                 title: 'Success',
-                message: 'Success',
+                message: '成功',
                 type: 'success',
                 duration: 2000,
               })
@@ -898,7 +895,7 @@ new Vue({
         }
       })
     },
-    // Delete
+    // 删除
     handleDelete(index, row) {
       let that = this
       let ids = [row.id]
@@ -907,7 +904,7 @@ new Vue({
           that.getList()
           that.$notify({
             title: 'Success',
-            message: 'Deleted successfully',
+            message: '删除成功',
             type: 'success',
             duration: 2000,
           })
@@ -934,7 +931,7 @@ new Vue({
 
 Modify \Register.Area.cs
 
-The source code is as follows:
+Source code as follows:
 
 ```csharp
 using Microsoft.AspNetCore.Hosting;
@@ -954,8 +951,8 @@ using System.Reflection;
 
 namespace Senparc.Xncf.Admin
 {
-	public partial class Register : IAreaRegister, // Register XNCF page interface (optional)
-									IXncfRazorRuntimeCompilation  // Enable RazorPage runtime compilation
+	public partial class Register : IAreaRegister, //Register XNCF page interface (optional)
+									IXncfRazorRuntimeCompilation  //Enable RazorPage runtime compilation
 	{
 		#region IAreaRegister Interface
 
@@ -963,7 +960,7 @@ namespace Senparc.Xncf.Admin
 
 		public List<AreaPageMenuItem> AareaPageMenuItems => new List<AreaPageMenuItem>() {
 			 new AreaPageMenuItem(GetAreaHomeUrl(),"Home","fa fa-laptop"),
-			 // New menu
+			 //Newly added menu
 			 new AreaPageMenuItem(GetAreaUrl($"/Admin/User/Index"),"User","fa fa-bookmark-o"),
 		};
 
@@ -971,7 +968,7 @@ namespace Senparc.Xncf.Admin
 		{
 			builder.AddRazorPagesOptions(options =>
 			{
-				// Configure page permissions here
+				//Page permissions can be configured here
 			});
 
 			SenparcTrace.SendCustomLog("Admin Startup", "Completed Area:AllTheCode.Xncf.Admin Registration");
@@ -998,4 +995,4 @@ namespace Senparc.Xncf.Admin
 }
 ```
 
-Based on the above creation methods, you can complete any required functionality in the system.
+Using the above creation methods, you can complete any required functionality in the system.

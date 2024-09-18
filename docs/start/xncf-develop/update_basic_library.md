@@ -2,7 +2,7 @@
 
 What is updating the base library? Updating the base library means updating the nuget version of the underlying core library referenced in NCF.
 
-## How to Update the Base Library
+## How to update the base library
 
 Step 1: Double-click the project name to open the project file for editing
 
@@ -32,12 +32,12 @@ Step 4: Modify the version number of the referenced base library in the project 
 
 <img src="./images/update-library-version1.png" />
 
-## How to Use Locally Compiled Base Library
+## How to use locally compiled base library
 
 You can refer to the steps on how to generate a local nuget package [Issue Local Nuget](/start/developer/issue_local_nuget.html)
 
-After generating the local nuget package, you can put the local nuget package that needs to be referenced into a unified folder for easy management.
+After generating the local nuget package, you can put the local nuget package that needs to be referenced into a unified folder for easy management
 
-Use the method above `How to Update the Base Library` to update it.
+Use the method above `How to update the base library` to update
 
 [Base Library](/NcfPackageSources)
