@@ -22,7 +22,7 @@ features:
     details: 高度模块化设计，自由组合、自行扩展。每个功能模块都可以独立开发、测试、集成、部署。
 
   - title: 多数据库支持
-    details: 支持 SQL Server、MySQL、SQLite、PostgreSQL、Oracle、DM（达梦）等多种数据库，并可轻松扩展
+    details: 支持 SQL Server、MySQL、SQLite、PostgreSQL、Oracle、DM（达梦）等多种数据库，并可轻松扩展。
 
   - title: 高性能
     details: 10 余年的企业级系统优化经验，高性能、高可用。大量日均 500 万 PV 以上系统正在使用。
