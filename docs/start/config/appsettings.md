@@ -19,16 +19,16 @@ The `appsettings.json` file contains multiple nodes, among which `SenparcCoreSet
 Node information is as follows:
 
 ```json
-  &quot;SenparcCoreSetting&quot;: {
-    &quot;IsDebug&quot;: true,
-    &quot;IsTestSite&quot;: true,
-    &quot;DatabaseName&quot;: &quot;Local&quot;, // Corresponding: AppData/DataBase/SenparcConfig.config, the Name prefix of the database connection required in the &lt;SenparcConfig&gt; node
-    &quot;MemcachedAddresses&quot;: &quot;&quot;,
-    &quot;CacheType&quot;: &quot;Local&quot;, // Global cache type, other options see enumeration: Redis / Memcached. For details, see: Senparc.CO2NET.CacheType
-    &quot;EnableMultiTenant&quot;: false, // Whether to enable multi-tenant, please confirm whether the system needs to support multi-tenant when starting for the first time, try not to modify it after deploying to the production environment!
-    &quot;TenantRule&quot;: &quot;DomainName&quot;, // Distinguish tenant mode
-    &quot;RequestTempLogCacheMinutes&quot;: 5, // Temporary log cache time in the cache (minutes), 0 means no cache
-    &quot;PasswordSaltToken&quot;: &quot;YourPasswordSaltToken&quot; // Password encryption enhancement option, do not modify this value after the first account is generated, otherwise all passwords will become invalid
+  SenparcCoreSetting: {
+    IsDebug: true,
+    IsTestSite: true,
+    DatabaseName: Local, // Corresponding: AppData/DataBase/SenparcConfig.config, the Name prefix of the database connection required in the &lt;SenparcConfig&gt; node
+    MemcachedAddresses: ,
+    CacheType: Local, // Global cache type, other options see enumeration: Redis / Memcached. For details, see: Senparc.CO2NET.CacheType
+    EnableMultiTenant: false, // Whether to enable multi-tenant, please confirm whether the system needs to support multi-tenant when starting for the first time, try not to modify it after deploying to the production environment!
+    TenantRule: DomainName, // Distinguish tenant mode
+    RequestTempLogCacheMinutes: 5, // Temporary log cache time in the cache (minutes), 0 means no cache
+    PasswordSaltToken: YourPasswordSaltToken // Password encryption enhancement option, do not modify this value after the first account is generated, otherwise all passwords will become invalid
   }
 ```
 
@@ -54,17 +54,17 @@ Parameter descriptions are as follows:
 Node information is as follows:
 
 ```json
-    &quot;SenparcSetting&quot;: {
+    SenparcSetting: {
     // The following are the global configurations of CO2NET's SenparcSetting, do not modify the key, do not delete any items
 
-    &quot;IsDebug&quot;: true,
-    &quot;DefaultCacheNamespace&quot;: &quot;NcfDefaultCache&quot;,
+    IsDebug: true,
+    DefaultCacheNamespace: NcfDefaultCache,
 
     // Distributed cache
-    &quot;Cache_Redis_Configuration&quot;: &quot;#{Cache_Redis_Configuration}#&quot;, // Redis configuration
+    Cache_Redis_Configuration: #{Cache_Redis_Configuration}#, // Redis configuration
 
-    &quot;Cache_Memcached_Configuration&quot;: &quot;#{Cache_Memcached_Configuration}#&quot;, // Memcached configuration
-    &quot;SenparcUnionAgentKey&quot;: &quot;#{SenparcUnionAgentKey}#&quot; // SenparcUnionAgentKey
+    Cache_Memcached_Configuration: #{Cache_Memcached_Configuration}#, // Memcached configuration
+    SenparcUnionAgentKey: #{SenparcUnionAgentKey}# // SenparcUnionAgentKey
   },
 ```
 
@@ -74,16 +74,16 @@ Parameter descriptions are as follows:
 
 ```json
 //Senparc.AI Settings
-&quot;SenparcAiSetting&quot;: {
-  &quot;IsDebug&quot;: true,
-  &quot;AiPlatform&quot;: &quot;UnSet&quot;, // Note to modify to the corresponding enumeration value of your platform
-  &quot;NeuCharAIKeys&quot;: {
-    &quot;ApiKey&quot;: &quot;&lt;Your ApiKey&gt;&quot;, // Apply at https://www.neuchar.com/Developer/AiApp
-    &quot;NeuCharEndpoint&quot;: &quot;https://www.neuchar.com/&lt;DeveloperId&gt;/&quot;, // You can see the DeveloperId when viewing the ApiKey
-    &quot;ModelName&quot;: {
-      &quot;Chat&quot;: &quot;gpt-35-turbo&quot;,
-      &quot;Embedding&quot;: &quot;text-embedding-ada-002&quot;,
-      &quot;TextCompletion&quot;: &quot;text-davinci-003&quot;
+SenparcAiSetting: {
+  IsDebug: true,
+  AiPlatform: UnSet, // Note to modify to the corresponding enumeration value of your platform
+  NeuCharAIKeys: {
+    ApiKey: &lt;Your ApiKey&gt;, // Apply at https://www.neuchar.com/Developer/AiApp
+    NeuCharEndpoint: https://www.neuchar.com/&lt;DeveloperId&gt;/, // You can see the DeveloperId when viewing the ApiKey
+    ModelName: {
+      Chat: gpt-35-turbo,
+      Embedding: text-embedding-ada-002,
+      TextCompletion: text-davinci-003
   }
 }
 ```
