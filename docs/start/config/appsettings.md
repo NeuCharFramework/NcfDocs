@@ -40,14 +40,16 @@ Parameter descriptions are as follows:
 
 ## SenparcSetting Node Configuration
 
-| IsTestSite | Whether it is a test site. This flag is used to run (or prohibit running) certain code in the test environment. |
-| DatabaseName | Database name, corresponding to the Name prefix of the database connection required in the `&lt;SenparcConfig&gt;` node in ~/AppData/DataBase/SenparcConfig.config, default is `Local` |
-| MemcachedAddresses | Memcached connection address, can be ignored if not used |
-| CacheType | Global cache type, other options see enumeration: Local / Redis / Memcached. For details, see: Senparc.CO2NET.CacheType |
-| EnableMultiTenant | Whether to enable multi-tenant, please confirm whether the system needs to support multi-tenant when starting for the first time, try not to modify it after deploying to the production environment! |
-| TenantRule | Distinguish tenant mode, default is `DomainName`, which distinguishes tenants based on domain names |
-| RequestTempLogCacheMinutes | Temporary log cache time in the cache (minutes), 0 means no cache |
-| PasswordSaltToken | Password encryption enhancement option, do not modify this value after the first account is generated, otherwise all passwords will become invalid |
+| Parameter                  | Description                                                                                                                                                                                           |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| IsTestSite                 | Whether it is a test site. This flag is used to run (or prohibit running) certain code in the test environment.                                                                                       |
+| DatabaseName               | Database name, corresponding to the Name prefix of the database connection required in the `&lt;SenparcConfig&gt;` node in ~/AppData/DataBase/SenparcConfig.config, default is `Local`                |
+| MemcachedAddresses         | Memcached connection address, can be ignored if not used                                                                                                                                              |
+| CacheType                  | Global cache type, other options see enumeration: Local / Redis / Memcached. For details, see: Senparc.CO2NET.CacheType                                                                               |
+| EnableMultiTenant          | Whether to enable multi-tenant, please confirm whether the system needs to support multi-tenant when starting for the first time, try not to modify it after deploying to the production environment! |
+| TenantRule                 | Distinguish tenant mode, default is `DomainName`, which distinguishes tenants based on domain names                                                                                                   |
+| RequestTempLogCacheMinutes | Temporary log cache time in the cache (minutes), 0 means no cache                                                                                                                                     |
+| PasswordSaltToken          | Password encryption enhancement option, do not modify this value after the first account is generated, otherwise all passwords will become invalid                                                    |
 
 Node information is as follows:
 
@@ -68,19 +70,6 @@ Node information is as follows:
 
 Parameter descriptions are as follows:
 
-| Parameter | Description |
-| --------- | ----------- |
-
-Node information is as follows:
-
-    }
-
-| IsDebug | Whether it is debug mode. When `true`, SenparcTrace will record logs (stored in the ~/App_Data/SenparcTraceLog/ directory) |
-| DefaultCacheNamespace | Default cache namespace. The namespace will help distinguish multiple running NCF projects in the same shared cache service (such as Redis or local Memory cache), ensuring that even if there are the same keys in each system, they will not interfere with each other |
-| Cache_Redis_Configuration | Redis connection string configuration, if not used, please keep it as is |
-| Cache_Memcached_Configuration | Memcached connection string configuration, if not used, please keep it as is |
-| SenparcUnionAgentKey | System Agent key, used for subsequent intelligent networking system expansion |
-
 ## SenparcAiSetting Node Configuration
 
 ```json
@@ -98,3 +87,13 @@ Node information is as follows:
   }
 }
 ```
+
+Node information is as follows:
+
+| Parameter                     | Description                                                                                                                                                                                                                                                              |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| IsDebug                       | Whether it is debug mode. When `true`, SenparcTrace will record logs (stored in the ~/App_Data/SenparcTraceLog/ directory)                                                                                                                                               |
+| DefaultCacheNamespace         | Default cache namespace. The namespace will help distinguish multiple running NCF projects in the same shared cache service (such as Redis or local Memory cache), ensuring that even if there are the same keys in each system, they will not interfere with each other |
+| Cache_Redis_Configuration     | Redis connection string configuration, if not used, please keep it as is                                                                                                                                                                                                 |
+| Cache_Memcached_Configuration | Memcached connection string configuration, if not used, please keep it as is                                                                                                                                                                                             |
+| SenparcUnionAgentKey          | System Agent key, used for subsequent intelligent networking system expansion                                                                                                                                                                                            |
