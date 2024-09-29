@@ -21,8 +21,8 @@ Mainly look at the `Senparc.Web\global.json` file, with the following content:
 
 ```json
 {
-  &quot;sdk&quot;: {
-    &quot;version&quot;: &quot;8.0.100&quot;
+  sdk: {
+    version: 8.0.100
   }
 }
 ```
