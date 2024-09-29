@@ -1,8 +1,8 @@
-# Xncf Module Introduction
+# Introduction to Xncf Modules
 
-NCF adopts a highly modular architecture and development approach, with most projects and features existing in the form of modules (Xncf).
+NCF adopts a highly modular architecture and development approach, with most projects and functionalities existing in the form of modules (Xncf).
 
-## Xncf Introduction
+## Introduction to Xncf
 
 <img src="./images/logo.png" width="300" />
 
@@ -17,11 +17,11 @@ NCF adopts a highly modular architecture and development approach, with most pro
 
 This project is the source code for the official package template at [https://github.com/NeuCharFramework/NcfPackageSources](https://github.com/NeuCharFramework/NcfPackageSources).
 
-| Folder                | Description                                                                                                                |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| src/Basic             | Essential official library, prefixed with `Separc.Ncf.`                                                                    |
-| src/Extensions        | Extension packages, prefixed with `Senparc.Xncf.`                                                                          |
-| src/Extensions/System | Essential system extension packages, also prefixed with `Senparc.Xncf.`; modules not in this folder are generally optional |
+| Folder                | Description                                                                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| src/Basic             | Essential official libraries that must be installed, prefixed with `Separc.Ncf.`                                                   |
+| src/Extensions        | Extension packages, prefixed with `Senparc.Xncf.`                                                                                  |
+| src/Extensions/System | Essential system extension packages, also prefixed with `Senparc.Xncf.`. Modules not in this folder are generally optional modules |
 
 ## Xncf Official Package Project Address
 
@@ -35,10 +35,10 @@ This project is the source code for the official package template at [https://gi
 
 Example: Senparc.Xncf.WeixinManager
 
-| Name          | Description                                                 |
-| ------------- | ----------------------------------------------------------- |
-| Senparc       | Company name/organization name/custom identifier            |
-| Xncf          | Fixed name (meaning Ncf framework module, easy to identify) |
-| WeixinManager | Functional identifier of the module                         |
+| Name          | Description                                                    |
+| ------------- | -------------------------------------------------------------- |
+| Senparc       | Company name/organization name/custom identification name      |
+| Xncf          | Fixed name (meaning module of Ncf framework, easy to identify) |
+| WeixinManager | Functional identification name of the module                   |
 
-## Welcome to Contribute Code!
+## Welcome to contribute code!

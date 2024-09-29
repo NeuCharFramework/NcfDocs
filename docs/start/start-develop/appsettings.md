@@ -1,3 +1,3 @@
 # appsettings.json Configuration
 
-Please refer to `Configuration` > [appsettings.json Configuration](/start/config/appsettings).
+Please see `Configuration` &gt; [appsettings.json Configuration](../config/appsettings).

@@ -1,5 +1,5 @@
 # Database
 
-View the data results
+View the results of the data
 
 <img src="./images/database-infomation.png" />

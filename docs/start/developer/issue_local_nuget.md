@@ -12,8 +12,9 @@
 
 ![Image text](./images/issue_local_nuget/edit_project_file.png)
 
-> 4. Edit conditions and necessary parameters for generating Nuget file
+> 4. Edit the conditions and necessary parameters for generating the Nuget file
 
+```xml
     <Project Sdk="Microsoft.NET.Sdk">
       <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -21,13 +22,13 @@
         <AssemblyName>Senparc.Xncf.Application</AssemblyName>
         <RootNamespace>Senparc.Xncf.Application</RootNamespace>
         <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
-        <Description>Application Module</Description>
+        <Description>Application module</Description>
         <Copyright>Senparc</Copyright>
         <PackageTags>Senparc,NeuCharFramework,NCF,Senparc.Xncf.Application</PackageTags>
         <Authors>Senparc</Authors>
         <Owners>Senparc</Owners>
         <!-- <PackageLicenseUrl>https://github.com/NeuCharFramework/NcfPackageSources/blob/master/LICENSE</PackageLicenseUrl> -->
-        <Title>.Application Module</Title>
+        <Title>.Application module</Title>
         <!--<ProjectUrl> https://github.com/NeuCharFramework/NCF</ProjectUrl>
         <PackageProjectUrl>https://github.com/NeuCharFramework/NcfPackageSources</PackageProjectUrl>
         <PackageIconUrl>http://sdk.weixin.senparc.com/Images/logo-square-ncf.jpg</PackageIconUrl>-->
@@ -62,12 +63,13 @@
     </ItemGroup>
 
     </Project>
+```
 
 > 5. Rebuild the project
 
 ![Image text](./images/issue_local_nuget/project_build.png)
 
-> 6. Find the generated Nuget package (here using Debug environment, so it is generated in the Debug directory)
+> 6. Find the generated Nuget package (here using the Debug environment, so it is generated in the Debug directory)
 
 ![Image text](./images/issue_local_nuget/general_nuget_file_success.png)
 
@@ -75,11 +77,11 @@
 
 ![Image text](./images/issue_local_nuget/copy_to_local_nuget_source.png)
 
-## Reference Local Nuget Source
+## Referencing Local Nuget Source
 
 > 1. There are two ways to enter the source settings
 
-> > 1-1. Click the toolbar Tools->Options->Nuget Package Manager
+> > 1-1. Click the toolbar Tools-&gt;Options-&gt;Nuget Package Manager
 
 ![Image text](./images/issue_local_nuget/enter_nuget_source_setting_1.png)
 
@@ -97,11 +99,11 @@
 
 ![Image text](./images/issue_local_nuget/prefect_nuget_infomation.png)
 
-> 3. Select local nuget source
+> 3. Select the local nuget source
 
 ![Image text](./images/issue_local_nuget/select_nuget_source.png)
 
-> 4. Import local nuget source
+> 4. Import the local nuget source
 
 ![Image text](./images/issue_local_nuget/install_nuget_source.png)
 
@@ -109,7 +111,7 @@
 
 > 5. Rebuild the project
 
-> 6. Show results
+> 6. Effect display
 
 ![Image text](./images/issue_local_nuget/show_new_module_can_install.png)
 

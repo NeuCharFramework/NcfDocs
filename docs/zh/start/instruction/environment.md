@@ -14,7 +14,7 @@
 
 ## 数据库
 
-- NCF 支持多数据库，目前已支持的有：SQLite、SQL Server、MySQL、PostgreSql、Oracle，我们还将支持更多的数据库，包括：
+- NCF 支持多数据库，目前已支持的有：SQLite、SQL Server、MySQL、PostgreSql、Oracle、DM（达梦），我们还将支持更多的数据库，包括：
   - Azure Cosmos DB
   - DB2
   - 更多数据库欢迎告诉我们: [发表](https://github.com/NeuCharFramework/NCF/issues)

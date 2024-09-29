@@ -1,12 +1,12 @@
-# NCF Unit Testing Introduction
+# NCF Unit Test Introduction
 
 ## Introduction
 
-NCF provides a unit testing framework for all modules to ensure code quality. Unit testing is a testing method used to verify the correctness of code.
+NCF provides a unit test framework for all modules to ensure code quality. Unit testing is a testing method used to verify the correctness of the code.
 
-In NCF, we adhere to the standard DDD (Domain-Driven Design) pattern, completely isolating databases and data from different domains at different stages. On one hand, NCF's unit testing design allows developers to focus on business logic testing and provides a complete underlying support system, making it very convenient for developers to conduct unit tests. It also supports automated testing in the CI/CD process of DevOps, and even uses Agents for automated testing and optimization. On the other hand, the basic framework provided by NCF also offers good support for TDD (Test-Driven Development).
+In NCF, we adhere to the standard DDD (Domain-Driven Design) pattern, completely isolating databases and data from different domains at different stages. On one hand, the unit test design of NCF allows developers to focus on business logic testing and provides a complete set of underlying support systems, making it very convenient for developers to conduct unit tests. It also supports automated testing in the CI/CD process in DevOps, and even uses Agents for automated testing and optimization. On the other hand, the basic framework provided by NCF also offers good support for TDD (Test-Driven Development).
 
-## Unit Testing Basic Module
+## Unit Test Basic Module
 
 Nuget Package: [Senparc.Ncf.UnitTestExtension](https://www.nuget.org/packages/Senparc.Ncf.UnitTestExtension)
 

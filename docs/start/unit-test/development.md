@@ -2,7 +2,7 @@
 
 ## Preparation
 
-NCF unit testing is based on the official .NET unit testing framework (MsTest), so you do not need to have any additional skills. Therefore, you only need to install the regular .NET development environment (.NET SDK) to develop and run unit tests.
+NCF unit testing is based on the official .NET unit testing framework (MsTest), so you do not need to acquire any additional skills. Therefore, you only need to install the .NET regular development environment (.NET SDK) to develop and run unit tests.
 
 ## Create Unit Test Project
 
@@ -24,7 +24,7 @@ The unit test project needs to reference the project being tested, such as the S
 </ItemGroup>
 ```
 
-Secondly, we need to reference the NCF unit test support library:
+Secondly, we need to reference the NCF unit test base support library:
 
 ```shell
 dotnet add package Senparc.Ncf.UnitTestExtension
@@ -47,7 +47,7 @@ public class AdminUserInfoServiceTests : BaseNcfUnitTest
 }
 ```
 
-> `BaseNcfUnitTest` is a unit test base class provided by NCF, from the `Senparc.Ncf.UnitTestExtension` package installed in the previous step.
+> `BaseNcfUnitTest` is the unit test base class provided by NCF, from the `Senparc.Ncf.UnitTestExtension` package installed in the previous step.
 
 To provide common objects for the entire Service, we can add a constructor and private variables:
 
@@ -57,7 +57,7 @@ public AdminUserInfoServiceTests()
 {
     // Create a Mock object for the Repository base class
     var mockBaseRepo = base.GetRespository<AdminUserInfo>().MockRepository;
-    // Since AdminUserInfoService created a dedicated interface, the relevant extended interface is automatically mapped from the base class. If you directly use IClientRepositoryBase<AdminUserInfo> to operate data, this line can be omitted
+    // Since AdminUserInfoService creates a dedicated interface, the relevant extended interface is automatically mapped from the base class. If you directly use IClientRepositoryBase<AdminUserInfo> to operate data, this line can be omitted
     var mockAdminUserInfoRepo = base.CreateMockForExtendedInterface<IAdminUserInfoRepository, IClientRepositoryBase<AdminUserInfo>>(mockBaseRepo);
     // Generate AdminUserInfoService class
     adminUserInfoService = new AdminUserInfoService(mockAdminUserInfoRepo.Object, null, base._serviceProvider);
@@ -66,7 +66,7 @@ public AdminUserInfoServiceTests()
 
 > The above method is general and can be used for almost all Services and entity classes.
 
-Next, we can test all methods in `AdminUserInfoService`, for example:
+Next, we can test all the methods in `AdminUserInfoService`, for example:
 
 ```csharp
 [TestMethod]
@@ -90,10 +90,10 @@ public async Task CreateAdminUserInfoTest()
 
 The above code is relatively easy to understand:
 
-- `adminUserInfoDto` creates a DTO object for creating an administrator
-- `adminUserInfoService.CreateAdminUserInfoAsync()` method is the target of this unit test, used to implement administrator addition
-- `Assert` methods verify the expected results
+- `adminUserInfoDto` creates a DTO object for creating an admin
+- The `adminUserInfoService.CreateAdminUserInfoAsync()` method is the target of this unit test, used to implement admin addition
+- The `Assert` method verifies the expected results
 
-Run the unit test, and it shows the test passed:
+Running the unit test shows that the test passed:
 
 <img src="./images/development-01.png" />

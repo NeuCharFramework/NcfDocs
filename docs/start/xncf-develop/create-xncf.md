@@ -1,14 +1,14 @@
 # Create the First Xncf Module
 
-## Introduction
+## Preface
 
 There are two ways to create an Xncf module:
 
-1. The manual way is to create a `Register` class and implement a series of interfaces as required in [Xncf's composition](/start/xncf-develop/about-xncf.html).
-   > For manual creation, refer to [here](/start/developer/xncf_module.html).
-2. [Recommended] Use the UI visual configuration method to automatically create the module. It is worth mentioning that the function used to create the Xncf module is also provided by an Xncf module named Senparc.Xncf.XncfBuilder.
+1.  The manual way is to create the `Register` class and implement a series of interfaces according to the requirements in [About Xncf](/start/xncf-develop/about-xncf.html).
+    > You can refer to [here](/start/developer/xncf_module.html) for the manual creation method.
+2.  [Recommended] Use the UI visual configuration method to automatically create the module. It is worth mentioning that this feature for creating Xncf modules is also provided by an Xncf module named Senparc.Xncf.XncfBuilder.
 
-The following introduces the method of creating an Xncf module with "0 code" using the visual automatic creation method.
+The following introduces the method of creating the basic code of the Xncf module using the "0 code" creation method.
 
 ## Install Senparc.Xncf.XncfBuilder
 
@@ -22,7 +22,7 @@ After installation:
 
 ## Enable Senparc.Xncf.XncfBuilder
 
-Click the [Enable] button to activate this module:
+Click the [Enable] button to enable this module:
 
 <img src="./images/create-xncf/03.png" />
 
@@ -32,18 +32,18 @@ Click the [Execute] button on the right side of [Generate XNCF] to set the infor
 
 <img src="./images/create-xncf/04-1.png" />
 
-> **Tip**<br>
+> **Tip**
 >
-> 1. All parameters are explained, no need to elaborate here. It is worth mentioning:<br>
->    The [Solution File (.sln) Path] parameter can be the path of the solution file of the currently running NCF project or any other NCF project solution file path (for example, sometimes we develop multiple projects simultaneously using multiple solutions). The new Xncf module project will be automatically added to the specified solution. Therefore, if the specified solution is running a web site (such as IISExpress), the site will automatically restart because the solution file will be modified.<br>
+> 1. All parameters have explanations, so they will not be repeated here. It is particularly worth mentioning that:<br>
+>    The [Solution File (.sln) Path] parameter can be the path of the solution file of the currently running NCF project, or it can be the solution file path of any other NCF project (for example, sometimes we develop multiple projects simultaneously using multiple solutions). The new Xncf module project will be automatically added to the specified solution. Because of this, if the specified solution is running a web site (such as IISExpress), the site will automatically restart because the solution file will be modified.<br>
 > 2. The organization name entered above is `MySenparc`, and the module name is `MyApp`, so it can be inferred that the full name of the final module is: `MySenparc.Xncf.MyApp`.<br><br>
->    (This article uses the currently running NCF.sln as an example.)
+>    (This article takes the currently running NCF.sln as an example.)
 
-In addition to the basic information above, scroll down to see the [Function Configuration] option. If you need the module to configure the basic code for the corresponding function (implement the corresponding function interface), you can check it.
+In addition to the above basic information, you can continue to scroll down to see the [Function Configuration] options. If you need the basic code for the module configuration corresponding function (implementing the corresponding function interface), you can check it.
 
 <img src="./images/create-xncf/05.png" />
 
-At the bottom is the [Install Sample] option. If you are new to NCF, it is strongly recommended that you check this option. The installed Sample will show you a multifunctional Xncf module that includes a database, functions, and web pages, making it easier for you to understand the composition of Xncf and the implementation of corresponding functions. Additionally, the code in the Sample can also provide a reference for creating your own business code.
+At the bottom is the [Install Sample] option. If this is your first time using NCF, it is strongly recommended that you check this option. The installed Sample will show you a multifunctional Xncf module that includes a database, functions, and web pages, allowing you to understand the composition of Xncf and the implementation of corresponding functions more vividly and concretely. Of course, in addition to this, the code in the Sample can also provide a reference for creating your own business code.
 
 ## Install Xncf Module Template
 
@@ -65,50 +65,45 @@ After installation, execute `dotnet new` again to display the content as follows
 
 ## Generate Xncf
 
-Check the information, confirm it is correct, and click the [Execute] button. In about 0.5 seconds, the customized Xncf project creation will be completed:
+Check the information, confirm that it is correct, and click the [Execute] button. In about 0.5 seconds, the creation of the customized Xncf project will be completed:
 
 <img src="./images/create-xncf/06.png" />
 
-> **Tip:** Since the currently set .sln file is the solution of the currently running site, the [Download Log] button in the success prompt will be invalid.
-
 ## Load Xncf Module
 
-Return to Visual Studio. When the new Xncf module code is automatically created, it will be automatically added to the NCF.sln solution, so you can see this prompt:
-
 <img src="./images/create-xncf/07.png" />
-
+> **Tip:** Since the currently set .sln file is the solution of the currently running site, the [Download Log] button in the success prompt will be invalid.
+Return to Visual Studio. When the new Xncf module code is automatically created, it will be automatically added to the NCF.sln solution, so you can see this prompt:
 Click the [Reload] button to reload the solution.
-
 In the [Solution Explorer], you can see that the new project `MySenparc.Xncf.MyApp` has been automatically created, and it is still "0 code":
-
 <img src="./images/create-xncf/08.png" />
 
 ## Install and Enable MySenparc.Xncf.MyApp Module
 
-Continue with "0 code", directly press <kbd>Ctrl</kbd> + <kbd>F5</kbd> to run the Senparc.Web project and enter the backend:
+Continue with the "0 code" approach, directly press <kbd>Ctrl</kbd> + <kbd>F5</kbd> to run the Senparc.Web project and enter the backend:
 
 <img src="./images/create-xncf/09.png" />
 
-At this point, you can see that the number of "Newly Discovered Modules" has changed from 3 to 4. Click this tab to enter the [Module Management] page, and you can see the `MySenparc.Xncf.MyApp` module automatically generated by the above operation in the "Newly Discovered Modules" list. The menu display name is `Automatically Generated Module`, consistent with the settings:
+At this point, you can see that the number of "Newly Discovered Modules" has changed from 3 to 4. Click this tab to enter the [Module Management] page, where you can see the `MySenparc.Xncf.MyApp` module automatically generated by the above operation in the "Newly Discovered Modules" list. The menu display name is `Automatically Generated Module`, consistent with the settings:
 
 <img src="./images/create-xncf/10.png" />
 
-When we click the [Install] button on the right, we can complete the installation of this custom module. However, before that, to understand the changes in the database, let's first look at the current database tables (using SQL Server as an example):
+When we click the corresponding [Install] button on the right, we can complete the installation of this custom module. However, before that, to understand the changes in the database, let's first look at the current database tables (taking SQL Server as an example):
 
 <img src="./images/create-xncf/11.png" />
 
 Return to the webpage, click the [Install] button on the right side of `MySenparc.Xncf.MyApp` to complete the module installation, and click the [Enable] button to activate the module.
 
-Before "Enable", you can already see the changes in the database tables:
+Before "enabling", you can already see the changes in the database tables:
 
 <img src="./images/create-xncf/12.png" />
 
 The installation process automatically added 2 tables to the database:
 
-| Table Name                             | Description                                                                                                                                  |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **MySenparc_MyApp**EFMigrationsHistory | EFCore's history version record for database migration and upgrade, automatically modified by EFCore during migration operations (Migration) |
-| MySenparc_MyApp_Color                  | Since the [Install Sample] option was checked, this database is used to demonstrate the sample database operations                           |
+| Table Name                             | Description                                                                                                                                   |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **MySenparc_MyApp**EFMigrationsHistory | Historical version records of EFCore database migration and upgrade, automatically modified by EFCore during migration operations (Migration) |
+| MySenparc_MyApp_Color                  | Since the [Install Sample] option was checked, this database is used to demonstrate the sample database operations in the Sample              |
 
 > **Tip:** In the automatically generated table names, you can see the prefix `MySenparc_MyApp`. The advantage of this is that even if different organizations release modules with the same name (such as `MySenparc.Xncf.MyApp` and `YourSenparc.Xncf.MyApp`), they can be well compatible and will not conflict.
 
@@ -119,42 +114,33 @@ Return to the webpage, and you can see the module information in the enabled sta
 > **Tip**<br>
 > ①: You can see that the module menu supporting web pages has an additional directory compared to the menu without web pages (such as `Database Toolkit`). In addition to the `Settings/Execute` page that everyone has, there is also a custom web page.<br>
 > ②: In the "Features" column, you can see the features supported by the current module: web pages, database, execution methods (Function).<br>
-> ③: Xncf modules with web page functionality are required to define a "home page", which can be quickly accessed on this page.
+> ③: Xncf modules with web page functionality are required to define a "homepage", which can be quickly accessed on this page.
 
 ## Function Demonstration
 
-Before understanding the internal files and principles, let's first look at what functions this Sample demonstrates.
+Before understanding the internal files and principles, let's first look at the demonstration of the functions completed by this Sample.
 
 ### Function
 
-> The function feature is used to complete a simple, small-granularity operation, supporting visual operations in the NCF backend and can be executed using code.
+> The function feature is used to complete a simple, small-grained operation, supporting visual operation in the NCF backend and can be executed using code.
 
-Open the default page of the module settings (i.e., the [Settings/Execute] menu), and you can see the [Execute] button on the right. Each [Execute] button represents a function:
+Open the default page of the module settings (i.e., the [Settings/Execute] menu), and you can see the [Execute] button on the right. Each [Execute] button represents a function (Function):
 
 <img src="./images/create-xncf/14.png" />
 
-> Tip: This function will automatically perform addition, subtraction, multiplication, division, and square calculations based on the parameters entered by the user.
-
-Click the [Execute] button on the right side of "My Function" to pop up the visual operation interface of this function, which defines all the variables required for this function. These variables can be freely set through code. The example includes name, number 1, number 2, operator, and the option to calculate the square.
-
-<img src="./images/create-xncf/15.png" />
-
-Fill in the information and set the options. The following configuration will perform the calculation of `(2 × 3)²`
-
-<img src="./images/create-xncf/16.png" />
-
-Click [Execute] to output the calculation result:
-
-<img src="./images/create-xncf/17.png" />
-
-On the result page, we can also see a "Download Log" link. This log will only be temporarily stored in the server cache for 5 minutes. Download and open it to see the complete calculation process recorded in the log:
-
-<img src="./images/create-xncf/18.png" />
-
 ### Web Page
 
-> The web page feature uses the ASP.NET page Area capability. Each Xncf module can define one or more Areas, and of course, pages can also be created directly in the root directory. The development process is no different from ordinary projects.
+> Tip: This function will automatically perform addition, subtraction, multiplication, division, and square calculations based on the parameters entered by the user.
+> Click the [Execute] button on the right side of "My Function" to pop up the visual operation interface of this function, which defines all the variables required for this function. These variables can be freely set through code. The example includes name, number 1, number 2, operator, and the option to calculate the square.
+> <img src="./images/create-xncf/15.png" />
+> Fill in the information and set the options. The following configuration will perform the calculation of `(2 &#215; 3)&#178;`
+> <img src="./images/create-xncf/16.png" />
+> After clicking [Execute], the calculation result is output:
+> <img src="./images/create-xncf/17.png" />
+> On the result page, we can also see a "Download Log" link. This log will only be temporarily stored in the server cache for 5 minutes. Download and open it to see that the log records the complete calculation process:
+> <img src="./images/create-xncf/18.png" />
+> The web page functionality uses the capabilities of ASP.NET's page Area. Each Xncf module can define one or more Areas, and of course, pages can also be created directly in the root directory. The development process is no different from ordinary projects.
 
 ### Database
 
-> NCF provides multi-database support for all modules and supports migration between multiple databases. At the same time, NCF also provides a complete set of basic methods for database access.
+> NCF provides multi-database support for all modules and supports migration between multiple databases. At the same time, NCF also configures a complete set of basic methods for database access.

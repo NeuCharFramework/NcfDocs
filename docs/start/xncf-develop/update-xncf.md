@@ -14,7 +14,7 @@ Modify the Version number in the file
 
 ## How to update the module in the NCF project?
 
-Simply reference the latest dll (or install the nuget package), and the system backend will automatically scan for version updates:
+You only need to reference the latest dll (or install the nuget package), and the system backend will automatically detect the version update:
 
 `【Module Management】page`
 

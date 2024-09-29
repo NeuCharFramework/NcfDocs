@@ -16,7 +16,7 @@ Deleted Status:
 
 ## One-Click Generate Xncf Module
 
-Enter `NCF` module management to see newly discovered modules
+Enter `NCF` module management, you can see newly discovered modules
 
 ![Image text](./images/new_function/fn_xncf_module_builder.png)
 
@@ -51,7 +51,7 @@ Installed module display
 
 ## One-Click Hide Extension Module Menu Items
 
-For developers with OCD, an extra layer of menu can be quite a headache. So here is a newly released powerful feature to beautify the interface with one click
+For developers with OCD, an extra layer of menu can be quite annoying. Now, a new powerful feature has been released to make the interface beautiful with one click
 
 ![Image text](./images/new_function/hidden_extend_menu.png)
 

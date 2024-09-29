@@ -1,18 +1,18 @@
-# NCF Terminology Explanation
+# NCF Terminology
 
 | Term                         | Explanation                                                                           |
 | ---------------------------- | ------------------------------------------------------------------------------------- |
 | `NCF`                        | NeuCharFramework                                                                      |
-| `Xncf Module`                | NCF module                                                                            |
-| `NcfPackageSource`           | NCF core library                                                                      |
-| `Docs`                       | NCF development documentation                                                         |
+| `Xncf Module`                | NCF Module                                                                            |
+| `NcfPackageSource`           | NCF Core Library                                                                      |
+| `Docs`                       | NCF Development Documentation                                                         |
 | `Tenant`                     | Tenant                                                                                |
-| `MultiTenant`                | Multi-tenant                                                                          |
+| `MultiTenant`                | Multi-Tenant                                                                          |
 | `数据库配置文件`             | Senparc.Web/SenparcConfig.config                                                      |
-| `Redis配置`                  | Cache_Redis_Configuration node in appsetting.json                                     |
+| `Redis配置`                  | Node Cache_Redis_Configuration in appsetting.json                                     |
 | `Service`                    | Service                                                                               |
 | `Register`                   | Register                                                                              |
-| `Area`                       | Area (page)                                                                           |
+| `Area`                       | Area (Page)                                                                           |
 | `Database`                   | Database                                                                              |
 | `Middleware`                 | Middleware                                                                            |
 | `ACL(Anti Corruption Layer)` | [Anti-Corruption Layer](https://blog.csdn.net/muzizongheng/article/details/108871808) |

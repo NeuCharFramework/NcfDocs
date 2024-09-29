@@ -1,12 +1,12 @@
 # Windows Deployment of NCF Site
 
-To make it more convenient for everyone to seamlessly use all aspects of NCF, here is how to publish the latest version of the site.
+To make it more convenient for everyone to seamlessly use NCF, here is how to publish the latest version of the site.
 
-No matter how cool and practical your website is in the development environment, it ultimately needs to be tested and deployed in a production environment. Using cloud servers is an inevitable step.
+No matter how cool and practical your website is in the development environment, it ultimately needs to be tested and deployed. Therefore, using a cloud server for testing and production environments is essential.
 
-This section aims to help you eliminate obstacles in the publishing and deployment process, allowing you to deploy your site from the development environment to the testing and production environments as smoothly as shifting gears in an automatic car.
+This section mainly helps you eliminate obstacles in the publishing and deployment process, allowing you to deploy the site from the development environment to the testing and production environments smoothly, like shifting gears in an automatic car.
 
-Ultimately, you should focus on your core business and not let these auxiliary tasks consume your time.
+Ultimately, you should focus on the core business and not let these auxiliary tasks take up too much of your time.
 
 Let's talk about how to publish.
 
@@ -20,7 +20,7 @@ It will be displayed in the lower left corner of the Visual Studio tool.
 
 <img src="./images/deploy-website-rebuild-success.png">
 
-This indicates that the build was successful. Then click publish.
+This indicates that everything has been successfully generated. Then click publish.
 
 <img src="./images/deploy-website-publish-01.png">
 
@@ -34,11 +34,11 @@ When choosing the publishing method, select Folder.
 
 As shown in the figure:
 
-Configuration: Choose Debug, Release, or others.
+Configuration: Choose Debug or Release, or others.
 
 Target Framework: Different versions of .NET Core, net6.0/7.0, etc.
 
-Deployment Mode: Framework-dependent | Self-contained (You can learn about the differences between the two deployment modes.)
+Deployment Mode: Framework-dependent | Self-contained (You can learn about the differences between the two deployment modes).
 
 Target Runtime: You can choose portable or specified runtime environments, such as win-x64, linux, etc.
 
@@ -84,7 +84,7 @@ Add a website.
 
 <img src="./images/deploy-website-create-02.png">
 
-Focus on the areas marked in red.
+Focus on the areas in the red box.
 
 <img src="./images/deploy-website-create-03.png">
 
@@ -98,7 +98,7 @@ Creating a site will also generate an application.
 
 <img src="./images/deploy-website-application-pool-01.png">
 
-Since we are deploying a .NET Core project, this needs to be modified.
+Since the project we are deploying is .NET Core, this needs to be modified.
 
 <img src="./images/deploy-website-application-pool-02.png">
 
@@ -110,81 +110,80 @@ After opening, configure the parameters to the values in the red box.
 
 <img src="./images/deploy-website-application-pool-04.png">
 
-First, stop the application, then start it.
+First stop the application, then start it.
 
 <img src="./images/deploy-website-application-pool-05.png">
 
 If there is an error when starting, keep trying until it starts successfully.
 
-8. Run the site (this process may encounter various issues), and handle them accordingly.
+Common errors are as follows:
 
-Common errors include:
+````
 
-```csharp
-HTTP Error 500.31 - ANCM Failed to Find Native Dependencies
-Common solutions to this issue:
-The specified version of Microsoft.NetCore.App or Microsoft.AspNetCore.App was not found.
-```
-
-This means that the corresponding version of Microsoft.NetCore.App and Microsoft.AspNetCore.App could not be found.
+The literal meaning is that the corresponding versions of Microsoft.NetCore.App and Microsoft.AspNetCore.App cannot be found.
 
 The official error documentation is: https://learn.microsoft.com/aspnet/core/test/troubleshoot-azure-iis?view=aspnetcore-7.0
 
 <img src="./images/deploy-website-run-01.png">
 
-Run the following command:
+Let's run the following command
 
 ```csharp
+8. Run the site (this process may encounter many strange issues), and the handling methods vary depending on the issue.
+```csharp
+HTTP Error 500.31 - ANCM Failed to Find Native Dependencies
+Common solutions to this issue:
+The specified version of Microsoft.NetCore.App or Microsoft.AspNetCore.App was not found.
 dotnet --info
-```
+````
 
-The result shows:
+The result shows
 
-<img src="./images/deploy-website-run-02.png">
+&lt;img src=&quot;./images/deploy-website-run-02.png&quot;&gt;
 
-The above figure is crucial. First, understand whether the installed versions are being used by IIS. If they do not match, errors will occur.
+The above figure is crucial; you need to understand whether the installed versions are being used by IIS. If they do not match, errors will occur.
 
-Check the following figure, which shows an adjusted environment.
+Look at the figure below; it shows an adjusted environment.
 
-<img src="./images/deploy-website-run-03.png">
+&lt;img src=&quot;./images/deploy-website-run-03.png&quot;&gt;
 
-Some may ask how to know if the SDK version and Host version are correct.
+Some of you might ask, how do we know if the SDK version and Host version are correct?
 
-Go to the .NET Core SDK download page: https://dotnet.microsoft.com/download/dotnet/6.0
+We go to the place to download the .NET Core SDK: https://dotnet.microsoft.com/download/dotnet/6.0
 
-<img src="./images/deploy-website-run-04.png">
+&lt;img src=&quot;./images/deploy-website-run-04.png&quot;&gt;
 
-Focus on the content in the red box for better understanding.
+Mainly observe the content in the red box to understand.
 
-<img src="./images/deploy-website-run-05.png">
+&lt;img src=&quot;./images/deploy-website-run-05.png&quot;&gt;
 
-If the .NET Core SDK version and Host version from dotnet --info match, the basic configuration is complete. However, it may still report error 500.31. In this case, troubleshoot based on the error message, such as:
+If the .NET Core SDK version and Host version shown by dotnet --info match, then the basic configuration is complete. But it doesn't end here; it might still report error 500.31. At this point, you need to troubleshoot based on the prompt information. For example,
 
-Check Windows logs by entering eventvwr in the DOS window. This will display error markers related to IIS, which can be handled accordingly.
+Windows log troubleshooting, enter eventvwr in the DOS window to display, as shown in the error mark below, find the ones related to IIS and handle them according to the prompts.
 
-<img src="./images/deploy-website-run-06.png">
+&lt;img src=&quot;./images/deploy-website-run-06.png&quot;&gt;
 
 For example:
 
 ```csharp
-Could not find 'aspnetcorev2_inprocess.dll'. Exception message:
+Could not find &#39;aspnetcorev2_inprocess.dll&#39;. Exception message:
 It was not possible to find any compatible framework version
-The framework 'Microsoft.NETCore.App', version '6.0.0' was not found.
+The framework &#39;Microsoft.NETCore.App&#39;, version &#39;6.0.0&#39; was not found.
   - The following frameworks were found:
       3.1.3 at [C:\Program Files (x86)\dotnet\shared\Microsoft.NETCore.App]
 
 You can resolve the problem by installing the specified framework and/or SDK.
 
 The specified framework can be found at:
-  - https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&framework_version=6.0.0&arch=x86&rid=win10-x86
+  - https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&amp;framework_version=6.0.0&amp;arch=x86&amp;rid=win10-x86
 ```
 
-This means that version 6.0.0 of Microsoft.NETCore.App is not installed. The installation address is provided below.
+It means that version 6.0.0 of Microsoft.NETCore.App is not installed, and the installation address is provided below.
 
-https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&framework_version=6.0.0&arch=x86&rid=win10-x86
+https://aka.ms/dotnet-core-applaunch?framework=Microsoft.NETCore.App&amp;framework_version=6.0.0&amp;arch=x86&amp;rid=win10-x86
 
-After installation, you can access the site. If there are still errors, continue to troubleshoot based on the prompts until there are no IIS errors.
+After installation, you can access the site. If there are still errors, continue to fix them according to the prompts until there are no IIS errors.
 
-Finally, the website information will be displayed. If you have any questions, feel free to ask in the community group.
+The final presentation is the information of the website we see. If there is anything unclear, you can directly ask me in the community group.
 
-<img src="./images/deploy-website-run-07.png">
+&lt;img src=&quot;./images/deploy-website-run-07.png&quot;&gt;

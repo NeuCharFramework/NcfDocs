@@ -4,13 +4,13 @@ As we all know, Microsoft's database migration tool Entity Framework (EF) Core i
 
 ## Overview
 
-Entity Framework (EF) Core is a lightweight, extensible, open-source, and cross-platform version of the commonly used Entity Framework data access technology.
+Entity Framework (EF) Core is a lightweight, extensible, open-source, and cross-platform version of the popular Entity Framework data access technology.
 
-EF Core can be used as an Object-Relational Mapper (O/RM), which enables the following:
+EF Core can be used as an object-relational mapper (O/RM), which can achieve the following two points:
 
-Allows .NET developers to work with databases using .NET objects.
+Enable .NET developers to work with databases using .NET objects.
 
-Eliminates the need to write most of the data access code as usual.
+Eliminate the need to write most of the data access code as usual.
 
 EF Core supports multiple database engines.
 
@@ -24,6 +24,6 @@ Create Models
 
 Manually code the models to conform to the database
 
-After creating the models, use EF migrations to create the database from the models. When the models change, migrations allow the database to evolve continuously.
+After creating the model, use EF migration to create the database from the model. When the model changes, migration allows the database to evolve continuously.
 
-Inject DbContext into the Service, and the Service obtains the authority to operate and migrate the database. According to different database requirements, migrate to different databases.
+Inject DbContext into the Service, the Service obtains the authority to operate the migration database, and migrate to different databases according to different database requirements

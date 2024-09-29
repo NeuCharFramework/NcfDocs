@@ -1,12 +1,12 @@
 # Publish Xncf Module to nuget.org
 
-First step: Select the project, right-click on Properties, and open the packaging options
+First step: Select the project, right-click on properties, and open the packaging options
 
 <img src="./images/general-nuget-package1.png" />
 
-Check the option to generate a nuget package on build
+Check the option to generate the nuget package during build
 
-Second step: Rebuild the project, the generated nuget package will be compiled into the folder you set
+Second step: Recompile the project, the generated nuget package will be compiled into the folder you set
 
 <img src="./images/build-finished-nuget-package1-1.png" />
 
@@ -22,4 +22,4 @@ Wait for the upload result
 
 <img src="./images/nuget-upload-package-2-2.png" />
 
-Fifth step: Click Submit, after submission, leave it to nuget, wait for a moment, and the nuget package will be online
+Fifth step: Click Submit, after submission, leave it to nuget, wait a moment, and the nuget package will be online

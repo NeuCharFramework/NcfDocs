@@ -1,30 +1,30 @@
-# Xncf Composition
+# Composition of Xncf
 
 ## Preface
 
-This document introduces the important components of Xncf module code, helping developers understand its principles. Developing Xncf does not require manually writing these codes; you can use the [Xncf Module Generator](/start/xncf-develop/create-xncf) for visual configuration and generation.
+This document introduces the important components of the Xncf module code, which helps developers understand its principles. Developing Xncf does not require manually typing these codes, as you can use the [Xncf Module Generator](/start/xncf-develop/create-xncf) for visual configuration and generation.
 
 ## What is Xncf?
 
-Xncf (XNCF) refers to the individual modules that make up the NCF system's functionality, usually appearing as a single project (such as a class library, introduced into the solution using .csproj). In special cases, it can also consist of multiple projects. To include the Xncf module's dll in the release package, Xncf needs to be directly or indirectly referenced by the Web project (Senparc.Web).
+Xncf (XNCF) refers to the individual modules that make up the NCF system functions, usually appearing as a single project (such as a class library, introduced into the solution using .csproj). In special cases, it can also consist of multiple projects. To include the dll of the Xncf module in the release package, Xncf needs to be directly or indirectly referenced by the Web project (Senparc.Web).
 
 > Xncf can be planned as a complete Domain project in the DDD development model, containing all the standard structures required by DDD.
 
-The file composition of an XNCF project can be understood as a regular class library, plus a special [Register Class](#register-class).
+The file structure of an XNCF project can be understood as a regular class library, plus a special [Register class](#register-class).
 
-> Therefore, you can turn almost any class library into a plug-and-play XNCF module by adding a `Register` class!
+> Therefore, you can almost turn any class library into a plug-and-play XNCF module by adding a `Register` class!
 
-## Xncf Naming Rules
+## Naming Rules for Xncf
 
-The naming of Xncf projects (usually also the dll file name) requires each Xncf module to have a globally unique module name, following the format:
+The naming of Xncf projects (usually also the file name of the dll), each Xncf module needs to have a globally unique module name, which must follow the format:
 
 `<OrganizationName>`.Xncf.`<ModuleName>`
 
-- `<OrganizationName>` is usually the name of the company or team, used to distinguish modules provided by different organizations and prevent `<ModuleName>` conflicts.
-- `.Xncf.` is a fixed character, indicating that this is an Xncf module and used to separate the organization name and module name.
-- `<ModuleName>` is the name of the current module. This name cannot contain `.`. If there are submodules, underscores `_` can be used.
+- `<OrganizationName>` is usually the name of the company or team, used to distinguish modules provided by different organizations and prevent conflicts in `<ModuleName>`
+- `.Xncf.` is a fixed character, indicating that this is an Xncf module, and is used to separate the organization name and module name
+- `<ModuleName>` is the name of the current module, and this name cannot contain `.`. If there are sub-modules, underscores `_` can be used
 
-The final Xncf naming example: `Senparc.Xncf.DatabaseTool` or `Senparc.Xncf.DatabaseTool_Backup`.
+The final Xncf naming could be: `Senparc.Xncf.DatabaseTool` or `Senparc.Xncf.DatabaseTool_Backup`.
 
 ## Important Concepts of Xncf Modules
 
@@ -37,17 +37,17 @@ The final Xncf naming example: `Senparc.Xncf.DatabaseTool` or `Senparc.Xncf.Data
 
 ### IXncfRegister Interface (Required)
 
-The required interface is: `IXncfRegister` (from the base library: <a href="/NcfPackageSources/libs/Senparc.Ncf.XscfBase.html">Senparc.Ncf.XncfBase</a>).
+The required interface is: `IXncfRegister` (base library: <a href="/NcfPackageSources/libs/Senparc.Ncf.XscfBase.html">Senparc.Ncf.XncfBase</a>).
 
-The `IXncfRegister` interface includes module name, globally unique identifier, version number, menu name, icon, and other module metadata information. It also allows defining the code to be executed during module installation and uninstallation.
+The `IXncfRegister` interface contains module name, globally unique identifier, version number, menu name, icon, and other module metadata information, and can define the code that needs to be executed during module installation and uninstallation.
 
-For detailed introduction of the `IXncfRegister` interface, see: [IXncfRegister](/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IXncfRegister.html).
+For detailed introduction of the `IXncfRegister` interface, please see: [IXncfRegister](/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IXncfRegister.html).
 
-To facilitate developers, NCF provides a default implementation based on the `IXncfRegister` interface: `XncfRegisterBase`. Therefore, usually, we only need to create a `Register.cs` class file in the project, inherit the `XncfRegisterBase` base class, and implement its specified interface to quickly turn the project into an Xncf module.
+To facilitate developers, NCF provides a default implementation based on the `IXncfRegister` interface: `XncfRegisterBase`. Therefore, usually, we only need to create a `Register.cs` class file in the project, then inherit the `XncfRegisterBase` base class and implement its specified interface, to quickly turn this project into an Xncf module.
 
 #### [XncfRegister] Attribute
 
-Use the [XncfRegister] attribute on the custom `Register` class of each module project, allowing the system to quickly identify the current class as an Xncf registration class (reserved functionality, recommended to add).
+In the custom `Register` class of each module project, use the [XncfRegister] attribute to enable the system to quickly identify the current class as an Xncf registration class (reserved function, it is recommended to add it).
 
 According to the above requirements, a minimal Xncf module registration class might look like this:
 
@@ -82,7 +82,7 @@ namespace Senparc.Xncf.XncfBuilder
 
 #### [XncfOrder] Attribute
 
-You can add the [XncfOrder] attribute to the Register class to set the loading order of the current XNCF module. The constructor of this attribute provides a sorting number (`order` parameter), which is arranged in descending order when the system loads (the larger the number, the earlier it is loaded), such as:
+You can add the [XncfOrder] attribute to the Register class to set the loading order of the current XNCF module. The constructor of this attribute provides a sorting number (the `order` parameter), which is arranged in descending order when the system loads (the larger the number, the earlier it is loaded), such as:
 
 ```csharp
     [XncfRegister]
@@ -95,25 +95,25 @@ You can add the [XncfOrder] attribute to the Register class to set the loading o
 
 `order` parameter conventions:
 
-`0`: Default value, modules without the [XncfOrder] attribute default to 0, usually such modules have no special loading order requirements.
+`0`: Default value, modules without the [XncfOrder] attribute default to 0, usually such modules have no special loading order requirements
 
-`1` ~ `5000`: Important modules that need to be preloaded in order.
+`1` ~ `5000`: Important modules that need to be preloaded in order
 
-`Above 5000`: System and basic modules, regular modules should not occupy.
+Above `5000`: System and basic modules, regular modules should not occupy
 
-`59xx`: System underlying basic modules, regular modules should not occupy.
+`59xx`: System underlying basic modules, regular modules should not occupy
 
-`58xx`: AI-related basic modules, regular modules should not occupy.
+`58xx`: AI-related basic modules, regular modules should not occupy
 
-<!-- TODO: More override methods -->
+&lt;!-- TODO: More override methods --&gt;
 
 ### More Optional Interfaces
 
-On the basis of implementing the `IXncfRegister` interface, according to the functions that the current module needs to support, you can continue to add optional interfaces to expand the capabilities of Xncf. Common optional interfaces include:
+On the basis of implementing the `IXncfRegister` interface, you can continue to add optional interfaces according to the functions that the current module needs to support, expanding the capabilities of Xncf. Common optional interfaces include:
 
-| Interface Name               | Supported Functionality                                    |
+| Interface Name               | Supported Function                                         |
 | ---------------------------- | ---------------------------------------------------------- |
-| IXncfFunction                | Function, a method to complete a task                      |
+| IXncfFunction                | Function, i.e., a method to complete a task                |
 | IXncfDatabase                | Database, supports multiple databases                      |
 | IXncfRazorRuntimeCompilation | Runtime compilation for RazorPage when including web pages |
 | IXncfMiddleware              | Defines a .NET Core middleware                             |
@@ -125,9 +125,9 @@ The specific definitions and final effects of each interface will be introduced 
 
 After the Register class inherits IXncfDatabase and implements the interface methods, the database capability can be activated.
 
-> To make the code clearer, the code in the template uses "partial class", and the related code is stored independently in `Register.Database.cs` (similarly for other interfaces below).
+&gt; To make the code clearer, the code in the template uses "partial class", and the related code is stored independently in `Register.Database.cs` (the same applies to other interfaces below).
 
-The default template code is as follows:
+The default code in the template is as follows:
 
 ```csharp
     public partial class Register : IXncfDatabase  // Register XNCF module database (optional)
@@ -137,17 +137,17 @@ The default template code is as follows:
         /// <summary>
         /// Database prefix
         /// </summary>
-        public const string DATABASE_PREFIX = "Senparc_PromptRange_";
+        public const string DATABASE_PREFIX = &quot;Senparc_PromptRange_&quot;;
 
         /// <summary>
         /// Database prefix
         /// </summary>
-        public string DatabaseUniquePrefix => DATABASE_PREFIX;
+        public string DatabaseUniquePrefix =&gt; DATABASE_PREFIX;
 
         /// <summary>
         /// Dynamically get the database context
         /// </summary>
-        public Type TryGetXncfDatabaseDbContextType => MultipleDatabasePool.Instance.GetXncfDbContextType(this);
+        public Type TryGetXncfDatabaseDbContextType =&gt; MultipleDatabasePool.Instance.GetXncfDbContextType(this);
 
         public void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -165,23 +165,21 @@ The default template code is as follows:
     }
 ```
 
-`DATABASE_PREFIX` provides a constant for the database prefix, with the default naming rule being "`OrganizationName`_`ModuleName`_", finally like: `Senparc_PromptRange_`.
+`DATABASE_PREFIX` provides a constant for the database prefix, with the default naming rule being "`OrganizationName`_`ModuleName`_". The final result is: `Senparc_PromptRange_`.
 
-The `TryGetXncfDatabaseDbContextType` property is a specific method used to specify the current database context class in multiple database configurations, and the default code does not need to be modified.
+The `TryGetXncfDatabaseDbContextType` property is a specific method used to specify the current database context class in multi-database configurations. The default code does not need modification.
 
-The `OnModelCreating` method will be executed when the EF Core database is initialized (executed in the DbContext's OnModelCreating() method).
+The `OnModelCreating` method will be executed during the EF Core database initialization (executed in the DbContext's OnModelCreating() method).
 
-`AddXncfDatabaseModule` is used to configure dependency injection configurations related to the database.
+`AddXncfDatabaseModule` is used to configure dependency injection settings related to the database.
 
-<!-- TODO: Introduce SenparcEntities -->
+&lt;!-- TODO: Introduce SenparcEntities --&gt;
 
-<!--
+&lt;!--
 The following will be introduced one by one.
 
 #### IXncfRazorRuntimeCompilation Interface (Optional)
 
-
 #### IXncfMiddleware Interface (Optional)
 
-
-#### IXncfThread Interface (Optional) -->
+#### IXncfThread Interface (Optional) --&gt;

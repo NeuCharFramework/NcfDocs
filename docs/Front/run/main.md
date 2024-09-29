@@ -1,10 +1,10 @@
 # Run
 
-Check the version of node
+Check the node version
 
 <img src="./images/node-version.png" />
 
-Check the version of npm
+Check the npm version
 
 <img src="./images/npm-version.png" />
 
@@ -48,6 +48,6 @@ Extend module
 
 <img src="./images/extend-module.png" />
 
-Options for open Tabs, you can close all, close current, close others, etc.
+Options for the opened Tab, you can close all, close current, close others, etc.
 
 <img src="./images/tab-option.png" />
