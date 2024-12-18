@@ -9,6 +9,10 @@
 
 ## .NET 框架
 
+- .NET 9 ，SDK下载地址：[https://dotnet.microsoft.com/en-us/download/dotnet/9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+
+  > 基础库已经支持 .NET Standard 2.1，兼容 .NET 5 和 .NET 6 , .NET 8+，NCF 模板已经使用 .NET 9 发布。
+
 - .NET 8 ，SDK下载地址：[https://dotnet.microsoft.com/en-us/download/dotnet/8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
   > 基础库已经支持 .NET Standard 2.1，兼容 .NET 5 和 .NET 6+，NCF 模板已经使用 .NET 8 发布。
 
@@ -38,7 +42,7 @@
 - QEMU
 - 其他支持 .NET Core 运行的操作系统：[查看](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md)
 
-安装到服务器：[https://docs.microsoft.com/zh-cn/dotnet/core/install/](https://docs.microsoft.com/zh-cn/dotnet/core/install/)
+安装.NET Core到服务器：[https://docs.microsoft.com/zh-cn/dotnet/core/install/](https://docs.microsoft.com/zh-cn/dotnet/core/install/)
 
 ## CPU 架构
 

@@ -8,19 +8,19 @@
 
 首先找到`Senparc.Web` 项目下的appsetting.json文件
 
-<img src="./images/config-mutil-tenant1.png" />
+<img src="./images/config-mutil-tenant.png" />
 
 ## 系统模块的多租户数据表对应
 
 数据库生成后，会自动生成一个多租户的表，如下
 
-<img src="./images/mutil-tenant-table1.png" />
+<img src="./images/mutil-tenant-table.png" />
 
 ## 数据库中其他的表的变化
 
 数据库生成后，会在每个表中都生成一个字段，如下
 
-<img src="./images/mutil-tenant-table-field1.png" />
+<img src="./images/mutil-tenant-table-field.png" />
 
 ## 对应关系
 
