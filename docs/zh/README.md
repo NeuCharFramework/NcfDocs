@@ -1,6 +1,7 @@
 ---
 home: true
 title: 首页
+description: 中文的 NCF 官方文档
 heroImage: /images/logo.png
 actions:
   - text: 快速上手

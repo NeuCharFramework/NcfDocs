@@ -51,6 +51,7 @@ export default defineUserConfig({
   theme: defaultTheme({
     hostname: 'https://www.ncf.pub',
     logo: '/images/logo.png',
+    logoDark: '/images/logo.png',
     repo: 'NeuCharFramework/NCF',
     docsRepo: 'NeuCharFramework/NcfDocs',
     docsDir: 'docs',
@@ -112,6 +113,10 @@ export default defineUserConfig({
       // use shiki plugin in production mode instead
       prismjs: !isProd,
     },
+
+    colorMode: 'auto',
+    colorModeSwitch: true,
+    externalLinkIcon: true,
   }),
 
   // configure markdown
