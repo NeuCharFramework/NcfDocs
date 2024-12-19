@@ -24,7 +24,7 @@ XNCF 模块模板：[![Senparc.Xncf.XncfBuilder.Template](https://img.shields.io
 
 ## 支持的 .NET 版本
 
-NCF 已全面兼容 .NET 8.0。
+NCF 已全面兼容 .NET 5.0/6.0/7.0/8.0/9.0 。
 
 ## 支持的数据库
 
@@ -51,9 +51,9 @@ Apache License V2.0
 
 ## 说明
 
-> NCF 由盛派（Senparc）团队经过多年优化迭代的自用系统底层框架 SenparcCore 整理而来，经历了 .NET Framwork 3.5/4.5 众多系统的实战检验，并最终移植到 .NET Core（同时支持 .NET 5.0/6.0/7.0/8.0），高度模块化。NCF 目前已在众多大中型应用中稳定运行，感谢大家一直以来的支持，欢迎大家多提意见和建议，或加入社区贡献者的行列！
+> NCF 由盛派（Senparc）团队经过多年优化迭代的自用系统底层框架 SenparcCore 整理而来，经历了 .NET Framwork 3.5/4.5 众多系统的实战检验，并最终移植到 .NET Core（同时支持 .NET 5.0/6.0/7.0/8.0/9.0），高度模块化。NCF 目前已在众多大中型应用中稳定运行，感谢大家一直以来的支持，欢迎大家多提意见和建议，或加入社区贡献者的行列！
 
-<center><img src="https://weixin.senparc.com/images/NCF/login.png" /></center>
+<center><img src="https://weixin.senparc.com/images/NCF/login.jpg" /></center>
 
 > 我们欢迎第三方开源组件提供自己的解决方案，我们将会测试并集成到 NCF 中。
 

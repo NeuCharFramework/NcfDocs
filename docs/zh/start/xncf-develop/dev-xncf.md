@@ -289,7 +289,7 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
 
 模块中的网页部分在
 
-<img src="./images/xncf-module-area1.png" />
+<img src="./images/xncf-module-area.png" />
 
 页面可以根据自己的实际需要去排版
 
