@@ -117,6 +117,8 @@ export default defineUserConfig({
     colorMode: 'auto',
     colorModeSwitch: true,
     externalLinkIcon: true,
+    lastUpdated: true,
+    contributors: true,
   }),
 
   // configure markdown
