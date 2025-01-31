@@ -22,6 +22,26 @@ dotnet new NCF -n MyProject
 
 > 其中，`MyProject` 为项目名称，可根据需要修改，如果不提供 `-n` 参数，则使用默认名称创建。
 
+模板的启动，使用 `Visual Studio` 打开项目，默认的启动项目为 `Senparc.Aspire.AppHost`
+
+<img src="./images/get-ncf-template-07-default-startup-project.png" />
+
+启动后的输出信息
+
+<img src="./images/get-ncf-template-08-startup-console.png" />
+
+提示 `Aspire` 启动页面
+
+<img src="./images/get-ncf-template-09-startup-aspire.png" />
+
+输入令牌
+
+<img src="./images/get-ncf-template-10-startup-aspire-password.png" />
+
+登录 `Aspire` 后
+
+<img src="./images/get-ncf-template-11-startup-aspire-logined.png" />
+
 ## 方法二：从源码地址获取源码
 
 以下两个代码托管地址，为 NCF 官方代码发布渠道：
