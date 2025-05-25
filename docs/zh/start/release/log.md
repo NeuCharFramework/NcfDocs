@@ -1,5 +1,23 @@
 # 日志
 
+## 2025-05-04更新
+
+1、添加租户（还没做名称唯一性判断）
+
+<img src="./images/mutiple-tenant-001.png" />
+
+2、初始化租户（还没做重复生成判断）：
+
+<img src="./images/mutiple-tenant-002.png" />
+
+3、完成后可获得新租户的默认管理员账号密码，从登录页面输入即可登录：
+
+<img src="./images/mutiple-tenant-003.png" width=200 />
+
+> 注意：
+> 1、appsettings.json 有变化，需要设置："TenantRule": "LoginInput" （之前为 DomainName）
+> 2、已经安装完的系统，需要在 Senparc.Web/App_Data 目录下，新建一个文件：install_finished.txt（内容无所谓）
+
 ## 2025-01-31更新
 
 NCF v0.28.0 发布，更新了包括 Senparc.AI 在内的基础库，同时更新了后台首页
