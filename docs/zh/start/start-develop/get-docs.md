@@ -4,7 +4,7 @@ NCF 为开发者准备了多种阅读文档的途径，有在线版本、Xncf �
 
 ## 方式一：在线阅读官方文档
 
-NCF 为开发者提供了官方在线文档地址：[https://www.ncf.pub/Docs](https://www.ncf.pub/Docs) 。
+NCF 为开发者提供了官方在线文档地址：[https://doc.ncf.pub](https://doc.ncf.pub/) 。
 
 ## 方式二：在 NCF 站点中进入官方文档
 

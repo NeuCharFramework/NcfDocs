@@ -165,4 +165,20 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
   ],
+   '/zh/SenparcAI/': [
+    {
+      text: 'Senparc.AI',
+      children: ['/zh/SenparcAI/home/index.md'],
+    },
+    {
+      text: 'Senparc.AI.Agents',
+      children: ['/zh/SenparcAI/agents/index.md'],
+    },
+    {
+      text: 'Senparc.AI.Kernel',
+      children: ['/zh/SenparcAI/kernel/index.md'],
+    },
+  ]
 }
+}
+
