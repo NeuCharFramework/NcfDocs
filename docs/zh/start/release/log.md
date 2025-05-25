@@ -1,5 +1,71 @@
 # 日志
 
+## 2025-05-04更新
+
+1、添加租户（还没做名称唯一性判断）
+
+<img src="./images/mutiple-tenant-001.png" />
+
+2、初始化租户（还没做重复生成判断）：
+
+<img src="./images/mutiple-tenant-002.png" />
+
+3、完成后可获得新租户的默认管理员账号密码，从登录页面输入即可登录：
+
+<img src="./images/mutiple-tenant-003.png" width=200 />
+
+> 注意：
+> 1、appsettings.json 有变化，需要设置："TenantRule": "LoginInput" （之前为 DomainName）
+> 2、已经安装完的系统，需要在 Senparc.Web/App_Data 目录下，新建一个文件：install_finished.txt（内容无所谓）
+
+## 2025-01-31更新
+
+NCF v0.28.0 发布，更新了包括 Senparc.AI 在内的基础库，同时更新了后台首页
+
+<img src="./images/log/log-2025013101.png" />
+
+源码已经更新，也可以直接安装体验，https://www.nuget.org/packages/Senparc.NCF.Template/0.28.0
+
+## 2025-01-24更新
+
+Senparc.AI 最新版本已经发布；NeuCharAI 的 function calling 能力已经接通。
+
+## 2025-01-22更新
+
+Senparc.AI 最新版本已经支持 DeepSeek，NCF 的 AIKernel 下一个版本也会同步支持 UI。目前测试 DeepSeek V3的 function call 有点问题，谨慎使用。明天晚上周会我会演示带有 Function Call 功能的多智能体，接下去就可以让机器人自动做所有事情了。
+
+## 2025-01-09更新
+
+NCF 基础模块和模板都有更新，对 XNCF 生成过程全部重构了，解决了XNCF 模块生成时候的中文支持问题，另外增加了 XNCF 模块的默认达梦数据库迁移
+
+## 2024-12-27更新
+
+CO2NET 3.1.0 正式版已经发布，这是第一个 3.0 之后的正式版。
+
+## 2024-12-23更新
+
+NCF 模板新版本发布：v0.27.3 优化单元测试，提供最新的种子数据（Seed Data）注入方法演示，实现无外部数据库支持下的数据读写和操作测试。
+
+## 2024-12-21更新
+
+NCF 模板更新，提供菜单设置页面的父层节点置顶，解决菜单项过长，不容易编辑的问题。
+
+## 2024-12-19更新
+
+https://doc.ncf.pub 搜索功能已经上线
+
+## 2024-12-08更新
+
+Senparc.AI Sample 已经支持 GPT-4o 的图片识别能力（Developer-Vision 分支）：
+
+## 2024-11-17更新
+
+Aspire 的分支已经发布：https://github.com/NeuCharFramework/NCF/tree/Developer-Aspire
+
+## 2024-11-15更新
+
+Senparc.AI.Agents已经发布了新版本，AutoGen 作者一起 PR 了一个 Sample 过来，之前说的问题已经解决了
+
 ## 2023-04-21更新
 
 ```

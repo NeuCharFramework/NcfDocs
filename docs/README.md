@@ -2,6 +2,8 @@
 home: true
 title: Home
 heroImage: /images/logo.png
+heroHeight: 280
+footHtml: true
 actions:
   - text: Get Started
     link: /start/start-develop/get-ncf-template.html
@@ -39,5 +41,5 @@ features:
   - title: Community Support
     details: Maintained by the core team of the Senparc developer community, with long-term upgrades and maintenance.
 
-footer: Apache License 2.0 | Copyright &#169; 2018-present Senparc Developer Community
+footer: Apache License 2.0 | Copyright@ 2018-present Senparc Developer Community
 ---

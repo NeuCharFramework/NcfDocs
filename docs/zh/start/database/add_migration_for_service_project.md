@@ -31,7 +31,6 @@ dotnet ef migrations add AddOpenId -c SystemServiceEntities_SqlServer -o Migrati
 执行命令即可完成 SQL Server 的迁移文件更新：
 
 ![Image Text](./images/add_migration_for_service_project-run_migrations_add.png)
-
 上图中：
 
 ①：在 Senparc.Service 目录下，输入的命令

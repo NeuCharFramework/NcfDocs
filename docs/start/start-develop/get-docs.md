@@ -4,7 +4,7 @@ NCF provides developers with multiple ways to read the documentation, including 
 
 ## Method 1: Read the Official Documentation Online
 
-NCF provides developers with the official online documentation address: [https://www.ncf.pub/Docs](https://www.ncf.pub/Docs).
+NCF provides developers with the official online documentation address: [https://doc.ncf.pub](https://doc.ncf.pub).
 
 ## Method 2: Access the Official Documentation on the NCF Site
 

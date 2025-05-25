@@ -16,6 +16,8 @@ export const navbarZh: NavbarConfig = [
           '/zh/NcfPackageSources/home/index.md',
           '/zh/DynamicWebApi/home/index.md',
           '/zh/Deploy/home/index.md',
+          '/zh/MCP/home/index.md',
+          '/zh/SenparcAI/home/index.md',
         ],
       },
       {

@@ -152,4 +152,33 @@ export const sidebarZh: SidebarConfig = {
       children: ['/zh/Deploy/docker/ncf-website.md'],
     },
   ],
+  '/zh/MCP/': [
+    {
+      text: 'MCP 模块',
+      children: [
+        '/zh/MCP/home/index.md',
+        '/zh/MCP/installation.md',
+        '/zh/MCP/basic-usage.md',
+        '/zh/MCP/advanced-features.md',
+        '/zh/MCP/api-reference.md',
+        '/zh/MCP/faq.md',
+      ],
+    },
+  ],
+   '/zh/SenparcAI/': [
+    {
+      text: 'Senparc.AI',
+      children: ['/zh/SenparcAI/home/index.md'],
+    },
+    {
+      text: 'Senparc.AI.Agents',
+      children: ['/zh/SenparcAI/agents/index.md'],
+    },
+    {
+      text: 'Senparc.AI.Kernel',
+      children: ['/zh/SenparcAI/kernel/index.md'],
+    },
+  ]
 }
+}
+
