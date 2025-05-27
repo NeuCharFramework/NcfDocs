@@ -53,37 +53,29 @@ Tool 'dotnet-outdated-tool' (version '4.6.8') was successfully installed.
 
 > Note: The tool only needs to be installed once. Unless an upgrade is needed, there is no need to install it repeatedly.
 
-If you are on MacOS, you may be asked to run an additional command to add the tool to the environment variables:
+If you are on MacOS, you may be asked to run an additional command to add the tool to the environment variables.
+
+Copy and execute `export PATH="$PATH:/Users/jeffreysu/.dotnet/tools"` in the command line (Note: each user's path is different):
 
 <img src="./images/xncf-develop/11-tool-install.png" />
-
-Copy and execute `export PATH="$PATH:/Users/jeffreysu/.dotnet/tools"` in the command line (Note: each user's path is different).
 
 Step 3: Navigate to the NCF solution directory
 
 Navigate to the NCF directory in the command line (the directory with \*.sln files, i.e., the parent directory of the Senparc.Web folder)
 
-Step 4: Check for updates (optional, you can go directly to the next step)
+Step 4: Check and install updates
 
 Enter:
 
 ```shell
-dotnet outdated -inc Senparc
+dotnet outdated -u:prompt -inc Senparc
 ```
 
-<img src="./images/xncf-develop/12-search-update.png" />
+<img src="./images/xncf-develop/12-check-packages.png" />
 
-> Note: If it shows no updates, you don't need to continue to the next step.
+If updates are detected, enter Y to automatically complete the update.
 
-Step 5: Execute update
-
-Execute command:
-
-```bash
-dotnet outdated -inc Senparc --upgrade
-```
-
-<img src="./images/xncf-develop/12-update.png" />
+<img src="./images/xncf-develop/04-updated.png" />
 
 Done.
 

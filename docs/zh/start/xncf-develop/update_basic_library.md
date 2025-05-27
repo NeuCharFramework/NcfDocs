@@ -2,7 +2,7 @@
 
 ## 什么是更新基础库？
 
-更新基础库的意思就是更新 NCF 中引用的底层核心库的 Nuget 版本，这些基础库大部分是 NCF 的基础库（如 XNCF 模块），也会包含部分第三方库
+更新基础库的意思就是更新 NCF 中引用的底层核心库的 Nuget 版本，这些基础库大部分是 NCF 的基础库（如 XNCF 模块），也会包含部分第三方库。
 
 ## 如何更新基础库
 
@@ -34,9 +34,9 @@
 
 第一步：打开命令行工具
 
-Windows：打开 CMD 或 PowerShell 命令行
+Windows：打开 CMD 或 PowerShell 命令行。
 
-MacOS：打开“终端”应用程序
+MacOS：打开“终端”应用程序。
 
 第二步：安装工具
 
@@ -53,37 +53,27 @@ dotnet tool install --global dotnet-outdated-tool
 
 > 注意：工具只需要安装一次，除非需要升级，否则后续不需要重复安装
 
-如果是 MacOS，可能会要求你多运行一条指令，将工具存入到环境变量中：
+如果是 MacOS，可能会要求你多运行一条指令，将工具存入到环境变量中：命令行中复制 `export PATH="$PATH:/Users/jeffreysu/.dotnet/tools"` 并执行即可（注意：每个用户路径不同），如下图：
 
 <img src="./images/xncf-develop/11-tool-install.png" />
 
-命令行中复制 `export PATH="$PATH:/Users/jeffreysu/.dotnet/tools"` 并执行即可（注意：每个用户路径不同）。
-
 第三步：进入到 NCF 的解决方案目录中
 
-命令行进入 NCF 的目录（有 \*.sln 文件的目录，即 Senparc.Web 文件夹的父层）
+命令行进入 NCF 的目录（有 \*.sln 文件的目录，即 Senparc.Web 文件夹的父层）。
 
-第四步：检查更新（可选，可以直接进入下一步）
+第四步：检查并安装更新
 
 输入：
 
 ```shell
-dotnet outdated -inc Senparc
+dotnet outdated -u:prompt -inc Senparc
 ```
 
-<img src="./images/xncf-develop/12-search-update.png" />
+<img src="./images/xncf-develop/12-check-packages.png" />
 
-> 注意：如果显示没有更新，则不用再继续下一步。
+如果检测到更新，输入 Y，即可自动完成更新。
 
-第五步：执行更新
-
-执行命令：
-
-```bash
- dotnet outdated -inc Senparc --upgrade
-```
-
-<img src="./images/xncf-develop/12-update.png" />
+<img src="./images/xncf-develop/04-updated.png" />
 
 完成。
 
@@ -105,11 +95,11 @@ dotnet outdated -inc Senparc
 
 <img src="./images/search-package-name-for-nuget.png" />
 
-点击打开
+点击打开：
 
 <img src="./images/select-package.png" />
 
-可以看到很多个版本，这里可以选择最新的
+可以看到很多个版本，这里可以选择最新的：
 
 <img src="./images/select-last-new-version.png" />
 
