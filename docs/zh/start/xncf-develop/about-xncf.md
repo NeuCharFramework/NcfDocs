@@ -28,12 +28,14 @@ Xncf 项目的命名（通常也是 dll 的文件名），每一个 Xncf 模块�
 
 ## Xncf 模块的几个重要概念
 
-| 对象                | 说明 |
-| ------------------- | ---- |
-| Register 类         |      |
-| [XncfRegister] 特性 |      |
-| IxncfRegister 接口  |      |
-| 更多可选接口        |      |
+| 对象                | 说明                                                                        |
+| ------------------- | --------------------------------------------------------------------------- |
+| Register 类         | 当前模块的注册信息，可以让 NCF 识别当前项目为一个 XNCF 模块并将其自动注册。 |
+| [XncfRegister] 特性 | 用于标记 Register 类。                                                      |
+| [XncfOrder] 特性    | 用于控制 Register 类的启动顺序，数字越大，优先级越高（启动越早）            |
+| 更多可选接口        | 请见下文“更多可选接口”                                                      |
+
+> 上述可选接口实现后，系统将自动激活对应功能。
 
 ### IXncfRegister 接口（必须）
 
@@ -45,7 +47,7 @@ Xncf 项目的命名（通常也是 dll 的文件名），每一个 Xncf 模块�
 
 为了方便开发者使用，NCF 默认提供了一个基于 `IXncfRegister` 接口的实现：`XncfRegisterBase`，因此，通常我们只需要在项目中，创建一个 `Register.cs` 类文件，然后继承 `XncfRegisterBase` 基类，并实现其指定的接口，即可使这个项目快速变成一个 Xncf 模块。
 
-#### [XncfRegister] 特性
+### [XncfRegister] 特性
 
 在每个模块项目自定义的 `Register` 类上，使用 [XncfRegister] 特性，使系统可以快速识别当前类为 Xncf 注册类（预留功能，建议都加上）。
 
@@ -80,17 +82,17 @@ namespace Senparc.Xncf.XncfBuilder
 }
 ```
 
-#### [XncfOrder] 特性
+### [XncfOrder] 特性
 
 您可以为 Register 类添加 [XncfOrder] 特性，来设置当前 XNCF 模块的载入次序。此特性构造函数内提供了排序的数字（`order` 参数），在系统载入时，按照降序排列（数字越大越在前），如：
 
 ```csharp
-    [XncfRegister]
-    [XncfOrder(4090)]
-    public partial class Register : XncfRegisterBase, IXncfRegister
-    {
-        //...
-    }
+[XncfRegister]
+[XncfOrder(4090)]
+public partial class Register : XncfRegisterBase, IXncfRegister
+{
+    //...
+}
 ```
 
 `order` 参数约定：
@@ -107,7 +109,7 @@ namespace Senparc.Xncf.XncfBuilder
 
 <!-- TODO：更多重写方法 -->
 
-### 更多可选接口
+## 更多可选接口
 
 在已经实现了 `IXncfRegister` 接口的基础上，根据当前模块需要支持的功能，可以继续添加可选接口，扩充 Xncf 的能力。常用的可选接口有：
 
@@ -115,13 +117,14 @@ namespace Senparc.Xncf.XncfBuilder
 | ---------------------------- | -------------------------------------------- |
 | IXncfFunction                | 函数（Function），即最小化完成一个任务的方法 |
 | IXncfDatabase                | 数据库，支持多数据库                         |
-| IXncfRazorRuntimeCompilation | 包含网页时，对 RazorPage 进行运行时编译      |
 | IXncfMiddleware              | 定义一个 .NET Core 的中间件（Middleware）    |
 | IXncfThread                  | 支持后台线程                                 |
+| ｜ IAreaRegister             | 为当前项目的 Razor 页面进行区域（Area）注册  |
+| IXncfRazorRuntimeCompilation | 包含网页时，对 RazorPage 进行运行时编译      |
 
 每个接口具体的定义和最终效果都会在后续开发中介绍。
 
-#### IXncfDatabase 接口（可选）
+### IXncfDatabase 接口（可选）
 
 Register 类继承 IXncfDatabase 并实现接口方法后，即可激活数据库能力。
 
@@ -130,39 +133,35 @@ Register 类继承 IXncfDatabase 并实现接口方法后，即可激活数据�
 模板默认代码如下：
 
 ```csharp
-    public partial class Register : IXncfDatabase  //注册 XNCF 模块数据库（按需选用）
+public partial class Register : IXncfDatabase  //注册 XNCF 模块数据库（按需选用）
+{
+    /// <summary>
+    /// 数据库前缀
+    /// </summary>
+    public const string DATABASE_PREFIX = "Senparc_PromptRange_";
+
+    /// <summary>
+    /// 数据库前缀
+    /// </summary>
+    public string DatabaseUniquePrefix => DATABASE_PREFIX;
+
+    /// <summary>
+    /// 动态获取数据库上下文
+    /// </summary>
+    public Type TryGetXncfDatabaseDbContextType => MultipleDatabasePool.Instance.GetXncfDbContextType(this);
+
+    public void OnModelCreating(ModelBuilder modelBuilder)
     {
-        #region IXncfDatabase 接口
-
-        /// <summary>
-        /// 数据库前缀
-        /// </summary>
-        public const string DATABASE_PREFIX = "Senparc_PromptRange_";
-
-        /// <summary>
-        /// 数据库前缀
-        /// </summary>
-        public string DatabaseUniquePrefix => DATABASE_PREFIX;
-
-        /// <summary>
-        /// 动态获取数据库上下文
-        /// </summary>
-        public Type TryGetXncfDatabaseDbContextType => MultipleDatabasePool.Instance.GetXncfDbContextType(this);
-
-        public void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            //实现 [XncfAutoConfigurationMapping] 特性之后，可以自动执行，无需手动添加
-            //modelBuilder.ApplyConfiguration(new AreaTemplate_ColorConfigurationMapping());
-        }
-
-        public void AddXncfDatabaseModule(IServiceCollection services)
-        {
-            //DOT REMOVE OR MODIFY THIS LINE 请勿移除或修改本行 - Entities Point
-            //ex. services.AddScoped(typeof(Color));
-        }
-
-        #endregion
+        //实现 [XncfAutoConfigurationMapping] 特性之后，可以自动执行，无需手动添加
+        //modelBuilder.ApplyConfiguration(new AreaTemplate_ColorConfigurationMapping());
     }
+
+    public void AddXncfDatabaseModule(IServiceCollection services)
+    {
+        //DOT REMOVE OR MODIFY THIS LINE 请勿移除或修改本行 - Entities Point
+        //ex. services.AddScoped(typeof(Color));
+    }
+}
 ```
 
 `DATABASE_PREFIX` 提供了一个数据库前缀的常量，默认的命名规则为”`组织名字`_`模块名称`_”，最终如：`Senparc_PromptRange_`。
@@ -175,13 +174,103 @@ Register 类继承 IXncfDatabase 并实现接口方法后，即可激活数据�
 
 <!-- TODO：介绍 SenparcEntities -->
 
-<!--
-以下逐一介绍。
+### IXncfMiddleware 接口（可选）
 
-#### IXncfRazorRuntimeCompilation 接口（可选）
+IXncfMiddleware 接口用于定义一个 .NET Core 的中间件（Middleware），在系统启动时自动激活（无论当前 XNCF 模块是否在管理员后台安装）。
 
+实现 IXncfMiddleware 接口需要实现 `UseMiddleware` 方法，内部逻辑代码和 .NET Core 完全一致。如下所示：
 
-#### IXncfMiddleware 接口（可选）
+```csharp
+public partial class Register : IXncfMiddleware
+{
+    public void UseMiddleware(IApplicationBuilder app)
+    {
+        //app.UseMiddleware<YourMiddleware>();
+        //app.XXX;
+    }
+}
+```
 
+> 您可以结合 [XncfOrder] 特性来控制当前 Register 运行的顺序，从而控制 Middleware 的启动顺序。
 
-#### IXncfThread 接口（可选） -->
+### IXncfThread 接口（可选）
+
+IXncfThread 接口用于定义一个后台线程，在系统启动时自动激活（无论当前 XNCF 模块是否在管理员后台安装）。
+
+实现 IXncfThread 接口需要实现 `ThreadConfig` 方法，用于设置线程的执行周期和执行内容。如下所示：
+
+```csharp
+public partial class Register : IXncfThread
+{
+    public void ThreadConfig(XncfThreadBuilder xncfThreadBuilder)
+    {
+        xncfThreadBuilder.AddThreadInfo(new Ncf.XncfBase.Threads.ThreadInfo(
+            name: "定时发送邮件任务",
+            intervalTime: TimeSpan.FromSeconds(60),//每隔 60 秒执行一次
+            task: async (app, threadInfo) =>
+            {
+                try
+                {
+                    using (var scope = app.ApplicationServices.CreateScope())
+                    {
+                        var serviceProvider = scope.ServiceProvider;
+                        var emailService = serviceProvider.GetService<EmailService>();
+                        await emailService.SendEmailAsync();
+                    }
+                }
+                catch (NcfModuleException ex)
+                {
+                    throw;
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    threadInfo.RecordStory("定时邮件发送结束");
+                }
+            },
+            exceptionHandler: ex =>
+            {
+                SenparcTrace.SendCustomLog("AutoSendEmail", $@"{ex.Message}
+{ex.StackTrace}
+{ex.InnerException?.StackTrace}");
+                return Task.CompletedTask;
+            }));
+    }
+}
+```
+
+### IAreaRegister 接口（可选）
+
+IAreaRegister 接口用于定义一个 Razor 页面区域（Area）注册，用于支持 Razor 页面的自动注册。
+
+```csharp
+
+//指定首页路径，将出现在当前模块的设置菜单中。
+public string HomeUrl => "/Admin/AgentsManager/Index";
+
+//指定更多菜单路径
+public List<AreaPageMenuItem> AreaPageMenuItems => new List<AreaPageMenuItem>() {
+                    new AreaPageMenuItem(GetAreaHomeUrl(),"首页","fa fa-laptop"),
+			};
+
+public IMvcBuilder AuthorizeConfig(IMvcBuilder builder, IHostEnvironment env)
+{
+    builder.AddRazorPagesOptions(options =>
+    {
+        //此处可配置页面权限
+    });
+
+    SenparcTrace.SendCustomLog("AgentsManager 启动", "完成 Area:Senparc.Xncf.AgentsManager 注册");
+
+    return builder;
+}
+```
+
+<!-- TODO: 加上图片帮助理解 -->
+
+### IXncfRazorRuntimeCompilation 接口（可选）
+
+IXncfRazorRuntimeCompilation 接口用于定义一个 RazorPage 运行时编译，用于支持 RazorPage 的实时编译，通常和 IAreaRegister 接口一起使用。

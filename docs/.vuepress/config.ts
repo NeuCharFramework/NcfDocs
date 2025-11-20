@@ -193,6 +193,7 @@ export default defineUserConfig({
           },
         },
       },
+      maxResultsPerGroup: 10,
     }),
     googleAnalyticsPlugin({
       // we have multiple deployments, which would use different id

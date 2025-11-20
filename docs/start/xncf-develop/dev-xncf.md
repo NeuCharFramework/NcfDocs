@@ -288,7 +288,7 @@ namespace Senparc.Xncf.Admin.Models.DatabaseModel
 
 The web page section in the module is located at
 
-<img src="./images/xncf-module-area1.png" />
+<img src="./images/xncf-module-area.png" />
 
 The page layout can be customized according to your actual needs.
 

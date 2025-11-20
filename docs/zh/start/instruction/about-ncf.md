@@ -57,21 +57,6 @@ Apache License V2.0
 
 > 我们欢迎第三方开源组件提供自己的解决方案，我们将会测试并集成到 NCF 中。
 
-<!-- NCF 除了会为大家提供完善的框架代码，我们还在着手：
-
-
-1. [x] 提供完善的项目自动生成服务（参考 [WeChatSampleBuilder](http://sdk.weixin.senparc.com/Home/WeChatSampleBuilder)），为开发者提供项目定制生成服务。
-
-1. [x] 提供快捷的模块化开发和安装方法。
-
-1. [ ] 开源 [NeuChar.com](https://www.neuchar.com/) 中的微信功能模块，可使用独立模块集成。
-
-1. [x]提供完善的示例代码和文档。
-
-1. [ ]提供博客和视频教程（也欢迎开发者参与或发起）。
-
-1. [x]提供交流社区，包括但不仅限于[问答网站](https://weixin.senparc.com/QA)、[QQ群](#qq-技术交流群)、微信群、直播群。 -->
-
 ## QQ 技术交流群
 
 <img src="https://sdk.weixin.senparc.com/images/QQ_Group_Avatar/NCF/QQ-Group.jpg" width="380" />

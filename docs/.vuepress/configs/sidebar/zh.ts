@@ -155,6 +155,19 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
   ],
+  '/zh/MCP/': [
+    {
+      text: 'MCP 模块',
+      children: [
+        '/zh/MCP/home/index.md',
+        '/zh/MCP/installation.md',
+        '/zh/MCP/basic-usage.md',
+        '/zh/MCP/advanced-features.md',
+        '/zh/MCP/api-reference.md',
+        '/zh/MCP/faq.md',
+      ],
+    },
+  ],
   '/zh/SenparcAI/': [
     {
       text: 'Senparc.AI',

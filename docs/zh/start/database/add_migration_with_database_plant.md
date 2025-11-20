@@ -4,6 +4,7 @@
 
 > 修改 `Senparc.Web\App_Data\DataBase\SenparcConfig.config` 文件中的 `Local-SqlServer` 节点
 
+```xml
     <SenparcConfig>
     	<Id>3</Id>
     	<Name>Local-SqlServer</Name>
@@ -13,9 +14,11 @@
     	<!--<ConnectionStringFull><![CDATA[Server=172.17.160.1; initial catalog=NCF;User ID=sa; Password=2wsx@WSX;MultipleActiveResultSets=True;App=EntityFramework]]></ConnectionStringFull>-->
     	<ApplicationPath><![CDATA[/]]></ApplicationPath>
     </SenparcConfig>
+```
 
 > 找到自己的模块中定义数据库的配置文件 `Senparc.Xncf.Demo\Senparc.Xncf.Demo.csproj` ,修改节点 `Local-SqlServer`
 
+```xml
     <SenparcConfig>
     	<Id>2</Id>
     	<Name>Local-SqlServer</Name>
@@ -23,9 +26,11 @@
     	<ConnectionStringFull><![CDATA[Server=PC-20210411JFTZ;Database=NCF; initial catalog=NCF;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework]]></ConnectionStringFull>
     	<ApplicationPath><![CDATA[/]]></ApplicationPath>
     </SenparcConfig>
+```
 
 > 找到停机坪定义数据库的配置文件 `Senparc.Web.DatabasePlant\App_Data\Database\SenparcConfig.config` ,修改节点 `Local-SqlServer`
 
+```xml
     <SenparcConfig>
     	<Id>2</Id>
     	<Name>Local-SqlServer</Name>
@@ -33,6 +38,7 @@
     	<ConnectionStringFull><![CDATA[Server=.\;Database=NCF; initial catalog=NCF;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework]]></ConnectionStringFull>
     	<ApplicationPath><![CDATA[/]]></ApplicationPath>
     </SenparcConfig>
+```
 
 ## 原数据库表结构
 
