@@ -149,7 +149,10 @@ export const sidebarZh: SidebarConfig = {
     },
     {
       text: 'Docker部署',
-      children: ['/zh/Deploy/docker/ncf-website.md'],
+      children: [
+        '/zh/Deploy/docker/ncf-dockerfile.md',
+        '/zh/Deploy/docker/ncf-website.md',
+      ],
     },
   ],
   '/zh/SenparcAI/': [
