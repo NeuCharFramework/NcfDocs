@@ -1,5 +1,41 @@
 # 日志
 
+## 2025-12-16更新
+
+新版本 PromptRange 已经支持可视化查看，双击 A 标签（Aimming）可以快速到达对应提示词。不同颜色表示不同评分状态。默认视图下，纵向是T,横向是 A
+
+<img src="./images/log/log-2025121601.png" />
+
+<img src="./images/log/log-2025121602.png" />
+
+## 2025-12-14更新
+
+PromptRange 已经提供 Chat 功能，第一次打靶完成后，可以在第一条记录中“继续对话”，后续会提供所有连发记录的“继续对话”。“对话”过程不允许（不会）改变任何参数，如果需要改变参数，请另外开设靶道。
+
+<img src="./images/log/log-2025121401.png" />
+
+<img src="./images/log/log-2025121402.png" />
+
+<img src="./images/log/log-2025121403.png" />
+
+发了新的连发的也可以继续对话了，PromptRange 0.15.1-preview.1
+
+## 2025-12-11更新
+
+PromptRange 新版本发布，支持关键字高亮，已经增加对话测界面（目前是 hard code，功能完善中，此功能将在下一个版本中和 今天周三分享说的对外 API 一起发布正式版）
+
+<img src="./images/log/log-2025121101.png" />
+
+## 2025-11-16更新
+
+NCF v0.31.3 模板发布：https://github.com/NeuCharFramework/NCF/releases/tag/v0.31.3-build9499
+
+已经集成最新版本的基础库，包括升级之后的全新 PromptRange
+
+## 2025-11-05更新
+
+PromptRange 新版本发布，支持同一个靶场中的多个 Prompt 对比：
+
 ## 2025-05-04更新
 
 1、添加租户（还没做名称唯一性判断）
