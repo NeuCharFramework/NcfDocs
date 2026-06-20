@@ -1,64 +1,50 @@
 # Senparc.Ncf.Service
 
-## Overview
+## Positioning
 
-Senparc.Ncf.Service is a core service module in the NeuCharFramework (NCF) system. It provides essential services and interfaces for the entire framework, ensuring smooth and efficient operation.
+`Senparc.Ncf.Service` is the business-service layer above Repository. It provides transaction orchestration, mapping support, and cross-repository composition as the recommended location for domain/application logic.
 
-## Features
+## Key Types
 
-- **Modular Design**: The service is designed in a modular fashion, allowing for easy extension and customization.
-- **High Performance**: Optimized for high performance, ensuring that the services run efficiently even under heavy load.
-- **Scalability**: Built to scale with your application's needs, supporting both small and large-scale deployments.
+- `IServiceBase<T>`
+- `ServiceBase<T>`
+- `ServiceDataBase`
+- `DtoServiceBase`
+- `ResilientTransaction`
 
-## Installation
+Core folders: `ServiceBase`, `System`, `Common`
 
-To install Senparc.Ncf.Service, you can use the following command:
+## Core APIs
 
-```bash
-dotnet add package Senparc.Ncf.Service
-```
+- `GetObjectAsync / GetObjectListAsync / GetFullListAsync`
+- `SaveObjectAsync / DeleteObjectAsync / SaveObjectListAsync`
+- `BeginTransactionAsync(...) / CommitTransaction() / RollbackTransaction()`
+- `Mapping<TDto>(entity)`
+- `SetTenantInfo(RequestTenantInfo)`
 
-## Usage
-
-Below is a basic example of how to use Senparc.Ncf.Service in your application:
+## Recommended Pattern
 
 ```csharp
-using Senparc.Ncf.Service;
-
-public class MyService : BaseService
+public class DemoService : ServiceBase<DemoEntity>
 {
-    public MyService(IServiceProvider serviceProvider) : base(serviceProvider)
+    public DemoService(IServiceProvider serviceProvider) : base(serviceProvider)
     {
     }
 
-    public void MyMethod()
+    public async Task<DemoEntity> GetByCodeAsync(string code)
     {
-        // Your code here
+        return await GetObjectAsync(x => x.Code == code);
     }
 }
 ```
 
-## Configuration
+## Division of Responsibilities
 
-Configuration for Senparc.Ncf.Service can be done through the `appsettings.json` file. Below is an example configuration:
+- Repository: generic persistence primitives.
+- Service: business rules, transaction boundaries, cross-repository workflows, DTO mapping.
 
-```json
-{
-  "SenparcSetting": {
-    "IsDebug": true,
-    "DefaultCacheNamespace": "Senparc"
-  }
-}
-```
+## Recommendations
 
-## Documentation
-
-For more detailed documentation, please visit the [official documentation](https://www.senparc.com/).
-
-## Support
-
-If you encounter any issues or have any questions, please feel free to contact our support team at support@senparc.com.
-
-## License
-
-Senparc.Ncf.Service is licensed under the MIT License. For more details, please refer to the [LICENSE](https://github.com/Senparc/NeuCharFramework/blob/master/LICENSE) file.
+- Keep business logic in services, not in controllers/app-services.
+- Make multi-step writes explicitly transactional.
+- Validate tenant context early when handling tenant-isolated data.

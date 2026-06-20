@@ -111,9 +111,23 @@ export const sidebarZh: SidebarConfig = {
   ],
   '/zh/NcfPackageSources/': [
     {
+      text: '新手入口与能力说明',
+      children: [
+        '/zh/NcfPackageSources/home/beginner-quickstart',
+        '/zh/NcfPackageSources/home/index.md',
+        '/zh/NcfPackageSources/home/capability-guide',
+        '/zh/NcfPackageSources/home/version-upgrade-notes',
+      ],
+    },
+    {
+      text: 'XNCF 扩展库',
+      children: ['/zh/NcfPackageSources/home/xncf-extension-modules'],
+    },
+    {
       text: 'NCF 基础库',
       children: [
         '/zh/NcfPackageSources/libs/Senparc.Ncf.Core',
+        '/zh/NcfPackageSources/libs/Senparc.Ncf.Database',
         '/zh/NcfPackageSources/libs/Senparc.Ncf.Repository',
         '/zh/NcfPackageSources/libs/Senparc.Ncf.Service',
         '/zh/NcfPackageSources/libs/Senparc.Ncf.SMS',
@@ -126,7 +140,7 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
     {
-      text: 'Senparc.Ncf.AreaBase',
+      text: '核心接口',
       children: [
         '/zh/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IxncfRegister',
       ],
