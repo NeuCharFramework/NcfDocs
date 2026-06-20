@@ -1,205 +1,64 @@
-# IXncfRegister Interface
+# IXncfRegister Interface (Current)
+
+> Baseline: `src/Basic/Senparc.Ncf.XncfBase/Interfaces/IXncfRegister.cs` (current version)
+
+## 1. Contract Responsibility
+
+`IXncfRegister` is the module registration contract for each XNCF module. It defines:
+
+- module metadata (Name/Uid/Version/MenuName/Icon/Description)
+- module lifecycle hooks
+- AutoMapper mapping hooks
+- module thread information
+- MCP enablement and registration hooks
+
+## 2. Key Properties
 
 ```csharp
-    public interface IXncfRegister
-    {
-        /// <summary>
-        /// Whether to ignore installation (but does not affect the execution of registration code)
-        /// </summary>
-        bool IgnoreInstall { get; }
-
-        /// <summary>
-        /// Module name, globally unique
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// Identifier, globally unique
-        /// </summary>
-        string Uid { get; }
-
-        /// <summary>
-        /// Version number
-        /// </summary>
-        string Version { get; }
-
-        /// <summary>
-        /// Menu name
-        /// </summary>
-        string MenuName { get; }
-
-        /// <summary>
-        /// Icon
-        /// </summary>
-        string Icon { get; }
-
-        /// <summary>
-        /// Description
-        /// </summary>
-        string Description { get; }
-
-        /// <summary>
-        /// Registration method, the order of registration determines the order of arrangement in the interface
-        /// </summary>
-        IList<Type> Functions { get; }
-
-        /// <summary>
-        /// Add AutoMap mapping
-        /// </summary>
-        ConcurrentBag<Action<Profile>> AutoMapMappingConfigs { get; set; }
-
-        /// <summary>
-        /// Get the registered thread information of the current module
-        /// </summary>
-        IEnumerable<KeyValuePair<ThreadInfo, Thread>> RegisteredThreadInfo { get; }
-
-        /// <summary>
-        /// Installation code
-        /// </summary>
-        Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate);
-
-        /// <summary>
-        /// Uninstallation code
-        /// </summary>
-        Task UninstallAsync(IServiceProvider serviceProvider, Func<Task> unsinstallFunc);
-
-        /// <summary>
-        /// Get homepage URL
-        /// <para>Only valid after implementing the IAreaRegister interface, otherwise returns null</para>
-        /// </summary>
-        /// <returns></returns>
-        string GetAreaHomeUrl();
-
-        /// <summary>
-        /// Get URL of other Area pages
-        /// </summary>
-        /// <param name="path">URL path (without uid parameter)</param>
-        /// <returns></returns>
-        string GetAreaUrl(string path);
-
-        /// <summary>
-        /// Register the current module when ConfigureServices starts
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        /// <param name="configuration">Configuration</param>
-        /// <returns></returns>
-        IServiceCollection AddXncfModule(IServiceCollection services, IConfiguration configuration);
-
-        /// <summary>
-        /// Add AutoMap mapping relationship
-        /// </summary>
-        /// <param name="mapping"></param>
-        void AddAutoMapMapping(Action<Profile> mapping);
-
-        /// <summary>
-        /// Execute configuration in the Configure() method of startup.cs
-        /// </summary>
-        /// <param name="app"></param>
-        /// <param name="registerService">CO2NET registration object</param>
-        /// <returns></returns>
-        IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService);
-    }
+bool IgnoreInstall { get; }
+bool EnableMcpServer { get; }
+string Name { get; }
+string Uid { get; }
+string Version { get; }
+string MenuName { get; }
+string Icon { get; }
+string Description { get; }
+ConcurrentBag<Action<Profile>> AutoMapMappingConfigs { get; set; }
+IEnumerable<KeyValuePair<ThreadInfo, Thread>> RegisteredThreadInfo { get; }
 ```
 
-# IXncfRegister Interface
+## 3. Key Methods
 
 ```csharp
-    public interface IXncfRegister
-    {
-        /// <summary>
-        /// Whether to ignore installation (but does not affect the execution of registration code)
-        /// </summary>
-        bool IgnoreInstall { get; }
+Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate);
+Task UninstallAsync(IServiceProvider serviceProvider, Func<Task> unsinstallFunc);
 
-        /// <summary>
-        /// Module name, globally unique
-        /// </summary>
-        string Name { get; }
+string GetAreaHomeUrl();
+string GetAreaUrl(string path);
 
-        /// <summary>
-        /// Identifier, globally unique
-        /// </summary>
-        string Uid { get; }
+IServiceCollection AddXncfModule(IServiceCollection services, IConfiguration configuration, IHostEnvironment env);
+void AddAutoMapMapping(Action<Profile> mapping);
+void OnAutoMapMapping(IServiceCollection services, IConfiguration configuration);
 
-        /// <summary>
-        /// Version number
-        /// </summary>
-        string Version { get; }
+IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService);
 
-        /// <summary>
-        /// Menu name
-        /// </summary>
-        string MenuName { get; }
-
-        /// <summary>
-        /// Icon
-        /// </summary>
-        string Icon { get; }
-
-        /// <summary>
-        /// Description
-        /// </summary>
-        string Description { get; }
-
-        /// <summary>
-        /// Registration method, the order of registration determines the order of arrangement in the interface
-        /// </summary>
-        IList<Type> Functions { get; }
-
-        /// <summary>
-        /// Add AutoMap mapping
-        /// </summary>
-        ConcurrentBag<Action<Profile>> AutoMapMappingConfigs { get; set; }
-
-        /// <summary>
-        /// Get the registered thread information of the current module
-        /// </summary>
-        IEnumerable<KeyValuePair<ThreadInfo, Thread>> RegisteredThreadInfo { get; }
-
-        /// <summary>
-        /// Installation code
-        /// </summary>
-        Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate);
-
-        /// <summary>
-        /// Uninstallation code
-        /// </summary>
-        Task UninstallAsync(IServiceProvider serviceProvider, Func<Task> unsinstallFunc);
-
-        /// <summary>
-        /// Get homepage URL
-        /// <para>Only valid after implementing the IAreaRegister interface, otherwise returns null</para>
-        /// </summary>
-        /// <returns></returns>
-        string GetAreaHomeUrl();
-
-        /// <summary>
-        /// Get URL of other Area pages
-        /// </summary>
-        /// <param name="path">URL path (without uid parameter)</param>
-        /// <returns></returns>
-        string GetAreaUrl(string path);
-
-        /// <summary>
-        /// Register the current module when ConfigureServices starts
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        /// <param name="configuration">Configuration</param>
-        /// <returns></returns>
-        IServiceCollection AddXncfModule(IServiceCollection services, IConfiguration configuration);
-
-        /// <summary>
-        /// Add AutoMap mapping relationship
-        /// </summary>
-        /// <param name="mapping"></param>
-        void AddAutoMapMapping(Action<Profile> mapping);
-
-        /// <summary>
-        /// Execute configuration in the Configure() method of startup.cs
-        /// </summary>
-        /// <param name="app"></param>
-        /// <param name="registerService">CO2NET registration object</param>
-        /// <returns></returns>
-        IApplicationBuilder UseXncfModule(IApplicationBuilder app, IRegisterService registerService);
-    }
+void AddMcpServer(IServiceCollection services, IXncfRegister xncfRegister);
+void UseMcpServer(IApplicationBuilder app, IRegisterService registerService);
 ```
+
+## 4. Implementation Notes (Important)
+
+- `IList<Type> Functions` is commented out in the current contract and should not be treated as the primary registration path.
+- The recommended function model is `[FunctionRender]` scanning on AppService methods.
+- `AddXncfModule` includes `IHostEnvironment env` in the method signature.
+- MCP members are part of the contract (`EnableMcpServer`, `AddMcpServer`, `UseMcpServer`).
+
+## 5. Recommended Implementation Pattern
+
+For new modules, inherit from `XncfRegisterBase` and override only required points:
+
+- metadata
+- install/uninstall behavior
+- DI registration in `AddXncfModule`
+- middleware/static resource registration in `UseXncfModule`
+- MCP enablement via `EnableMcpServer => true` when needed

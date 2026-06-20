@@ -1,74 +1,91 @@
 # Senparc.Ncf.Core
 
-## Overview
+## Positioning
 
-Senparc.Ncf.Core is the core library of the NeuCharFramework (NCF). It provides fundamental functionalities and interfaces for the entire framework.
+`Senparc.Ncf.Core` is the foundational runtime core of NCF. It provides the shared infrastructure that module-level code relies on: authorization, cache, event bus, assembly scanning, work context, and app-service baseline contracts.
 
-## Features
+## Key Capabilities
 
-- **Modular Design**: The framework adopts a modular design, allowing developers to easily extend and customize functionalities.
-- **High Performance**: Optimized for high performance, ensuring efficient execution of tasks.
-- **Cross-Platform**: Compatible with multiple platforms, including Windows, Linux, and macOS.
-- **Open Source**: The entire framework is open source, encouraging community contributions and transparency.
+## 1. Startup and Assembly Coordination
 
-## Installation
+Related folders: `AssembleScan`, `Areas`, `Area`  
+Related types: `AssembleScanHelper`, `IAreaRegister`
 
-To install Senparc.Ncf.Core, you can use the following command:
+Together with `Senparc.Ncf.XncfBase.Register.StartNcfEngine(...)`, it supports:
 
-```bash
-dotnet add package Senparc.Ncf.Core
+- assembly scanning
+- XNCF module discovery
+- AppService scanning
+- baseline DI registration
+
+## 2. EventBus (High-Concurrency)
+
+Related folder: `EventBus`  
+Core files: `InMemoryEventBus.cs`, `EventBusHostedService.cs`, `EventBusExtensions.cs`
+
+Current capabilities:
+
+- configurable concurrent consumption
+- retry with exponential backoff
+- event deduplication by event ID window
+- chain depth limits
+- circular reference detection
+
+Recommended registration:
+
+```csharp
+services.AddSenparcEventBus(options =>
+{
+    options.MaxConcurrency = Math.Max(8, Environment.ProcessorCount * 2);
+    options.EnableDuplicateDetection = true;
+    options.RetryOnFailure = true;
+    options.MaxRetryAttempts = 3;
+    options.MaxEventChainDepth = 10;
+    options.EnableCircularReferenceDetection = true;
+}, typeof(YourEventHandler).Assembly);
 ```
 
-## Getting Started
+## 3. Authorization Foundation
 
-To get started with Senparc.Ncf.Core, follow these steps:
+Related folder: `Authorization`
 
-1. **Create a new project**: Use the .NET CLI to create a new project.
+Provides permission requirements, filters, handlers, and reusable authorization primitives for both system and business modules.
 
-   ```bash
-   dotnet new console -n MyNcfProject
-   cd MyNcfProject
-   ```
+## 4. Multi-Tenant Context
 
-2. **Add the Senparc.Ncf.Core package**: Add the package to your project.
+Related folder: `MultiTenant`  
+Key types: `RequestTenantInfo`, `TenantRule`
 
-   ```bash
-   dotnet add package Senparc.Ncf.Core
-   ```
+Delivers tenant context propagation into Service/Repository layers and supports explicit tenant-ignore contracts when needed.
 
-3. **Initialize the framework**: Initialize the framework in your `Program.cs` file.
+## 5. AppService Contracts and Helpers
 
-   ```csharp
-   using Senparc.Ncf.Core;
+Related folders: `AppServices`, `Models/AppServices`
 
-   class Program
-   {
-       static void Main(string[] args)
-       {
-           // Initialize NCF
-           NcfCore.Initialize();
-           Console.WriteLine("NCF Initialized!");
-       }
-   }
-   ```
+Includes:
 
-## Documentation
+- `AppServiceBase`
+- `FunctionRenderAttribute`
+- shared request/response and app-service helper model
 
-For detailed documentation, please visit the [official documentation](https://docs.senparc.com/).
+This is the base layer behind XNCF function execution.
 
-## Contributing
+## 6. Runtime Configuration and State
 
-We welcome contributions from the community. To contribute, please follow these steps:
+Related folder: `Config`  
+Key types: `SiteConfig`, `NcfCoreState`
 
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Commit your changes.
-4. Push your branch and create a pull request.
+Holds important runtime state and configuration switches used across module initialization and execution.
 
-## License
+## Typical Use Cases
 
-Senparc.Ncf.Core is licensed under the MIT License. For more details, see the [LICENSE](https://github.com/Senparc/NCF/blob/master/LICENSE) file.
+- cross-module asynchronous collaboration via EventBus
+- unified admin authorization baseline
+- multi-tenant request isolation support
+- shared app-service model for extensions
 
-## Contact
+## Recommendations
 
-For any questions or support, please contact us at [support@senparc.com](mailto:support@senparc.com).
+- Keep global behavior concerns (auth/event/config) at Core level.
+- EventBus is in-memory by default; use Outbox/persistent queue strategy for critical business chains.
+- Validate tenant-context propagation carefully in async flows before production release.

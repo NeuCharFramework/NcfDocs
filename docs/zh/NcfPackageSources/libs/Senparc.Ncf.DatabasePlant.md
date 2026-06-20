@@ -1,21 +1,32 @@
 # Senparc.Ncf.DatabasePlant
 
-Plant 意为“车间”，对战斗机来说，更像是“停机坪”，这意味着当你准备检修战斗机（模块）的时候，需要用到它。
+## 定位
 
-## 用途
+`DatabasePlant` 可以理解为“数据库检修平台（停机坪）”：它聚合了多数据库配置能力，适合在开发/调试阶段执行迁移、对照、批量维护。
 
-因为有了所有数据库 DatabaseConfiguration 的引用，这就意味着：一旦项目（模块）引用了 Senparc.Ncf.DatabasePlant，那么就可以获得操作所有（已经实现的）数据库的能力。
+## 核心价值
 
-但是我们也知道，如果带着一堆数据库的 Providers 部署到生产环境，是一个负担（虽然通常对运行效率并不会有影响），
-因此，我们只建议在“检修”（Debug）的时候去使用它，而在生产环境屏蔽它，为了能够顺利切换这两个场景，我们可以在引用 Senparc.Ncf.DatabasePlant 的时候，加上编译条件，如：
+- 当模块引用 `Senparc.Ncf.DatabasePlant` 后，可统一访问已实现的数据库配置能力。
+- 在多数据库并行维护时（SqlServer/MySql/PostgreSQL/Oracle/Sqlite/DM/InMemory）更高效。
 
-```XML
+## 推荐使用策略
+
+- **Debug/维护环境**：可启用 `DatabasePlant`，用于迁移与排障。
+- **Release/生产环境**：建议通过条件编译排除，降低运行负担与误操作风险。
+
+示例：仅在非 Release 引用
+
+```xml
 <ProjectReference Condition=" '$(Configuration)' != 'Release' " Include="..\..\..\Basic\Senparc.Ncf.DatabasePlant\Senparc.Ncf.DatabasePlant.csproj" />
 ```
 
-这也正是“停机坪”名称的由来：我们只在 Debug 的时候让项目“躺”在停机坪上，可以对数据库进行比如 Migration（迁移） 等各类针对多有数据库的批量操作，
-而当 NCF 起飞（Release）后，这个包会被自动忽略，不会给系统带来额外的负担。
+## 与 DatabaseToolkit 的关系
 
-## 应用
+- `DatabasePlant`：偏“能力聚合层”。
+- `Senparc.Xncf.DatabaseToolkit`：偏“可视化/函数化运维入口”。
 
-[Senparc.Ncf.DatabasePlant](/start/database/database_plant.html)
+两者组合可覆盖大部分数据库维护场景，但请务必遵守最小权限和备份先行原则。
+
+## 相关文档
+
+- [数据库组装厂（入门）](/zh/start/database/database_plant.html)

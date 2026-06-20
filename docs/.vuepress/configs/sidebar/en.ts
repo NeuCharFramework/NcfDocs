@@ -108,9 +108,23 @@ export const sidebarEn: SidebarConfig = {
   ],
   '/NcfPackageSources/': [
     {
+      text: 'Quickstart And Capability Guide',
+      children: [
+        '/NcfPackageSources/home/beginner-quickstart',
+        '/NcfPackageSources/home/index.md',
+        '/NcfPackageSources/home/capability-guide',
+        '/NcfPackageSources/home/version-upgrade-notes',
+      ],
+    },
+    {
+      text: 'XNCF Extension Modules',
+      children: ['/NcfPackageSources/home/xncf-extension-modules'],
+    },
+    {
       text: 'NCF Libraries',
       children: [
         '/NcfPackageSources/libs/Senparc.Ncf.Core',
+        '/NcfPackageSources/libs/Senparc.Ncf.Database',
         '/NcfPackageSources/libs/Senparc.Ncf.Repository',
         '/NcfPackageSources/libs/Senparc.Ncf.Service',
         '/NcfPackageSources/libs/Senparc.Ncf.SMS',
@@ -123,7 +137,7 @@ export const sidebarEn: SidebarConfig = {
       ],
     },
     {
-      text: 'Senparc.Ncf.AreaBase',
+      text: 'Core Interfaces',
       children: ['/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IxncfRegister'],
     },
   ],

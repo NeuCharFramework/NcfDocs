@@ -1,67 +1,49 @@
 # Senparc.Ncf.Repository
 
-## Overview
+## Positioning
 
-Senparc.Ncf.Repository is a core component of the NeuCharFramework (NCF) system. It provides a set of standardized data access interfaces and implementations, which facilitate the development and maintenance of applications.
+`Senparc.Ncf.Repository` is the EF Core-based data access abstraction in NCF. It standardizes query, CRUD, paging, sorting, and transaction primitives for upper layers.
 
-## Features
+## Key Types
 
-- **Unified Interface**: Provides a unified data access interface, reducing the learning curve for developers.
-- **Extensibility**: Supports custom extensions, allowing developers to extend functionality as needed.
-- **Compatibility**: Compatible with various databases, making it easy to switch between different database systems.
+- `IRepositoryBase<T>`: repository contract
+- `RepositoryBase<T>`: default implementation
+- `IClientRepositoryBase<T>` / `ClientRepositoryBase<T>`: client-side repository abstraction
+- `XncfModuleRepository`: module metadata repository
 
-## Installation
+Core folders: `BaseRepoisitory`, `System`
 
-To install Senparc.Ncf.Repository, you can use the following command:
+## Capability Overview
 
-```bash
-dotnet add package Senparc.Ncf.Repository
-```
+`IRepositoryBase<T>` includes:
 
-## Usage
+- sync/async conditional querying and paging
+- dynamic order-by field support
+- count/sum aggregation
+- batch save/delete operations
+- transaction lifecycle APIs
 
-### Basic Usage
-
-Below is an example of how to use Senparc.Ncf.Repository in your project:
+Example (paged query):
 
 ```csharp
-using Senparc.Ncf.Repository;
-
-public class MyService
-{
-    private readonly IRepository<MyEntity> _repository;
-
-    public MyService(IRepository<MyEntity> repository)
-    {
-        _repository = repository;
-    }
-
-    public void AddEntity(MyEntity entity)
-    {
-        _repository.Insert(entity);
-    }
-
-    public MyEntity GetEntity(int id)
-    {
-        return _repository.GetObject(id);
-    }
-}
+var page = await _repository.GetObjectListAsync(
+    where: x => !x.Flag,
+    orderBy: x => x.Id,
+    orderingType: OrderingType.Descending,
+    pageIndex: 1,
+    pageCount: 20);
 ```
 
-### Advanced Usage
+## Collaboration With Service Layer
 
-For more advanced usage, you can refer to the official documentation at [NCF Documentation](https://www.senparc.com/).
+Avoid scattering complex repository calls directly in controllers/app-services. Prefer wrapping data access in `Senparc.Ncf.Service.ServiceBase<T>` to keep:
 
-## Contributing
+- clear transaction boundaries
+- consistent tenant context
+- unified DTO mapping strategy
 
-If you wish to contribute to the project, please follow the guidelines outlined in the [CONTRIBUTING.md](https://github.com/Senparc/NeuCharFramework/blob/master/CONTRIBUTING.md) file.
+## Recommendations
 
-## License
-
-Senparc.Ncf.Repository is licensed under the MIT License. For more details, please refer to the [LICENSE](https://github.com/Senparc/NeuCharFramework/blob/master/LICENSE) file.
-
-## Contact
-
-For any questions or feedback, please contact us at [support@senparc.com](mailto:support@senparc.com).
-
-![Senparc Logo](https://www.senparc.com/images/logo.png)
+- Keep complex joins and aggregation orchestration in service-level methods.
+- Use explicit transactions for multi-step write workflows.
+- Keep repository layer focused on generic persistence behavior, not business policy.

@@ -1,124 +1,68 @@
 # Senparc.Ncf.XncfBase
 
-## Overview
+## Positioning
 
-Senparc.Ncf.XncfBase is a base module for NCF, providing a set of basic functionalities and interfaces for developing NCF modules.
+`Senparc.Ncf.XncfBase` is the modular engine foundation of NCF. It defines and implements module registration, scanning, lifecycle management, function discovery, and MCP integration contracts.
 
-## Installation
+## Key Types
 
-To install Senparc.Ncf.XncfBase, you can use the following command:
+- `IXncfRegister`: module registration contract
+- `XncfRegisterBase`: default module register base class
+- static `Register`: global startup and scan entry
+- `XncfRegisterManager`: module register list manager
+- `FunctionRenderCollection`: discovered function storage
+- `XncfOrderAttribute`: loading priority attribute
 
-```bash
-dotnet add package Senparc.Ncf.XncfBase
-```
+## 1. Engine Startup and Scan
 
-## Usage
+Startup entry:
 
-### Creating a New Module
+- `Register.StartNcfEngine(IServiceCollection, IConfiguration, IHostEnvironment, string[] dllFilePatterns)`
 
-To create a new module, you need to inherit from the `XncfModule` class and implement the required methods.
+Scan targets:
 
-```csharp
-public class MyModule : XncfModule
-{
-    public override string Name => "MyModule";
+- `IXncfRegister` implementations
+- `XncfAutoConfigurationMappingAttribute` types
+- `[FunctionRender]` methods in `AppServiceBase` descendants
 
-    public override string Uid => "MyModule-UID";
+## 2. Module Lifecycle
 
-    public override string Version => "1.0.0";
+Typical module `Register.cs` implements:
 
-    public override string MenuName => "My Module";
+- `InstallOrUpdateAsync(...)`
+- `UninstallAsync(...)`
+- `AddXncfModule(...)`
+- `UseXncfModule(...)`
 
-    public override string Icon => "fa fa-icon";
+For modules implementing `IXncfDatabase`, database context wiring and migration hooks are integrated.
 
-    public override async Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate)
-    {
-        // Your installation or update logic here
-    }
+## 3. FunctionRender Model (Current Recommended Path)
 
-    public override async Task UninstallAsync(IServiceProvider serviceProvider, Func<Task> uninstallFunc)
-    {
-        // Your uninstallation logic here
-    }
-}
-```
+In the current version:
 
-### Registering the Module
+- registration is method-level via `[FunctionRender(...)]`
+- discovered functions are stored in `Register.FunctionRenderCollection`
+- query is supported by register type or module UID
 
-To register the module, you need to add it to the `XncfModuleCollection` in the `Startup.cs` file.
+> Legacy `IXncfRegister.Functions` list-based registration is no longer the primary pattern.
 
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddXncfModule<MyModule>();
-}
-```
+## 4. MCP Integration
 
-### Adding a Menu
+`XncfRegisterBase` already includes MCP support:
 
-To add a menu item for your module, you need to override the `GetMenuItem` method.
+- module switch: `EnableMcpServer => true`
+- service registration: `AddMcpServer(...)`
+- route activation: `UseMcpServer(...)`
 
-```csharp
-public override MenuItem GetMenuItem()
-{
-    return new MenuItem()
-    {
-        Title = "My Module",
-        Url = "/MyModule",
-        Icon = "fa fa-icon"
-    };
-}
-```
+Default route pattern: `mcp-<module-name-lowercase>`
 
-## License
+## 5. Threads and Version Helpers
 
-Senparc.Ncf.XncfBase is licensed under the MIT License. For more details, please refer to the LICENSE file.
+- `Threads/ThreadInfo`, `XncfThreadBuilder`: module thread management
+- `VersionManager/*`: version utility helpers
 
-## Contact
+## Recommendations
 
-For any questions or issues, please contact us at support@senparc.com.
-
-## Documentation
-
-For more detailed documentation, please visit our [official website](https://www.senparc.com/).
-
-## Example
-
-Here is an example of a simple module:
-
-```csharp
-public class SimpleModule : XncfModule
-{
-    public override string Name => "SimpleModule";
-
-    public override string Uid => "SimpleModule-UID";
-
-    public override string Version => "1.0.0";
-
-    public override string MenuName => "Simple Module";
-
-    public override string Icon => "fa fa-icon";
-
-    public override async Task InstallOrUpdateAsync(IServiceProvider serviceProvider, InstallOrUpdate installOrUpdate)
-    {
-        // Installation or update logic
-    }
-
-    public override async Task UninstallAsync(IServiceProvider serviceProvider, Func<Task> uninstallFunc)
-    {
-        // Uninstallation logic
-    }
-
-    public override MenuItem GetMenuItem()
-    {
-        return new MenuItem()
-        {
-            Title = "Simple Module",
-            Url = "/SimpleModule",
-            Icon = "fa fa-icon"
-        };
-    }
-}
-```
-
-This example demonstrates how to create a basic module with installation, update, and uninstallation logic, as well as how to add a menu item for the module.
+- Keep each module centered around `XncfRegisterBase` as the single registration root.
+- Standardize function exposure through `AppService + FunctionRender` for future AI/MCP reuse.
+- Before exposing MCP externally, complete auth, tool allowlisting, and audit design.
