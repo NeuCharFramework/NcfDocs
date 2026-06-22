@@ -16,6 +16,8 @@ export const navbarEn: NavbarConfig = [
           '/NcfPackageSources/home/index.md',
           '/DynamicWebApi/home/index.md',
           '/Deploy/home/index.md',
+          '/MCP/home/index.md',
+          '/SenparcAI/home/index.md',
         ],
       },
       {

@@ -161,4 +161,31 @@ export const sidebarEn: SidebarConfig = {
       children: ['/Deploy/docker/ncf-website.md'],
     },
   ],
+  '/MCP/': [
+    {
+      text: 'MCP Module',
+      children: [
+        '/MCP/home/index.md',
+        '/MCP/installation.md',
+        '/MCP/basic-usage.md',
+        '/MCP/advanced-features.md',
+        '/MCP/api-reference.md',
+        '/MCP/faq.md',
+      ],
+    },
+  ],
+  '/SenparcAI/': [
+    {
+      text: 'Senparc.AI',
+      children: ['/SenparcAI/home/index.md'],
+    },
+    {
+      text: 'Senparc.AI.Agents',
+      children: ['/SenparcAI/agents/index.md'],
+    },
+    {
+      text: 'Senparc.AI.Kernel',
+      children: ['/SenparcAI/kernel/index.md'],
+    },
+  ],
 }
