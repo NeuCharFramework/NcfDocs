@@ -2,7 +2,7 @@
 
 入口文件 `Senparc.Web\Program.cs`
 
-进入到 .Net 6 时代以后，入口的命名空间的引用全部都归集到了 `Senparc.Web\GlobalUsings.cs` 的文件中，内容如下:
+当前 .NET 10 项目的公共命名空间引用归集在 `Senparc.Web\GlobalUsings.cs` 中，例如：
 
 ```csharp
 global using Microsoft.AspNetCore.Builder;
@@ -22,9 +22,10 @@ global using Dapr.Client;
 ```json
 {
   "sdk": {
-    "version": "8.0.100"
+    "version": "10.0.100",
+    "rollForward": "latestFeature"
   }
 }
 ```
 
-可以通过修改sdk的版本号来修改当前项目使用sdk的版本
+示例版本用于说明结构；请把它改为团队已安装并由 CI 使用的 .NET 10 SDK feature band。

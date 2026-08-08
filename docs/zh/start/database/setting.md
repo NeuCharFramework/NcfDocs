@@ -32,4 +32,4 @@ C:\NCF\src\Senparc.Web\App_Data\DataBase\SenparcConfig.config
 
 请参考上述修改的方式，找到 `<Name>` 节点符合如 `Local-<数据库名称>` 的配置项，修改 `<ConnectionStringFull>` 节点的内容即可。
 
-> `Local` 字符串是默认的数据库名称，如果您需要使用其他数据库名称，请在 `appsettings.json` 中修改 `DatabaseName` 配置项。([详情](/start/config/appsettings.html#senparccoresetting-节点配置))
+> `Local` 字符串是默认的数据库名称，如果您需要使用其他数据库名称，请在 `appsettings.json` 中修改 `DatabaseName` 配置项。([详情](/zh/start/config/appsettings.html#senparccoresetting-节点配置))

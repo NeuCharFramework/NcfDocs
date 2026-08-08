@@ -7,14 +7,13 @@
 - JetBrains Rider
 - 其他所有支持 C# 编译的编辑器
 
-## .NET 框架
+## .NET SDK
 
-- .NET 9 ，SDK下载地址：[https://dotnet.microsoft.com/en-us/download/dotnet/9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
-
-  > 基础库已经支持 .NET Standard 2.1，兼容 .NET 5 和 .NET 6 , .NET 8+，NCF 模板已经使用 .NET 9 发布。
-
-- .NET 8 ，SDK下载地址：[https://dotnet.microsoft.com/en-us/download/dotnet/8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-  > 基础库已经支持 .NET Standard 2.1，兼容 .NET 5 和 .NET 6+，NCF 模板已经使用 .NET 8 发布。
+- 当前 NCF 模板、`NcfPackageSources` 模拟站点和 XNCF 模板以 **.NET 10**
+  为开发基线。SDK 下载地址：
+  [https://dotnet.microsoft.com/download/dotnet/10.0](https://dotnet.microsoft.com/download/dotnet/10.0)
+- 使用旧版 NCF 或旧 NuGet 包时，请以对应发布标签和项目文件中的
+  `TargetFramework` 为准，不要用旧版教程推断当前源码的运行时要求。
 
 ## 数据库
 
@@ -40,7 +39,7 @@
 - Android
 - iOS/tvOS/MacCatalyst
 - QEMU
-- 其他支持 .NET Core 运行的操作系统：[查看](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md)
+- 其他受支持的操作系统：[查看 .NET 10 支持策略](https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md)
 
 安装.NET Core到服务器：[https://docs.microsoft.com/zh-cn/dotnet/core/install/](https://docs.microsoft.com/zh-cn/dotnet/core/install/)
 
@@ -50,7 +49,7 @@
 - x64
 - ARM32
 - ARM64
-- 其他支持 .NET Core 运行的 CPU 架构：[查看](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md)
+- 其他受支持的 CPU 架构：[查看 .NET 10 支持策略](https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md)
 
 ## 源码
 

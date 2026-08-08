@@ -195,17 +195,28 @@ export default defineUserConfig({
       },
       maxResultsPerGroup: 10,
     }),
-    googleAnalyticsPlugin({
-      // we have multiple deployments, which would use different id
-      id: process.env.DOCS_GA_ID ?? '',
-    }),
+    // We have multiple deployments with different IDs. Do not register the
+    // plugin when an ID is absent, otherwise VuePress emits a build warning.
+    process.env.DOCS_GA_ID
+      ? googleAnalyticsPlugin({ id: process.env.DOCS_GA_ID })
+      : [],
     registerComponentsPlugin({
       componentsDir: path.resolve(__dirname, './components'),
     }),
     // only enable shiki plugin in production mode
     isProd
       ? shikiPlugin({
-          langs: ['bash', 'diff', 'json', 'md', 'ts', 'vue'],
+          langs: [
+            'bash',
+            'csharp',
+            'diff',
+            'json',
+            'md',
+            'razor',
+            'ts',
+            'vue',
+            'xml',
+          ],
           theme: 'dark-plus',
         })
       : [],

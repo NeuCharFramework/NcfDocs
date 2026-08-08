@@ -1,200 +1,100 @@
 # MCP Basic Usage
 
-This document explains MCP basics so you can quickly integrate and use AI capabilities in NCF applications.
+## 1. Define tools in an XNCF module
 
-## Core Concepts
-
-Before you start, understand these terms:
-
-- **MCP Server**: Server component that handles and forwards AI requests
-- **MCP Client**: Client component that sends requests to the MCP Server
-- **MCP Tools**: Functions/services callable by AI models
-- **Function Calling**: The ability for models to call functions to complete tasks
-
-## Basic Workflow
-
-### 1. Create and Register MCP Tools
-
-MCP tools are callable functions exposed to AI models:
+Use attributes from `ModelContextProtocol.Server` on the tool type and methods:
 
 ```csharp
 using ModelContextProtocol.Server;
 using System.ComponentModel;
 
-[McpServerToolType()]
-public static class NcfMcpTools
+[McpServerToolType]
+public static class SampleMcpTools
 {
-    [McpServerTool, Description("Process strings")]
+    [McpServerTool, Description("Return the input unchanged")]
     public static string Echo(string message)
     {
-        Console.WriteLine("Echo received MCP request, message: " + message);
-        return $"hello {message}";
+        return message;
     }
 
-    [McpServerTool, Description("Get current time")]
-    public static string Now(string message) { return $"{DateTime.Now}"; }
-
-    [McpServerTool, Description("Add hours automatically")]
-    public static string AddHours(int hours)
+    [McpServerTool, Description("Return the current server time")]
+    public static string Now()
     {
-        return $"{DateTime.Now.AddHours(hours)}";
+        return DateTimeOffset.Now.ToString("O");
     }
 }
 ```
 
-In this example:
-
-- `[McpServerToolType()]` marks a class that contains MCP tools
-- `[McpServerTool]` marks a method as a tool
-- `[Description]` provides tool descriptions used by AI to understand and choose tools
-
-### 2. Call Tools via MCP Client
-
-You can call tools directly from your application:
+Enable MCP in that module's `Register`:
 
 ```csharp
-// Create MCP client
-var clientTransport = new SseClientTransport(new SseClientTransportOptions()
-{
-    Endpoint = new Uri("http://localhost:5000/sse/sse"),
-    Name = "NCF-Server"
-});
+public override bool EnableMcpServer => true;
+```
 
-var client = await McpClientFactory.CreateAsync(clientTransport);
+The default scanner uses the assembly containing the module `Register`. If
+tools live in another assembly, override the registration explicitly rather
+than assuming the default scan crosses assembly boundaries.
 
-// List available tools
-var tools = await client.ListToolsAsync();
-foreach (var tool in tools)
+## 2. Determine the module endpoint
+
+The default route uses the complete module name:
+
+```text
+Module:   Senparc.Xncf.MCP
+Route:    mcp-senparc-xncf-mcp
+Endpoint: http://localhost:5000/mcp-senparc-xncf-mcp/sse
+```
+
+At runtime, enumerate registered services with:
+
+```csharp
+var servers = XncfRegisterManager.McpServerInfoCollection.Values;
+foreach (var server in servers)
 {
-    Console.WriteLine($"{tool.Name} ({tool.Description})");
+    Console.WriteLine($"{server.XncfName}: {server.McpRoute}/sse");
 }
-
-// Execute tool
-var result = await client.CallToolAsync(
-    "Echo",
-    new Dictionary<string, object?>() { ["message"] = "Hello MCP!" });
-
-Console.WriteLine("Result: " + result);
 ```
 
-### 3. Integrate with AI Models
+## 3. Use MCP from NCF AgentKernel
 
-MCP becomes powerful when tools are exposed to an AI model, letting the model decide what to call:
-
-```csharp
-// Get AI settings
-var aiSetting = Senparc.AI.Config.SenparcAiSetting;
-var semanticAiHandler = new SemanticAiHandler(aiSetting);
-
-// Configure model
-var iWantToConfig = semanticAiHandler.IWantTo()
-                        .ConfigModel(AI.ConfigModel.Chat, "MyAIAssistant");
-
-// Add MCP plugin
-var mcpPlugin = await iWantToConfig.Kernel.Plugins.AddMcpFunctionsFromSseServerAsync(
-    "NCF-Server",
-    "http://localhost:5000/sse/sse");
-
-// Build kernel
-var iWantToRun = iWantToConfig.BuildKernel();
-
-// Set execution options
-var executionSettings = new OpenAIPromptExecutionSettings
-{
-    Temperature = 0,
-    FunctionChoiceBehavior = FunctionChoiceBehavior.Required()
-};
-var kernelArguments = new KernelArguments(executionSettings);
-
-// Run request
-var result = await iWantToRun.Kernel.InvokePromptAsync(
-    "Tell me the current time and the time 3 hours later",
-    kernelArguments);
-
-Console.WriteLine(result.ToString());
-```
-
-In this example, AI analyzes the request and calls relevant MCP tools (like `Now` and `AddHours`) to complete the task.
-
-## Common Use Cases
-
-### 1. Data Processing and Calculation
+The current MCP module uses `HostedMcpServerTool` to expose a remote MCP server
+as an AI tool:
 
 ```csharp
-[McpServerTool, Description("Calculator tool for add, subtract, multiply, and divide")]
-public async Task<string> Calculator(RequestType request)
-{
-    double calcResult = request.Number1;
-    switch (request.TheOperator)
+using Microsoft.Extensions.AI;
+using Senparc.AI.AgentKernel;
+
+var endpoint = new Uri(
+    "http://localhost:5000/mcp-senparc-xncf-mcp/sse");
+
+var mcpTool = new HostedMcpServerTool("NCF-Server", endpoint);
+var handler = new AgentAiHandler(Senparc.AI.Config.SenparcAiSetting);
+var config = handler.IWantTo();
+var options = config.CreateChatClientAgentOptions(
+    "NCF-Agent",
+    "Call MCP tools when needed.",
+    new ChatOptions
     {
-        case "+":
-            calcResult = calcResult + request.Number2;
-            break;
-        case "-":
-            calcResult = calcResult - request.Number2;
-            break;
-        case "×":
-            calcResult = calcResult * request.Number2;
-            break;
-        case "÷":
-            if (request.Number2 == 0)
-            {
-                return "Error: divisor cannot be 0.";
-            }
-            calcResult = calcResult / request.Number2;
-            break;
-        default:
-            return $"Error: unknown operator: {request.TheOperator}";
-    }
+        Instructions = "Call MCP tools when needed.",
+        Tools = new List<AITool> { mcpTool },
+    });
 
-    if (request.Power > 1)
-    {
-        calcResult = Math.Pow(calcResult, request.Power);
-    }
-
-    return calcResult.ToString();
-}
+var runner = await config
+    .ConfigChatModel("NCF-Agent", options)
+    .BuildKernelAsync();
+var result = await runner.RunChatAsync("Return the server time");
+Console.WriteLine(result.OutputString);
 ```
 
-### 2. External API Integration
+A working chat model must already be configured. Do not disable human approval
+by default for tools that write data, execute commands, or access external
+systems.
 
-```csharp
-[McpServerTool, Description("Get weather information")]
-public async Task<string> GetWeather(string city)
-{
-    // Call weather API
-    using var httpClient = new HttpClient();
-    var response = await httpClient.GetAsync($"https://api.weatherapi.com/v1/current.json?key={apiKey}&q={city}");
-    var content = await response.Content.ReadAsStringAsync();
+## 4. Minimum verification
 
-    // Parse response
-    var weatherData = JsonDocument.Parse(content);
-    var temp = weatherData.RootElement.GetProperty("current").GetProperty("temp_c").GetDouble();
-    var condition = weatherData.RootElement.GetProperty("current").GetProperty("condition").GetProperty("text").GetString();
-
-    return $"Current temperature in {city}: {temp}°C, condition: {condition}";
-}
-```
-
-### 3. Web Crawling and Content Analysis
-
-```csharp
-[McpServerTool, Description("Web crawler tool for extracting content from specific pages")]
-public async Task<string> WebSpider(string url, int depth, int pageNumber)
-{
-    // Implement crawling logic
-    // ...
-
-    return "Crawled content...";
-}
-```
-
-## Best Practices
-
-1. **Write clear descriptions**: Make each tool purpose explicit for AI selection
-2. **Use strong typing and validation**: Keep inputs safe and predictable
-3. **Handle errors well**: Return meaningful errors for troubleshooting
-4. **Apply security controls**: Especially for sensitive operations
-5. **Optimize performance**: Use async processing and caching for expensive operations
-
-Following these principles helps you integrate MCP effectively and build smarter, more interactive NCF applications.
+- Server logs show that the expected module MCP route was mapped.
+- The client can list expected tools such as `Echo` and `Now`.
+- Test one side-effect-free tool first, then add authentication, timeouts, and
+  error handling.
+- Production testing covers unauthorized access, timeout, cancellation,
+  duplicate calls, and redaction of sensitive data.

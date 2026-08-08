@@ -1,6 +1,8 @@
 # XNCF Extension Library Guide (Senparc.Xncf.xxx)
 
-> Scope: current `NcfPackageSources` version.  
+> This page analyzes official extensions from the `NcfPackageSources` source
+> perspective and was checked against the development line on 2026-07-27.
+> Their internals are not prerequisites for Template-based business modules.
 > This page fills the missing half beside “NCF libraries”: **XNCF extension modules (`Senparc.Xncf.xxx`)**.
 
 ## 1. Why It Feels Like “XNCF Is Missing”
@@ -59,16 +61,18 @@ This is the core engineering value of NCF modularity: **capabilities are split i
 ### 4.3 Tooling and Ops Modules
 
 - `Senparc.Xncf.XncfBuilder`
+- `Senparc.Xncf.Sandbox` (lab sandbox orchestration via Docker/Wasm; see [Sandbox environment setup](../xncf/sandbox-environment.md))
 - `Senparc.Xncf.DatabaseToolkit`
 - `Senparc.Xncf.FileManager`
 - `Senparc.Xncf.Terminal`
 - `Senparc.Xncf.FirmwareUpdate`
 - `Senparc.Xncf.ChangeNamespace`
 - `Senparc.Xncf.WeixinManager`
+- `Senparc.Xncf.Dapr` (microservice integration; project version `0.11.0-preview2`)
 
 For full versions, order, and scenario guidance:
 
-- [NCF Capability Deep Dive](./capability-guide.md)
+- [NCF Capability Source Deep Dive](./capability-guide.md)
 
 ## 5. Developer Guidance: Design XNCF as Single-Granularity Units
 
@@ -79,6 +83,8 @@ Recommended baseline rules:
 3. Prefer `[FunctionRender]` for executable capability declaration.
 4. Enable `EnableMcpServer` only when needed, with explicit security controls.
 5. Run high-risk modules with least privilege and audit logging.
+6. Keep Function implementations and DTOs under `Application/AppServices` and `Application/DTOs` to match the current XncfBuilder template.
+7. Use resource files and `[LocalizedDescription]` for multilingual menus, descriptions, and parameters instead of hard-coding one language.
 
 ## 6. Where to Continue Reading
 
@@ -86,7 +92,7 @@ Recommended baseline rules:
   [NcfPackageSources Source Guide](./index.md)
 
 - Version capability map and mechanisms:
-  [NCF Capability Deep Dive](./capability-guide.md)
+  [NCF Capability Source Deep Dive](./capability-guide.md)
 
 - XNCF design and Register details:
   [Composition of Xncf](/start/xncf-develop/about-xncf.html)

@@ -1,128 +1,92 @@
 # MCP 安装与配置
 
-本文将指导您如何在NCF项目中安装和配置MCP模块，使您能够快速集成AI功能。
+> 适用于 .NET 10；内容于 2026-07-27 按 `NcfPackageSources` 开发分支核对。
 
-## 前置条件
+## 1. 选择安装方式
 
-在安装MCP模块之前，请确保您已经：
+### 通过 NCF 安装器或模块管理器
 
-1. 已安装 .NET SDK 8.0 或更高版本
-2. 创建或拥有一个基于NCF框架的项目
-3. 了解基本的NCF模块开发概念
+首次安装模拟站点时，`Senparc.Xncf.MCP` 已在高级选项中默认选中。对于已
+安装站点，可在后台模块管理器中安装并启用该模块。
 
-## 安装步骤
+这是 NCF 应用的推荐方式，框架会自动完成模块扫描、服务注册和路由映射。
 
-### 1. 通过NCF模块管理器安装
+### 通过 NuGet 引用
 
-最简单的方式是通过NCF后台的模块管理器安装：
-
-1. 登录NCF后台管理界面
-2. 导航至"扩展模块" → "模块管理"
-3. 在"模块商店"选项卡中找到"Senparc.Xncf.MCP"模块
-4. 点击"安装"按钮进行安装
-
-### 2. 通过NuGet包管理器安装
-
-如果您希望在项目开发阶段就集成MCP模块，可以使用NuGet包管理器：
+当前源码项目的 NuGet 包版本是 `0.4.0-preview3`：
 
 ```bash
-Install-Package Senparc.Xncf.MCP -Version 0.1.0
+dotnet add package Senparc.Xncf.MCP --version 0.4.0-preview3
 ```
 
-或者通过.NET CLI:
+如果该预览版本尚未发布到所使用的 NuGet 源，请选择源中实际存在的版本，或
+在源码联调方案中使用 `ProjectReference`。不要把模块内部的
+`Register.Version`（当前为 `0.1.0`）当作 NuGet 包版本。
+
+## 2. 自动注册
+
+当前 NCF 不需要在 `Startup.cs` 中手工调用 `AddMcpServer()` 或
+`MapMcp("sse")`。模块声明：
+
+```csharp
+public override bool EnableMcpServer => true;
+```
+
+NCF 启动时会自动：
+
+- 调用模块的 `AddMcpServer()`；
+- 扫描 `[McpServerToolType]`；
+- 使用 HTTP transport；
+- 调用 `UseMcpServer()` 映射模块路由。
+
+## 3. 启动并定位端点
+
+以源码模拟站点为例：
 
 ```bash
-dotnet add package Senparc.Xncf.MCP --version 0.1.0
+dotnet run \
+  --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj \
+  --launch-profile http
 ```
 
-### 3. 手动引用项目
+`Senparc.Xncf.MCP` 的端点为：
 
-您也可以通过手动引用MCP项目的方式进行安装：
-
-1. 从GitHub上克隆NCF项目源代码
-2. 在您的解决方案中添加对`Senparc.Xncf.MCP`项目的引用
-
-## 配置MCP模块
-
-安装完成后，需要进行一些基本配置以启用MCP功能：
-
-### 1. 配置appsettings.json
-
-在`appsettings.json`中添加MCP相关配置：
-
-```json
-{
-  "SenparcCoreSetting": {
-    "McpAccessToken": "您的访问令牌",
-    "McpEndpoint": "http://localhost:5000/sse/sse"
-  },
-  "SenparcAiSetting": {
-    "ModelName": {
-      "Chat": "gpt-4o"
-    },
-    "AzureOpenAIKeys": {
-      "ApiKey": "您的Azure OpenAI API密钥",
-      "AzureEndpoint": "您的Azure OpenAI端点URL"
-    }
-  }
-}
+```text
+http://localhost:5000/mcp-senparc-xncf-mcp/sse
 ```
 
-### 2. 在Startup.cs中注册MCP服务
+其他模块按相同规则生成，例如模块名 `Org.Xncf.Sample` 对应：
 
-如果您使用的是较新版本的NCF，MCP模块会自动注册。对于手动安装或自定义配置，您可以在`Startup.cs`的`ConfigureServices`方法中添加以下代码：
-
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    // 其他服务注册...
-    
-    services.AddMcpServer(opt =>
-    {
-        opt.ServerInfo = new Implementation()
-        {
-            Name = "ncf-mcp-server",
-            Version = "1.0.0",
-        };
-    })
-    .WithHttpTransport()
-    .WithToolsFromAssembly();
-}
+```text
+http://localhost:5000/mcp-org-xncf-sample/sse
 ```
 
-### 3. 配置MCP路由终结点
+也可以从 `XncfRegisterManager.McpServerInfoCollection` 读取实际登记的
+`McpRoute`，避免在代码中重复拼接规则。
 
-在`Configure`方法中配置MCP路由终结点：
+## 4. 验证清单
 
-```csharp
-public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{
-    // 其他中间件配置...
-    
-    app.UseEndpoints(endpoints =>
-    {
-        // 其他终结点配置...
-        
-        endpoints.MapMcp("sse");
-    });
-}
-```
+1. 模块已被扫描，并且 `EnableMcpServer` 为 `true`。
+2. 启动日志没有“未完成服务注册”或“MCP 路由注册失败”。
+3. 工具所在程序集至少有一个 `[McpServerToolType]` 类型。
+4. 使用 MCP 客户端或 NCF 后台的 MCP 调用功能连接完整 `/sse` 地址。
 
-## 验证安装
+浏览器直接打开 SSE 地址可能持续等待事件，这是长连接的正常表现，不能仅以
+页面是否结束加载判断服务是否可用。
 
-完成安装和配置后，您可以通过以下步骤验证MCP模块是否正常工作：
+## 5. 生产配置
 
-1. 运行您的NCF应用程序
-2. 在浏览器中访问`http://localhost:5000/sse/sse`（根据您的配置可能不同）
-3. 如果您看到一个事件流连接成功的响应，则表示MCP服务器已成功启动
+::: warning 当前源码安全边界
+`SenparcCoreSetting.McpAccessToken` 属性仍然存在，但当前自动映射路由没有启用
+对应的查询参数校验。请不要把添加 `?token=...` 当作已经生效的认证方式。
+:::
 
-## 故障排除
+公开 MCP 前至少应完成：
 
-如果您在安装或配置过程中遇到问题，请检查以下几点：
+- HTTPS；
+- 反向代理或应用层身份认证与授权；
+- 工具白名单和最小权限；
+- IP/网络范围控制；
+- 速率限制、超时、调用日志和敏感参数脱敏。
 
-1. 确保已正确安装所有依赖项
-2. 检查配置文件中的设置是否正确
-3. 查看应用程序日志以获取详细的错误信息
-4. 确保网络连接正常，特别是与AI服务的连接
-
-如果问题仍然存在，请查阅[常见问题解答](./faq.md)或在[GitHub Issues](https://github.com/NeuCharFramework/NcfPackageSources/issues)中提交问题。
+下一步：[基本使用](./basic-usage.md)。

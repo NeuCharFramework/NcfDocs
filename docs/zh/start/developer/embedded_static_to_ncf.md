@@ -21,13 +21,13 @@
 ## .csproject文件中增加库引用及相关配置
 
     <PropertyGroup>
-      <TargetFramework>netcoreapp3.1</TargetFramework>
+      <TargetFramework>net10.0</TargetFramework>
       <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     </PropertyGroup>
 
     <ItemGroup>
       <EmbeddedResource Include="wwwroot\**\*" />
-      <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.1.6" />
+      <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.2" />
     </ItemGroup>
 
 ## Register中增加嵌入资源注册服务

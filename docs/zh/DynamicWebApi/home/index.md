@@ -1,6 +1,6 @@
 # 动态WebApiEngine
 
-WebApiEngine 是一个可用于动态 WebApi 生成的引擎，基于 .NET Core（包括 .NET 5、 .NET 6），用于解决前后端分离、微服务、异步 Web 请求场景下的 WebApi 的动态生成和管理，并全面兼容 Swagger。
+WebApiEngine 是 Senparc.CO2NET 提供的动态 Web API 生成引擎，用于前后端分离、微服务和异步 Web 请求场景，并兼容 Swagger。当前 NCF 开发基线使用 .NET 10；请以项目实际安装的 `Senparc.CO2NET.WebApi` 包 API 为准。
 
 ## 开源地址
 
@@ -35,7 +35,9 @@ dotnet new webapi
 
 原始项目
 
-> 小贴士：您可以使用 NET Core 3.1 或 .NET 5、.NET 6 进行开发，代码没有任何差别。
+::: warning 示例版本
+本页截图和部分 `Startup` 写法来自早期 ASP.NET Core 模板。新建项目请使用 .NET 10，并根据当前包的 XML 文档、IntelliSense 和编译结果调整启动代码。
+:::
 
 运行后默认已经加载了 Swagger：
 

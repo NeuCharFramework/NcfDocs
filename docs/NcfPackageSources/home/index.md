@@ -1,13 +1,28 @@
 # NcfPackageSources Source Guide
 
-> This page is for developers who need to read source code, change internals, extend modules, and contribute back to the project.  
-> Documentation baseline: current `NcfPackageSources` code, `HEAD = 631f16b4` (2026-06-17).
+> This section is only for developers who read or change `NcfPackageSources`,
+> debug framework internals, or contribute to the official repositories. It was
+> checked against the development line on 2026-07-27; use the commit actually
+> checked out when resolving version-specific behavior.
 
-## Start Here (3-Step Path for Newcomers)
+## Choose a reading path first
+
+| What you are doing                                                                      | Documentation to use                                                                                                             |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Build a site or XNCF module only from an NCF Template                                   | [Template-Based Development](/start/xncf-develop/contracts-and-interfaces.html); source analysis in this section is not required |
+| Run, debug, or change the `NcfPackageSources` source                                    | The Source Development and Source Analysis sections here                                                                         |
+| Maintain template sources, synchronize the NCF repository, or prepare official packages | [Project Relationships, Synchronization, and Release](./project-relationships.md)                                                |
+
+Complete interface signatures, scanning flows, and library implementations are
+included here for source development. They are not prerequisites for normal
+Template users.
+
+## Source Development Start (4 Steps)
 
 1. Finish [Beginner Quickstart (60 Minutes)](./beginner-quickstart.md)
-2. Continue with [NCF Capability Deep Dive](./capability-guide.md)
-3. Complete modular understanding with [XNCF Extension Library Guide](./xncf-extension-modules.md)
+2. Understand repository boundaries in [Project Relationships, Synchronization, and Release](./project-relationships.md)
+3. Continue with [NCF Capability Source Deep Dive](./capability-guide.md)
+4. Complete module source understanding with [XNCF Extension Library Guide](./xncf-extension-modules.md)
 
 ## What You Will Get From This Guide
 
@@ -22,9 +37,14 @@
 
 It mainly contains three layers:
 
-- `src/Basic`: foundational runtime capabilities (Core, XncfBase, Repository, Service, Database*).
+- `src/Basic`: foundational runtime capabilities (Core, XncfBase, Repository, Service, Database\*).
 - `src/Extensions`: installable modules (system, AI, tooling, operations).
 - `tools/NcfSimulatedSite`: a simulated host site for integration and module verification (`Senparc.Web`, admin areas, installer, etc.).
+
+It, `NeuCharFramework/NCF`, and the XncfBuilder template packaging project are
+not three independently maintained copies of business code. See
+[Project Relationships, Synchronization, and Release](./project-relationships.md)
+for source authority, synchronization direction, and release boundaries.
 
 ## 2. Most Practical Source Workflow
 
@@ -34,14 +54,13 @@ It mainly contains three layers:
 git clone https://github.com/NeuCharFramework/NcfPackageSources.git
 cd NcfPackageSources
 
-dotnet restore src/NcfPackageSources_Include_NcfSimulatedSite.sln
 dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
 ```
 
 ### 2.2 Run the Simulated Host Site
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
+dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 ### 2.3 Validation Priorities
@@ -98,9 +117,11 @@ The current version is especially relevant for these module combinations:
 - **Database operations tooling**: `Senparc.Xncf.DatabaseToolkit`
 - **Release mirror/backup channel**: `Senparc.Xncf.FirmwareUpdate`
 
+This baseline also includes the .NET 10 runtime migration, six-language localization, installer default-module confirmation, dynamic desktop update sources, and the new `Application/AppServices` XNCF template structure.
+
 For detailed module inventory, versions, ordering, and implementation playbooks:
 
-- [NCF Capability Deep Dive](./capability-guide.md)
+- [NCF Capability Source Deep Dive](./capability-guide.md)
 
 ## 5. XNCF Extension Entry (Single-Granularity Modules)
 
@@ -172,5 +193,5 @@ For full symptom -> cause -> fix matrix:
 
 If you want to start coding immediately, continue with:
 
-- [NCF Capability Deep Dive](./capability-guide.md)
+- [NCF Capability Source Deep Dive](./capability-guide.md)
 - [Version Upgrade Notes](./version-upgrade-notes.md)

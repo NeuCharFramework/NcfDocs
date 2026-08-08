@@ -1,7 +1,9 @@
-# NCF Capability Deep Dive (Practical)
+# NCF Capability Source Deep Dive (Practical)
 
-> Scope: current `NcfPackageSources` version  
-> Baseline commit: `631f16b4` (2026-06-17)
+> This is source analysis for `NcfPackageSources` developers, not a prerequisite
+> for business modules created from a Template. For normal extension work, start
+> with [XNCF Extension Contracts and Boundaries](/start/xncf-develop/contracts-and-interfaces.html).
+> The content was checked against the development line on 2026-07-27.
 
 ## 1. Capability Overview
 
@@ -13,6 +15,8 @@ When learning the current version, focus on these capabilities first:
 - `XncfModuleManager` includes AI-friendly module install/open actions.
 - `FirmwareUpdate` introduces release mirroring from GitHub to local `wwwroot/NcfPackages`.
 - MCP integration is now part of the common register contract (`IXncfRegister` + `XncfRegisterBase`).
+- The simulated host now targets .NET 10 and includes Chinese, English, Japanese, French, Spanish, and Russian resources.
+- The installer preselects six foundational modules and presents a confirmation list before installation.
 
 ### 1.1 XNCF as Single-Granularity Module Units (Framework Meaning)
 
@@ -30,42 +34,42 @@ If you only study base libraries but skip XNCF modules, you understand “how th
 
 ### 2.1 System Core Modules (59xx)
 
-| Module | Version | XncfOrder | Responsibility |
-|---|---|---:|---|
-| Senparc.Xncf.Menu | 0.1 | 5940 | System menu management |
-| Senparc.Xncf.XncfModuleManager | 0.1.2 | 5950 | Module state governance, install/open actions, function status checks |
-| Senparc.Xncf.AreasBase | 0.1 | 5955 | Area baseline capability |
-| Senparc.Xncf.SystemPermission | 0.2.0 | 5960 | Permission management |
-| Senparc.Xncf.SystemManager | 1.1.2 | 5970 | System configuration and management |
-| Senparc.Xncf.SystemCore | 0.1.1 | 5980 | Core system structures |
-| Senparc.Xncf.Tenant | 0.1 | 5990 | Multi-tenant capability |
+| Module                         | Version | XncfOrder | Responsibility                                                        |
+| ------------------------------ | ------- | --------: | --------------------------------------------------------------------- |
+| Senparc.Xncf.Menu              | 0.1     |      5940 | System menu management                                                |
+| Senparc.Xncf.XncfModuleManager | 0.1.2   |      5950 | Module state governance, install/open actions, function status checks |
+| Senparc.Xncf.AreasBase         | 0.1     |      5955 | Area baseline capability                                              |
+| Senparc.Xncf.SystemPermission  | 0.2.0   |      5960 | Permission management                                                 |
+| Senparc.Xncf.SystemManager     | 1.1.2   |      5970 | System configuration and management                                   |
+| Senparc.Xncf.SystemCore        | 0.1.1   |      5980 | Core system structures                                                |
+| Senparc.Xncf.Tenant            | 0.1     |      5990 | Multi-tenant capability                                               |
 
 ### 2.2 AI / RAG / Agents Modules
 
-| Module | Version | XncfOrder | MCP | Notes |
-|---|---|---:|---|---|
-| Senparc.Xncf.AIKernel | 5.0.5 | - | No | AI model/vector model configuration baseline |
-| Senparc.Xncf.PromptRange | 0.15.2 | 5897 | No | Prompt range/track and PromptCode assets |
-| Senparc.Xncf.AgentsManager | 0.3.18.9 | - | No | Agent templates, chat group/task orchestration |
-| Senparc.Xncf.KnowledgeBase | 0.1.10 | - | No | KB management, import, embedding, recall testing |
-| Senparc.Xncf.AIAgentsHub | 0.1.0 | - | No | Early-stage Agent Hub |
-| Senparc.Xncf.MCP | 0.1.0 | - | Yes | MCP endpoint and execution management |
+| Module                     | Version          | XncfOrder | MCP | Notes                                                          |
+| -------------------------- | ---------------- | --------: | --- | -------------------------------------------------------------- |
+| Senparc.Xncf.AIKernel      | 5.0.5            |         - | No  | AI model/vector model configuration baseline                   |
+| Senparc.Xncf.PromptRange   | 0.15.2           |      5897 | No  | Prompt range/track and PromptCode assets                       |
+| Senparc.Xncf.AgentsManager | 0.3.22           |         - | No  | Agent templates, chat group/task orchestration                 |
+| Senparc.Xncf.KnowledgeBase | 0.1.10           |         - | No  | KB management, import, embedding, recall testing               |
+| Senparc.Xncf.AIAgentsHub   | 0.1.0            |         - | No  | Early-stage Agent Hub                                          |
+| Senparc.Xncf.MCP           | 0.1.0 (Register) |         - | Yes | NuGet package `0.4.0-preview3`; automatic MCP endpoint mapping |
 
 ### 2.3 Tooling and Operations Modules
 
-| Module | Version | XncfOrder | MCP | Notes |
-|---|---|---:|---|---|
-| Senparc.Xncf.XncfBuilder | 0.10.1 | 5896 | Yes | Module scaffolding, migration commands, AI-assisted code generation |
-| Senparc.Xncf.DatabaseToolkit | 0.7.1 | - | No | DB update, backup, schema query, AI-agent DB query integration |
-| Senparc.Xncf.Swagger | 0.7.1 | 0 | No | API documentation module |
-| Senparc.Xncf.Terminal | 0.1.6 | - | No | Server command execution (high privilege) |
-| Senparc.Xncf.FileManager | 0.2.5 | - | No | File management |
-| Senparc.Xncf.FirmwareUpdate | 0.1.0 | - | No | NCF package mirror + latest-release.json maintenance |
-| Senparc.Xncf.ChangeNamespace | 0.3.9 | - | No | Global namespace replacement (high risk) |
-| Senparc.Xncf.DynamicData | 0.1.0 | - | No | Dynamic data foundation (early stage) |
-| Senparc.Xncf.SenMapic | 0.1.3 | - | No | Crawler demo module |
-| Senparc.Xncf.Application | 0.0.5 | - | No | External program execution module |
-| Senparc.Xncf.WeixinManager | 0.21.1 | 5880 | Yes | WeChat management + MCP support |
+| Module                       | Version                   | XncfOrder | MCP | Notes                                                                      |
+| ---------------------------- | ------------------------- | --------: | --- | -------------------------------------------------------------------------- |
+| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5 (project) |      5896 | Yes | Template package `0.13.0`; scaffolding, migrations, and AI code generation |
+| Senparc.Xncf.DatabaseToolkit | 0.7.1                     |         - | No  | DB update, backup, schema query, AI-agent DB query integration             |
+| Senparc.Xncf.Swagger         | 0.7.1                     |         0 | No  | API documentation module                                                   |
+| Senparc.Xncf.Terminal        | 0.1.6                     |         - | No  | Server command execution (high privilege)                                  |
+| Senparc.Xncf.FileManager     | 0.2.5                     |         - | No  | File management                                                            |
+| Senparc.Xncf.FirmwareUpdate  | 0.1.0                     |         - | No  | NCF package mirror + latest-release.json maintenance                       |
+| Senparc.Xncf.ChangeNamespace | 0.3.9                     |         - | No  | Global namespace replacement (high risk)                                   |
+| Senparc.Xncf.DynamicData     | 0.1.0                     |         - | No  | Dynamic data foundation (early stage)                                      |
+| Senparc.Xncf.SenMapic        | 0.1.3                     |         - | No  | Crawler demo module                                                        |
+| Senparc.Xncf.Application     | 0.0.5                     |         - | No  | External program execution module                                          |
+| Senparc.Xncf.WeixinManager   | 0.21.1                    |      5880 | Yes | WeChat management + MCP support                                            |
 
 ## 3. Key Mechanisms (Code-Aligned)
 
@@ -117,8 +121,13 @@ Mechanism:
 - Registration: `AddMcpServer(IServiceCollection, IXncfRegister)`
 - Activation: `UseMcpServer(IApplicationBuilder, IRegisterService)`
 - Route pattern: `mcp-<module-name-lowercase>`
+- Append `/sse` for the SSE endpoint; for example `/mcp-senparc-xncf-mcp/sse` for the MCP module
 
 Use `XncfRegisterManager.McpServerInfoCollection` to inspect registered MCP server metadata.
+
+::: warning Security boundary
+The source contains an `McpAccessToken` setting, but query-token validation is not enabled on the automatic mapping path. Add authentication, rate limiting, and auditing at the reverse proxy, gateway, or application layer before external exposure.
+:::
 
 ### 3.4 API Authorization Reinforcement (AgentsManager / PromptRange)
 
@@ -134,11 +143,11 @@ Recommendation: keep this baseline for all newly added management APIs.
 
 ### 4.1 Scenario A: Build an AI + Prompt + Agent + Knowledge Pipeline
 
-1. Install/open baseline modules: `AIKernel`, `PromptRange`, `AgentsManager`, `KnowledgeBase`.  
-2. Configure model sets in `AIKernel` (chat/embedding/vector).  
-3. Build PromptCode assets in `PromptRange`.  
-4. Create AgentTemplate from PromptCode and compose ChatGroup/Task in `AgentsManager`.  
-5. Import files and run embedding in `KnowledgeBase`, then validate retrieval with recall testing.  
+1. Install/open baseline modules: `AIKernel`, `PromptRange`, `AgentsManager`, `KnowledgeBase`.
+2. Configure model sets in `AIKernel` (chat/embedding/vector).
+3. Build PromptCode assets in `PromptRange`.
+4. Create AgentTemplate from PromptCode and compose ChatGroup/Task in `AgentsManager`.
+5. Import files and run embedding in `KnowledgeBase`, then validate retrieval with recall testing.
 6. Connect retrieval output with agent execution loops for iterative quality improvements.
 
 ### 4.2 Scenario B: Module Governance (Install, Open, Diagnose)
@@ -167,6 +176,12 @@ This is the quickest path to diagnose “module exists but capability is unavail
 - update `latest-release.json`
 
 Useful for official mirrors and backup download paths.
+
+### 4.5 Scenario E: Localization and First-Time Installation
+
+- The site and installer support `zh-CN`, `en`, `ja`, `fr`, `es`, and `ru`.
+- Function parameter descriptions can bind resource keys through `[LocalizedDescription]`.
+- First-time installation preselects Administrator, PromptRange, XncfBuilder, MCP, AIKernel, and AgentsManager; state is written only after the user confirms the list.
 
 ## 5. High-Risk Modules (Pre-Production Review Required)
 

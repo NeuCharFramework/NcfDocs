@@ -21,13 +21,13 @@ Select any static resource file, right-click, and choose embedded resource, as s
 ## Adding Library References and Related Configurations in .csproject File
 
     <PropertyGroup>
-      <TargetFramework>netcoreapp3.1</TargetFramework>
+      <TargetFramework>net10.0</TargetFramework>
       <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     </PropertyGroup>
 
     <ItemGroup>
       <EmbeddedResource Include="wwwroot\**\*" />
-      <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.1.6" />
+      <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.2" />
     </ItemGroup>
 
 ## Adding Embedded Resource Registration Service in Register

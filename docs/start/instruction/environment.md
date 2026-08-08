@@ -7,10 +7,14 @@
 - JetBrains Rider
 - All other editors that support C# compilation
 
-## .NET Framework
+## .NET SDK
 
-- .NET 8, SDK download link: [https://dotnet.microsoft.com/en-us/download/dotnet/8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-  > The base library already supports .NET Standard 2.1, compatible with .NET 5 and .NET 6+, NCF templates have been released using .NET 8.
+- The current NCF template, the `NcfPackageSources` simulated site, and the XNCF
+  template use **.NET 10** as their development baseline. Download the SDK from
+  [https://dotnet.microsoft.com/download/dotnet/10.0](https://dotnet.microsoft.com/download/dotnet/10.0).
+- For an older NCF release or NuGet package, follow that release tag and the
+  `TargetFramework` in its project file instead of applying old tutorials to the
+  current source tree.
 
 ## Database
 
@@ -36,7 +40,7 @@ Currently, .NET Core already supports almost all mainstream operating systems:
 - Android
 - iOS/tvOS/MacCatalyst
 - QEMU
-- Other operating systems that support .NET Core: [View](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md)
+- Other supported operating systems: [See the .NET 10 support policy](https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md)
 
 Install to server: [https://docs.microsoft.com/dotnet/core/install/](https://docs.microsoft.com/dotnet/core/install/)
 
@@ -46,7 +50,7 @@ Install to server: [https://docs.microsoft.com/dotnet/core/install/](https://doc
 - x64
 - ARM32
 - ARM64
-- Other CPU architectures that support .NET Core: [View](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md)
+- Other supported CPU architectures: [See the .NET 10 support policy](https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md)
 
 ## Source Code
 

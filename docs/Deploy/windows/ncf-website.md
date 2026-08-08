@@ -36,7 +36,7 @@ As shown in the figure:
 
 Configuration: Choose Debug or Release, or others.
 
-Target Framework: Different versions of .NET Core, net6.0/7.0, etc.
+Target Framework: select `net10.0` for the current development baseline.
 
 Deployment Mode: Framework-dependent | Self-contained (You can learn about the differences between the two deployment modes).
 

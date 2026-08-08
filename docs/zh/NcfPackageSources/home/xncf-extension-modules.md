@@ -1,6 +1,7 @@
 # XNCF 扩展库说明（Senparc.Xncf.Xxxx）
 
-> 适用范围：`NcfPackageSources` 当前版本。  
+> 本页从 `NcfPackageSources` 源码角度解释官方扩展模块，内容于 2026-07-27
+> 按开发分支核对。Template 业务开发者无需把官方模块源码作为前置知识。
 > 本页用于介绍 NCF 中的**XNCF 扩展模块（Senparc.Xncf.Xxxx）**。
 
 ## 1. NCF 作为“模块化框架”的定义
@@ -53,16 +54,18 @@
 ### 3.3 开发与运维模块
 
 - `Senparc.Xncf.XncfBuilder`
+- `Senparc.Xncf.Sandbox`（独立沙箱编排：Docker/Wasm；环境准备见 [Sandbox 环境准备指南](../xncf/sandbox-environment.md)）
 - `Senparc.Xncf.DatabaseToolkit`
 - `Senparc.Xncf.FileManager`
 - `Senparc.Xncf.Terminal`
 - `Senparc.Xncf.FirmwareUpdate`
 - `Senparc.Xncf.ChangeNamespace`
 - `Senparc.Xncf.WeixinManager`
+- `Senparc.Xncf.Dapr`（微服务接入；项目版本 `0.11.0-preview2`）
 
 完整模块版本、排序、场景说明请看：
 
-- [NCF 核心能力详解](./capability-guide.md)
+- [NCF 核心能力源码详解](./capability-guide.md)
 
 ## 4. 开发者约定：如何把 XNCF 当作“单粒度模块”来设计
 
@@ -73,6 +76,8 @@
 3. 优先通过 `[FunctionRender]` 声明可执行能力，保持“代码即声明”。
 4. 有对外工具需求时，再显式开启 `EnableMcpServer` 并补齐安全策略。
 5. 高风险模块必须最小权限运行，并保留审计记录。
+6. Function 的实现和 DTO 优先放入 `Application/AppServices`、`Application/DTOs`，与当前 XncfBuilder 模板保持一致。
+7. 面向多语言的菜单、描述和参数使用资源文件与 `[LocalizedDescription]`，不要在代码中固定单一语言。
 
 ## 5. 你应该从哪里继续阅读
 
@@ -80,7 +85,7 @@
   [NcfPackageSources 源码指南](./index.md)
 
 - 版本能力清单与机制：
-  [NCF 核心能力详解](./capability-guide.md)
+  [NCF 核心能力源码详解](./capability-guide.md)
 
 - XNCF 开发原理与 Register 细节：
   [Xncf 的构成](/zh/start/xncf-develop/about-xncf.html)

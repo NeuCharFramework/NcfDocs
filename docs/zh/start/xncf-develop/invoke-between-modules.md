@@ -4,4 +4,4 @@
 
 ## 创建2个模块
 
-按照[创建一个模块的章节](/start/xncf-develop/create-xncf.html)去分别创建`Senparc.Xncf.Teacher` 和 `Senparc.Xncf.Student`俩个模块
+按照[创建一个模块的章节](/zh/start/xncf-develop/create-xncf.html)去分别创建`Senparc.Xncf.Teacher` 和 `Senparc.Xncf.Student`俩个模块

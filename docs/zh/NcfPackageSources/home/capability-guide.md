@@ -1,7 +1,9 @@
-# NCF 核心能力详解（面向实战）
+# NCF 核心能力源码详解（面向实战）
 
-> 适用范围：`NcfPackageSources` 当前版本。  
-> 基线提交：`631f16b4`（2026-06-17）。
+> 本页是面向 `NcfPackageSources` 开发者的源码剖析，不是使用 Template 开发
+> 业务模块的前置教程。普通二次开发请先看
+> [XNCF 二次开发接口与边界](/zh/start/xncf-develop/contracts-and-interfaces.html)。
+> 内容于 2026-07-27 按开发分支核对。
 
 ## 1. 核心能力总览
 
@@ -13,6 +15,8 @@
 - `XncfModuleManager` 增强了面向 AI 的模块安装/开放能力（UID 或名称关键字匹配）。
 - `FirmwareUpdate` 提供了 GitHub Release 到站点本地 `wwwroot/NcfPackages` 的镜像能力。
 - MCP 相关能力已下沉到 `IXncfRegister`/`XncfRegisterBase` 统一协议，可按模块开关。
+- 模拟站点已迁移到 .NET 10，并提供中文、英文、日文、法文、西班牙文和俄文界面资源。
+- 安装器默认勾选六个基础模块，并在真正安装前显示确认清单。
 
 ### 1.1 XNCF 的单粒度模块定义（框架意义）
 
@@ -30,42 +34,42 @@
 
 ### 2.1 系统核心模块（59xx）
 
-| 模块 | 版本 | XncfOrder | 作用 |
-|---|---|---:|---|
-| Senparc.Xncf.Menu | 0.1 | 5940 | 系统菜单管理 |
-| Senparc.Xncf.XncfModuleManager | 0.1.2 | 5950 | 模块状态治理、安装开放、Function 状态检查 |
-| Senparc.Xncf.AreasBase | 0.1 | 5955 | Area 基础能力 |
-| Senparc.Xncf.SystemPermission | 0.2.0 | 5960 | 权限管理 |
-| Senparc.Xncf.SystemManager | 1.1.2 | 5970 | 系统管理与核心配置 |
-| Senparc.Xncf.SystemCore | 0.1.1 | 5980 | 系统核心数据结构 |
-| Senparc.Xncf.Tenant | 0.1 | 5990 | 多租户能力 |
+| 模块                           | 版本  | XncfOrder | 作用                                      |
+| ------------------------------ | ----- | --------: | ----------------------------------------- |
+| Senparc.Xncf.Menu              | 0.1   |      5940 | 系统菜单管理                              |
+| Senparc.Xncf.XncfModuleManager | 0.1.2 |      5950 | 模块状态治理、安装开放、Function 状态检查 |
+| Senparc.Xncf.AreasBase         | 0.1   |      5955 | Area 基础能力                             |
+| Senparc.Xncf.SystemPermission  | 0.2.0 |      5960 | 权限管理                                  |
+| Senparc.Xncf.SystemManager     | 1.1.2 |      5970 | 系统管理与核心配置                        |
+| Senparc.Xncf.SystemCore        | 0.1.1 |      5980 | 系统核心数据结构                          |
+| Senparc.Xncf.Tenant            | 0.1   |      5990 | 多租户能力                                |
 
 ### 2.2 AI / RAG / Agents 相关模块
 
-| 模块 | 版本 | XncfOrder | MCP | 说明 |
-|---|---|---:|---|---|
-| Senparc.Xncf.AIKernel | 5.0.5 | - | 否 | AI 模型/向量模型配置与运行基础 |
-| Senparc.Xncf.PromptRange | 0.15.2 | 5897 | 否 | 提示词靶场、PromptCode 体系 |
-| Senparc.Xncf.AgentsManager | 0.3.18.9 | - | 否 | 智能体模板、群聊任务、优化流程 |
-| Senparc.Xncf.KnowledgeBase | 0.1.10 | - | 否 | 知识库管理、导入、向量化、召回测试 |
-| Senparc.Xncf.AIAgentsHub | 0.1.0 | - | 否 | Agent Hub（早期） |
-| Senparc.Xncf.MCP | 0.1.0 | - | 是 | MCP 端点与调用管理 |
+| 模块                       | 版本              | XncfOrder | MCP | 说明                                           |
+| -------------------------- | ----------------- | --------: | --- | ---------------------------------------------- |
+| Senparc.Xncf.AIKernel      | 5.0.5             |         - | 否  | AI 模型/向量模型配置与运行基础                 |
+| Senparc.Xncf.PromptRange   | 0.15.2            |      5897 | 否  | 提示词靶场、PromptCode 体系                    |
+| Senparc.Xncf.AgentsManager | 0.3.22            |         - | 否  | 智能体模板、群聊任务、优化流程                 |
+| Senparc.Xncf.KnowledgeBase | 0.1.10            |         - | 否  | 知识库管理、导入、向量化、召回测试             |
+| Senparc.Xncf.AIAgentsHub   | 0.1.0             |         - | 否  | Agent Hub（早期）                              |
+| Senparc.Xncf.MCP           | 0.1.0（Register） |         - | 是  | NuGet 包为 `0.4.0-preview3`；自动映射 MCP 端点 |
 
 ### 2.3 开发与运维模块
 
-| 模块 | 版本 | XncfOrder | MCP | 说明 |
-|---|---|---:|---|---|
-| Senparc.Xncf.XncfBuilder | 0.10.1 | 5896 | 是 | 模块脚手架、迁移命令、AI 辅助代码生成 |
-| Senparc.Xncf.DatabaseToolkit | 0.7.1 | - | 否 | 数据库更新、备份、结构查询、Agent 集成查询 |
-| Senparc.Xncf.Swagger | 0.7.1 | 0 | 否 | 接口文档 |
-| Senparc.Xncf.Terminal | 0.1.6 | - | 否 | 服务器终端命令执行（高权限） |
-| Senparc.Xncf.FileManager | 0.2.5 | - | 否 | 文件管理 |
-| Senparc.Xncf.FirmwareUpdate | 0.1.0 | - | 否 | 同步 NCF 安装包并维护 latest-release.json |
-| Senparc.Xncf.ChangeNamespace | 0.3.9 | - | 否 | 全局命名空间替换（高风险） |
-| Senparc.Xncf.DynamicData | 0.1.0 | - | 否 | 动态数据基础模块（早期） |
-| Senparc.Xncf.SenMapic | 0.1.3 | - | 否 | 爬虫示例模块 |
-| Senparc.Xncf.Application | 0.0.5 | - | 否 | 外部程序调用模块 |
-| Senparc.Xncf.WeixinManager | 0.21.1 | 5880 | 是 | 微信管理与对应 MCP 能力 |
+| 模块                         | 版本                    | XncfOrder | MCP | 说明                                        |
+| ---------------------------- | ----------------------- | --------: | --- | ------------------------------------------- |
+| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5（项目） |      5896 | 是  | 模板包 `0.13.0`；脚手架、迁移和 AI 代码生成 |
+| Senparc.Xncf.DatabaseToolkit | 0.7.1                   |         - | 否  | 数据库更新、备份、结构查询、Agent 集成查询  |
+| Senparc.Xncf.Swagger         | 0.7.1                   |         0 | 否  | 接口文档                                    |
+| Senparc.Xncf.Terminal        | 0.1.6                   |         - | 否  | 服务器终端命令执行（高权限）                |
+| Senparc.Xncf.FileManager     | 0.2.5                   |         - | 否  | 文件管理                                    |
+| Senparc.Xncf.FirmwareUpdate  | 0.1.0                   |         - | 否  | 同步 NCF 安装包并维护 latest-release.json   |
+| Senparc.Xncf.ChangeNamespace | 0.3.9                   |         - | 否  | 全局命名空间替换（高风险）                  |
+| Senparc.Xncf.DynamicData     | 0.1.0                   |         - | 否  | 动态数据基础模块（早期）                    |
+| Senparc.Xncf.SenMapic        | 0.1.3                   |         - | 否  | 爬虫示例模块                                |
+| Senparc.Xncf.Application     | 0.0.5                   |         - | 否  | 外部程序调用模块                            |
+| Senparc.Xncf.WeixinManager   | 0.21.1                  |      5880 | 是  | 微信管理与对应 MCP 能力                     |
 
 ## 3. 关键机制详解（直接对应源码）
 
@@ -117,8 +121,13 @@ services.AddSenparcEventBus(options =>
 - 注册层：`AddMcpServer(IServiceCollection, IXncfRegister)`
 - 启用层：`UseMcpServer(IApplicationBuilder, IRegisterService)`
 - 路由规则：`mcp-<module-name-lowercase>`（由 `XncfRegisterBase` 自动生成）
+- SSE 地址在上述路由后追加 `/sse`；例如 MCP 模块为 `/mcp-senparc-xncf-mcp/sse`
 
 可在 `XncfRegisterManager.McpServerInfoCollection` 获取已登记 MCP 服务清单。
+
+::: warning 安全边界
+当前源码虽然有 `McpAccessToken` 配置项，但自动映射路径尚未启用查询参数令牌校验。对外暴露前必须在反向代理、网关或应用层补充鉴权、限流和审计。
+:::
 
 ### 3.4 API 鉴权强化（AgentsManager / PromptRange）
 
@@ -134,11 +143,11 @@ services.AddSenparcEventBus(options =>
 
 ### 4.1 场景 A：搭建 AI + Prompt + Agent + KnowledgeBase 闭环
 
-1. 安装并开放基础模块：`AIKernel`、`PromptRange`、`AgentsManager`、`KnowledgeBase`。  
-2. 在 `AIKernel` 中配置可用模型（Chat/Embedding/向量库）。  
-3. 在 `PromptRange` 中沉淀 PromptCode 资产。  
-4. 在 `AgentsManager` 中通过 PromptCode 生成 AgentTemplate，组装 ChatGroup/Task。  
-5. 在 `KnowledgeBase` 导入文件并执行向量化，然后通过 RecallTest 验证召回质量。  
+1. 安装并开放基础模块：`AIKernel`、`PromptRange`、`AgentsManager`、`KnowledgeBase`。
+2. 在 `AIKernel` 中配置可用模型（Chat/Embedding/向量库）。
+3. 在 `PromptRange` 中沉淀 PromptCode 资产。
+4. 在 `AgentsManager` 中通过 PromptCode 生成 AgentTemplate，组装 ChatGroup/Task。
+5. 在 `KnowledgeBase` 导入文件并执行向量化，然后通过 RecallTest 验证召回质量。
 6. 将召回结果与 Agent 工作流串接，形成可迭代链路。
 
 ### 4.2 场景 B：模块治理（安装、开放、排障）
@@ -167,6 +176,12 @@ services.AddSenparcEventBus(options =>
 - 自动更新 `latest-release.json`
 
 适用于官方发布镜像、离线兜底下载等场景。
+
+### 4.5 场景 E：本地化与首次安装
+
+- 站点与安装器支持 `zh-CN`、`en`、`ja`、`fr`、`es`、`ru`。
+- Function 参数说明可通过 `[LocalizedDescription]` 关联资源键。
+- 首次安装默认选择管理员、PromptRange、XncfBuilder、MCP、AIKernel、AgentsManager 六个模块；用户确认清单后才会写入安装状态。
 
 ## 5. 高风险模块清单（上线前必审）
 

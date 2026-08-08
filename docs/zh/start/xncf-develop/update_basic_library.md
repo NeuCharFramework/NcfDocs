@@ -111,10 +111,10 @@ dotnet outdated -u:prompt -inc Senparc
 
 ## 如何使用本地编译的基础库
 
-可以参考如何生成本地的 Nuget 包的步骤来操作[发布本地Nuget](/start/developer/issue_local_nuget.html)
+可以参考如何生成本地的 Nuget 包的步骤来操作[发布本地Nuget](/zh/start/developer/issue_local_nuget.html)
 
 生成本地的 Nuget 包以后，可以把需要引用的本地的 Nuget 包放到一个统一的文件夹，便于管理
 
 使用上面 `如何更新基础库` 的方法，进行更新即可。
 
-[基础库](/NcfPackageSources)
+[基础库](/zh/NcfPackageSources)

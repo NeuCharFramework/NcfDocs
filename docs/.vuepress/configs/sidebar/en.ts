@@ -39,10 +39,11 @@ export const sidebarEn: SidebarConfig = {
       ],
     },
     {
-      text: 'Modular Development',
+      text: 'Template-Based Development',
       children: [
         '/start/xncf-develop/thought',
         '/start/xncf-develop/about-xncf',
+        '/start/xncf-develop/contracts-and-interfaces',
         '/start/xncf-develop/create-xncf',
         '/start/xncf-develop/about-custom-xncf',
         '/start/xncf-develop/dev-xncf',
@@ -108,20 +109,24 @@ export const sidebarEn: SidebarConfig = {
   ],
   '/NcfPackageSources/': [
     {
-      text: 'Quickstart And Capability Guide',
+      text: 'Source Development',
       children: [
         '/NcfPackageSources/home/beginner-quickstart',
         '/NcfPackageSources/home/index.md',
-        '/NcfPackageSources/home/capability-guide',
+        '/NcfPackageSources/home/project-relationships',
         '/NcfPackageSources/home/version-upgrade-notes',
       ],
     },
     {
-      text: 'XNCF Extension Modules',
-      children: ['/NcfPackageSources/home/xncf-extension-modules'],
+      text: 'XNCF Source Analysis',
+      children: [
+        '/NcfPackageSources/home/capability-guide',
+        '/NcfPackageSources/home/xncf-extension-modules',
+        '/NcfPackageSources/xncf/sandbox-environment',
+      ],
     },
     {
-      text: 'NCF Libraries',
+      text: 'NCF Library Source Analysis',
       children: [
         '/NcfPackageSources/libs/Senparc.Ncf.Core',
         '/NcfPackageSources/libs/Senparc.Ncf.Database',
@@ -137,7 +142,7 @@ export const sidebarEn: SidebarConfig = {
       ],
     },
     {
-      text: 'Core Interfaces',
+      text: 'Core Interface Source Analysis',
       children: ['/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IxncfRegister'],
     },
   ],

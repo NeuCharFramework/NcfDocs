@@ -16,13 +16,13 @@ Plant 意为“停机坪”，这意味着当你准备“检修”模块的时�
 
 <img src="./images/database_plant-graph.png" width="80%"/>
 
-> [Senparc.Ncf.DatabasePlant](/NcfPackageSources/libs/Senparc.Ncf.DatabasePlant.html) 引用了 NCF 官方实现的所有数据库的 DatabaseConfiguration 的项目，如：Senparc.Ncf.Database.MySql、Senparc.Ncf.Database.SqlServer，等等。
+> [Senparc.Ncf.DatabasePlant](/zh/NcfPackageSources/libs/Senparc.Ncf.DatabasePlant.html) 引用了 NCF 官方实现的数据库配置项目，如 `Senparc.Ncf.Database.MySql`、`Senparc.Ncf.Database.SqlServer` 等。
 
 ## 原因
 
 那么，为什么一定要使用 `DatabasePlant` 来完成迁移呢？
 
-首先，在执行 EF Core 的一系列迁移（Migrations）操作的时候，要求目标项目必须具备明确的 runtime 版本，如 .NET Core 3.1 或 .NET 6.0 等等。而大部分的 XNCF 模块为了达到更好的兼容性和灵活性，一般只会选择如 .NET Standard 2.1 这类的标准库名称及版本，如果强行使用 .NET Standard 进行迁移操作，会出现错误：
+首先，EF Core 迁移要求启动项目具备明确的目标运行时；当前 NCF 基线为 `net10.0`。部分可复用模块本身不承担启动职责，因此应由 `Senparc.Web.DatabasePlant` 提供运行时和设计时服务，而不是直接在模块项目中执行迁移：
 
 <img src="./images/database_plant-runtime-error.png" />
 
@@ -51,4 +51,4 @@ Plant 意为“停机坪”，这意味着当你准备“检修”模块的时�
 
 那么当模块没有引用任何数据库包的情况下，又是怎么在生产环境中明确指向并使用某个数据库的呢？
 
-请参考：[指定数据库](/start/database/appoint_database.html)
+请参考：[指定数据库](/zh/start/database/appoint_database.html)

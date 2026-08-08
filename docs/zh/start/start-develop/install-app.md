@@ -8,7 +8,18 @@
 
 <img src="./images/install-01.png" />
 
-点击【立即安装】按钮：
+点击【立即安装】按钮前，可以展开【高级选项】确认将随首次安装提交的模块。
+当前模拟站点默认选中以下 6 项：
+
+- 后台管理模块（系统必需）
+- `Senparc.Xncf.PromptRange`
+- `Senparc.Xncf.XncfBuilder`
+- `Senparc.Xncf.MCP`
+- `Senparc.Xncf.AIKernel`
+- `Senparc.Xncf.AgentsManager`
+
+默认选择使用固定模块 UID，不依赖界面语言或显示名称。可按实际需求调整后，
+点击【立即安装】：
 
 <img src="./images/install-02.png" />
 
@@ -16,7 +27,8 @@
 
 <img src="./images/install-02-2.png" width="261" />
 
-阅读提示并点击确认，随后，即可看到安装成功的界面：
+系统会显示安装确认对话框。核对管理员、数据库和模块选择，确认后才会提交
+安装请求；取消确认不会开始安装。安装完成后即可看到成功界面：
 
 <img src="./images/install-03.png" />
 
@@ -26,7 +38,8 @@
 
 ### 进阶：修改管理员账号和数据库连接字符串
 
-您也可以在第一个安装界面上点击“高级选项>”按钮，修改管理员账号和数据库连接字符串：
+您也可以在第一个安装界面上点击“高级选项>”按钮，修改管理员账号、数据库
+连接字符串和可选模块：
 
 <img src="./images/install-04.png" />
 

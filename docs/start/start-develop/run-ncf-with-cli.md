@@ -11,7 +11,7 @@ Navigate to the directory path where the Senparc.Web project (startup project) o
 ## Step 2: Enter .NET Project Startup Command
 
 ```
-E:\...\Senparc.Web > dotnet run
+E:\...\Senparc.Web > dotnet run --launch-profile http
 ```
 
 > Note: The default database used is SQLite. If you need to switch to another database, please refer to [Using Multiple Databases](../database/mutil_database_support.html).
@@ -24,11 +24,13 @@ Due to some behavior characteristics of the CLI command line, you may see a site
 
 <img src="./images/run-ncf-with-cli-02.png" />
 
-You just need to open `https://localhost:5001` directly in the browser to see the startup page:
+With the command above, open `http://localhost:5000` in the browser:
 
 <img src="./images/run-ncf-with-cli-03.png" />
 
-> Tip: You can also change the startup port by modifying the configuration in the `launchSettings.json` file (default is `"https://localhost:5001;http://localhost:5000"`), or specify it through command line parameters.
+> Tip: the local HTTPS profile uses `https://localhost:5111`; the Docker profile
+> uses `http://localhost:5000` and `https://localhost:5001`. Select a profile
+> explicitly with `--launch-profile`, or edit `launchSettings.json`.
 
 ## First Time Startup Installation
 

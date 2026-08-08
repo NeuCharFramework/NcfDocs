@@ -1,6 +1,9 @@
 # IXncfRegister 接口（当前版本）
 
-> 基线：`src/Basic/Senparc.Ncf.XncfBase/Interfaces/IXncfRegister.cs`（当前版本）
+> 本页逐项解释 `src/Basic/Senparc.Ncf.XncfBase/Interfaces/IXncfRegister.cs`，
+> 属于源码剖析。使用 Template 开发模块时，优先阅读
+> [XNCF 二次开发接口与边界](/zh/start/xncf-develop/contracts-and-interfaces.html)，
+> 无需先掌握完整接口内部协作。
 
 ## 1. 接口职责
 

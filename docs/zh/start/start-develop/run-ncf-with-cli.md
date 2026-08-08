@@ -11,7 +11,7 @@
 ## 第二步：输入 .NET 项目启动指令
 
 ```
-E:\...\Senparc.Web > dotnet run
+E:\...\Senparc.Web > dotnet run --launch-profile http
 ```
 
 > 注意：默认运行的数据库为 SQLite，如需更换其他数据库，请查看《[使用多数据库](../database/mutil_database_support.html)》。
@@ -24,11 +24,13 @@ E:\...\Senparc.Web > dotnet run
 
 <img src="./images/run-ncf-with-cli-02.png" />
 
-您只需直接在浏览器打开 `https://localhost:5001` 即可看到启动页面：
+使用上述命令时，在浏览器打开 `http://localhost:5000` 即可看到启动页面：
 
 <img src="./images/run-ncf-with-cli-03.png" />
 
-> 提示：启动端口您也可以通过修改 `launchSettings.json` 文件中配置进行更换（默认为 `"https://localhost:5001;http://localhost:5000"`），或通过命令行参数指定。
+> 提示：本机 HTTPS profile 使用 `https://localhost:5111`；Docker profile 使用
+> `http://localhost:5000` 和 `https://localhost:5001`。可以通过
+> `--launch-profile` 明确选择，也可以修改 `launchSettings.json`。
 
 ## 首次启动安装
 
