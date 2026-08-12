@@ -49,8 +49,8 @@ docker info
 # Python 短任务
 docker pull python:3.12-alpine
 
-# C# 短任务（SDK 镜像体积较大）
-docker pull mcr.microsoft.com/dotnet/sdk:8.0
+# C# 短任务（.NET 10 SDK；支持 file-based apps，体积较大）
+docker pull mcr.microsoft.com/dotnet/sdk:10.0
 
 # JupyterLab（交互式，内存占用更高）
 docker pull quay.io/jupyter/minimal-notebook:latest
@@ -58,18 +58,40 @@ docker pull quay.io/jupyter/minimal-notebook:latest
 
 说明：
 
+- `csharp-exec` 使用 .NET 10 **file-based apps**：容器内执行 `dotnet run --file main.cs`，可用顶层语句（如 `Console.WriteLine("hi");`），无需 csproj
+- Exec 默认 `--network none`：模块会注入离线 `nuget.config` 并关闭默认 NativeAOT（`PublishAot=false`），保证无外网可编译运行；`#:package` 拉包仍不可用
 - 内存紧张时，可只拉 `python:3.12-alpine`，暂不使用 Jupyter 模板
 - JupyterLab 活跃实例通常需要约 0.5–1.5GB 内存，请按并发规划宿主资源
 
-## 4. 内部镜像仓库（预留）
+## 4. 内部镜像仓库
 
 企业环境常需从内网 registry 拉取。推荐做法：
 
 1. 在内网同步/代理上述镜像，例如：
    - `registry.example.com/ncf-sandbox/python:3.12-alpine`
-   - `registry.example.com/ncf-sandbox/dotnet-sdk:8.0`
+   - `registry.example.com/ncf-sandbox/dotnet-sdk:10.0`
    - `registry.example.com/ncf-sandbox/minimal-notebook:latest`
-2. 在宿主配置 Docker registry mirror，或在 Sandbox 模块后续的「镜像映射/仓库前缀」配置中指向内网地址（功能演进后以模块配置页与本页更新为准）。
+2. 在宿主 `appsettings.json`（或环境变量）配置模块节 `SenparcXncfSandbox:Images`：
+
+```json
+"SenparcXncfSandbox": {
+  "Images": {
+    "RegistryPrefix": "registry.example.com/ncf-sandbox",
+    "Overrides": {
+      "python-exec": "registry.example.com/ncf-sandbox/python:3.12-alpine",
+      "csharp-exec": "registry.example.com/ncf-sandbox/dotnet-sdk:10.0",
+      "jupyter-python": "registry.example.com/ncf-sandbox/minimal-notebook:latest"
+    }
+  }
+}
+```
+
+说明：
+
+- `Overrides` 优先；未覆盖时用 `RegistryPrefix` + 默认镜像末段拼接
+- 含多级路径的官方镜像（如 `mcr.microsoft.com/...`）建议写全量 `Overrides`，避免只拼到 `sdk:10.0`
+- 也可只配 Docker daemon 的 registry mirror，不改应用配置
+
 3. 预拉时改为：
 
 ```bash

@@ -40,21 +40,34 @@ Then re-run the checks above.
 
 ```bash
 docker pull python:3.12-alpine
-docker pull mcr.microsoft.com/dotnet/sdk:8.0
+docker pull mcr.microsoft.com/dotnet/sdk:10.0
 docker pull quay.io/jupyter/minimal-notebook:latest
 ```
 
-If host memory is tight, pull only the Python image and skip Jupyter for now. A live Jupyter session often needs about 0.5–1.5GB RAM.
+Notes:
 
-## 4. Private registry (reserved)
+- `csharp-exec` uses .NET 10 **file-based apps** (`dotnet run --file main.cs`). Top-level statements work (e.g. `Console.WriteLine("hi");`); no `.csproj` required.
+- Exec uses `--network none`. The module injects an offline `nuget.config` and sets `PublishAot=false` (file-based apps default to Native AOT, which cannot restore offline). `#:package` restore remains unavailable unless you change network policy or bake packages into a custom image.
+- If host memory is tight, pull only the Python image and skip Jupyter for now. A live Jupyter session often needs about 0.5–1.5GB RAM.
 
-Mirror images internally, for example:
+## 4. Private registry
 
-- `registry.example.com/ncf-sandbox/python:3.12-alpine`
-- `registry.example.com/ncf-sandbox/dotnet-sdk:8.0`
-- `registry.example.com/ncf-sandbox/minimal-notebook:latest`
+Mirror images internally, then configure the host `appsettings.json`:
 
-Then pull from your registry (or configure a Docker registry mirror). Module-side registry prefix mapping may be added later; keep this page updated when that lands.
+```json
+"SenparcXncfSandbox": {
+  "Images": {
+    "RegistryPrefix": "registry.example.com/ncf-sandbox",
+    "Overrides": {
+      "python-exec": "registry.example.com/ncf-sandbox/python:3.12-alpine",
+      "csharp-exec": "registry.example.com/ncf-sandbox/dotnet-sdk:10.0",
+      "jupyter-python": "registry.example.com/ncf-sandbox/minimal-notebook:latest"
+    }
+  }
+}
+```
+
+`Overrides` wins over `RegistryPrefix`. Prefer full override entries for multi-segment public images (e.g. `mcr.microsoft.com/...`). You can also use a Docker registry mirror without app config.
 
 ## 5. Enable the module in NCF
 
