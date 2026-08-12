@@ -1,6 +1,6 @@
 # XNCF 扩展库说明（Senparc.Xncf.Xxxx）
 
-> 本页从 `NcfPackageSources` 源码角度解释官方扩展模块，内容于 2026-07-27
+> 本页从 `NcfPackageSources` 源码角度解释官方扩展模块，内容于 2026-08-13
 > 按开发分支核对。Template 业务开发者无需把官方模块源码作为前置知识。
 > 本页用于介绍 NCF 中的**XNCF 扩展模块（Senparc.Xncf.Xxxx）**。
 
@@ -50,11 +50,13 @@
 - `Senparc.Xncf.KnowledgeBase`
 - `Senparc.Xncf.MCP`
 - `Senparc.Xncf.AIAgentsHub`
+- `Senparc.Xncf.NeuCharWorkflow`：以 Function、系统节点和受控 Agent 组合服务端可视化工作流，参见 [NeuChar Workflow](../xncf/neuchar-workflow.md)。
 
 ### 3.3 开发与运维模块
 
 - `Senparc.Xncf.XncfBuilder`
 - `Senparc.Xncf.Sandbox`（独立沙箱编排：Docker/Wasm；环境准备见 [Sandbox 环境准备指南](../xncf/sandbox-environment.md)）
+- `Senparc.Xncf.DesktopBridge`（为桌面伴侣程序提供受保护的 HTTP/SSE 桥接、设备配对与活动通知）
 - `Senparc.Xncf.DatabaseToolkit`
 - `Senparc.Xncf.FileManager`
 - `Senparc.Xncf.Terminal`
@@ -66,6 +68,12 @@
 完整模块版本、排序、场景说明请看：
 
 - [NCF 核心能力源码详解](./capability-guide.md)
+
+### 3.4 近期模块入口
+
+- **NeuCharWorkflow**：用于创建、测试、触发、观察和回看服务端工作流。支持手动、定时和 Webhook 触发，可调用已启用 XNCF 的 Function、Agent / Agent 组 / A2A 对象及内置控制节点。请从 [NeuChar Workflow](../xncf/neuchar-workflow.md) 开始。
+- **Sandbox**：用于创建可销毁的 Docker/Wasm 实验会话；镜像、私有仓库和主机环境准备以 [Sandbox 环境准备](../xncf/sandbox-environment.md) 为准。
+- **DesktopBridge**：通过受保护的 HTTP/SSE 桥接、设备配对和活动通知连接 NCF Host 与已授权的桌面伴侣程序。桥接令牌只是应用层密钥，不能替代 TLS、网络访问控制或 Admin 授权。
 
 ## 4. 开发者约定：如何把 XNCF 当作“单粒度模块”来设计
 

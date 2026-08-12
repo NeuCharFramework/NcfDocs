@@ -122,6 +122,7 @@ export const sidebarEn: SidebarConfig = {
       children: [
         '/NcfPackageSources/home/capability-guide',
         '/NcfPackageSources/home/xncf-extension-modules',
+        '/NcfPackageSources/xncf/neuchar-workflow',
         '/NcfPackageSources/xncf/sandbox-environment',
       ],
     },

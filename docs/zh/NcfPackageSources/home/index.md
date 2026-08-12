@@ -107,6 +107,7 @@ dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --lau
 - **提示词工程层**：`Senparc.Xncf.PromptRange`
 - **智能体编排层**：`Senparc.Xncf.AgentsManager`
 - **知识库/RAG 基础层**：`Senparc.Xncf.KnowledgeBase`
+- **服务端可视化编排**：`Senparc.Xncf.NeuCharWorkflow` —— [操作与表达式说明](../xncf/neuchar-workflow.md)
 - **模块生成与模块清单治理**：`Senparc.Xncf.XncfBuilder`
 - **MCP 管理与接入**：`Senparc.Xncf.MCP`
 - **数据库运维工具**：`Senparc.Xncf.DatabaseToolkit`

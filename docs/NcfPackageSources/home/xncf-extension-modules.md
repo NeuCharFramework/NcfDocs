@@ -1,7 +1,7 @@
 # XNCF Extension Library Guide (Senparc.Xncf.xxx)
 
 > This page analyzes official extensions from the `NcfPackageSources` source
-> perspective and was checked against the development line on 2026-07-27.
+> perspective and was checked against the development line on 2026-08-13.
 > Their internals are not prerequisites for Template-based business modules.
 > This page fills the missing half beside “NCF libraries”: **XNCF extension modules (`Senparc.Xncf.xxx`)**.
 
@@ -57,11 +57,13 @@ This is the core engineering value of NCF modularity: **capabilities are split i
 - `Senparc.Xncf.KnowledgeBase`
 - `Senparc.Xncf.MCP`
 - `Senparc.Xncf.AIAgentsHub`
+- `Senparc.Xncf.NeuCharWorkflow` — server-side visual orchestration built from Functions, system nodes, and controlled Agents. See [NeuChar Workflow](../xncf/neuchar-workflow.md).
 
 ### 4.3 Tooling and Ops Modules
 
 - `Senparc.Xncf.XncfBuilder`
 - `Senparc.Xncf.Sandbox` (lab sandbox orchestration via Docker/Wasm; see [Sandbox environment setup](../xncf/sandbox-environment.md))
+- `Senparc.Xncf.DesktopBridge` (protected HTTP/SSE bridge, device pairing, and activity notifications for a desktop companion)
 - `Senparc.Xncf.DatabaseToolkit`
 - `Senparc.Xncf.FileManager`
 - `Senparc.Xncf.Terminal`
@@ -73,6 +75,12 @@ This is the core engineering value of NCF modularity: **capabilities are split i
 For full versions, order, and scenario guidance:
 
 - [NCF Capability Source Deep Dive](./capability-guide.md)
+
+### 4.4 Recent Module Entry Points
+
+- **NeuCharWorkflow**: create, test, trigger, observe, and replay server-side workflows. The module supports manual, interval, and Webhook triggers; it can invoke enabled XNCF Functions, Agents/Agent groups/A2A objects, and built-in control nodes. Start with [NeuChar Workflow](../xncf/neuchar-workflow.md).
+- **Sandbox**: creates disposable Docker/Wasm experiment sessions. Its image, registry, and host preparation details are intentionally maintained in [Sandbox environment setup](../xncf/sandbox-environment.md).
+- **DesktopBridge**: connects an NCF host to an authorized desktop companion through a protected HTTP/SSE bridge, device pairing, and activity notifications. Treat the bridge token as an application secret, not as a substitute for TLS, network controls, or Admin authorization.
 
 ## 5. Developer Guidance: Design XNCF as Single-Granularity Units
 

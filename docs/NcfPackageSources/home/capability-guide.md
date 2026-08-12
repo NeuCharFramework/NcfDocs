@@ -3,7 +3,7 @@
 > This is source analysis for `NcfPackageSources` developers, not a prerequisite
 > for business modules created from a Template. For normal extension work, start
 > with [XNCF Extension Contracts and Boundaries](/start/xncf-develop/contracts-and-interfaces.html).
-> The content was checked against the development line on 2026-07-27.
+> The content was checked against the development line on 2026-08-13.
 
 ## 1. Capability Overview
 
@@ -46,30 +46,33 @@ If you only study base libraries but skip XNCF modules, you understand “how th
 
 ### 2.2 AI / RAG / Agents Modules
 
-| Module                     | Version          | XncfOrder | MCP | Notes                                                          |
-| -------------------------- | ---------------- | --------: | --- | -------------------------------------------------------------- |
-| Senparc.Xncf.AIKernel      | 5.0.5            |         - | No  | AI model/vector model configuration baseline                   |
-| Senparc.Xncf.PromptRange   | 0.15.2           |      5897 | No  | Prompt range/track and PromptCode assets                       |
-| Senparc.Xncf.AgentsManager | 0.3.22           |         - | No  | Agent templates, chat group/task orchestration                 |
-| Senparc.Xncf.KnowledgeBase | 0.1.10           |         - | No  | KB management, import, embedding, recall testing               |
-| Senparc.Xncf.AIAgentsHub   | 0.1.0            |         - | No  | Early-stage Agent Hub                                          |
-| Senparc.Xncf.MCP           | 0.1.0 (Register) |         - | Yes | NuGet package `0.4.0-preview3`; automatic MCP endpoint mapping |
+| Module                       | Version          | XncfOrder | MCP | Notes                                                                               |
+| ---------------------------- | ---------------- | --------: | --- | ----------------------------------------------------------------------------------- |
+| Senparc.Xncf.AIKernel        | 5.0.5            |         - | No  | AI model/vector model configuration baseline                                        |
+| Senparc.Xncf.PromptRange     | 0.15.2           |      5897 | No  | Prompt range/track and PromptCode assets                                            |
+| Senparc.Xncf.AgentsManager   | 0.3.22           |         - | No  | Agent templates, chat group/task orchestration                                      |
+| Senparc.Xncf.KnowledgeBase   | 0.1.10           |         - | No  | KB management, import, embedding, recall testing                                    |
+| Senparc.Xncf.AIAgentsHub     | 0.1.0            |         - | No  | Early-stage Agent Hub                                                               |
+| Senparc.Xncf.NeuCharWorkflow | 0.1.0-preview1   |      5890 | No  | Visual server-side orchestration; see [operator guide](../xncf/neuchar-workflow.md) |
+| Senparc.Xncf.MCP             | 0.1.0 (Register) |         - | Yes | NuGet package `0.4.0-preview3`; automatic MCP endpoint mapping                      |
 
 ### 2.3 Tooling and Operations Modules
 
-| Module                       | Version                   | XncfOrder | MCP | Notes                                                                      |
-| ---------------------------- | ------------------------- | --------: | --- | -------------------------------------------------------------------------- |
-| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5 (project) |      5896 | Yes | Template package `0.13.0`; scaffolding, migrations, and AI code generation |
-| Senparc.Xncf.DatabaseToolkit | 0.7.1                     |         - | No  | DB update, backup, schema query, AI-agent DB query integration             |
-| Senparc.Xncf.Swagger         | 0.7.1                     |         0 | No  | API documentation module                                                   |
-| Senparc.Xncf.Terminal        | 0.1.6                     |         - | No  | Server command execution (high privilege)                                  |
-| Senparc.Xncf.FileManager     | 0.2.5                     |         - | No  | File management                                                            |
-| Senparc.Xncf.FirmwareUpdate  | 0.1.0                     |         - | No  | NCF package mirror + latest-release.json maintenance                       |
-| Senparc.Xncf.ChangeNamespace | 0.3.9                     |         - | No  | Global namespace replacement (high risk)                                   |
-| Senparc.Xncf.DynamicData     | 0.1.0                     |         - | No  | Dynamic data foundation (early stage)                                      |
-| Senparc.Xncf.SenMapic        | 0.1.3                     |         - | No  | Crawler demo module                                                        |
-| Senparc.Xncf.Application     | 0.0.5                     |         - | No  | External program execution module                                          |
-| Senparc.Xncf.WeixinManager   | 0.21.1                    |      5880 | Yes | WeChat management + MCP support                                            |
+| Module                       | Version                   | XncfOrder | MCP | Notes                                                                                   |
+| ---------------------------- | ------------------------- | --------: | --- | --------------------------------------------------------------------------------------- |
+| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5 (project) |      5896 | Yes | Template package `0.13.0`; scaffolding, migrations, and AI code generation              |
+| Senparc.Xncf.Sandbox         | 0.1.0-preview1            |         - | No  | Disposable Docker/Wasm experiment environments; [setup](../xncf/sandbox-environment.md) |
+| Senparc.Xncf.DesktopBridge   | 0.2.1-preview2            |         - | No  | Protected HTTP/SSE desktop bridge, device pairing, and activity notifications           |
+| Senparc.Xncf.DatabaseToolkit | 0.7.1                     |         - | No  | DB update, backup, schema query, AI-agent DB query integration                          |
+| Senparc.Xncf.Swagger         | 0.7.1                     |         0 | No  | API documentation module                                                                |
+| Senparc.Xncf.Terminal        | 0.1.6                     |         - | No  | Server command execution (high privilege)                                               |
+| Senparc.Xncf.FileManager     | 0.2.5                     |         - | No  | File management                                                                         |
+| Senparc.Xncf.FirmwareUpdate  | 0.1.0                     |         - | No  | NCF package mirror + latest-release.json maintenance                                    |
+| Senparc.Xncf.ChangeNamespace | 0.3.9                     |         - | No  | Global namespace replacement (high risk)                                                |
+| Senparc.Xncf.DynamicData     | 0.1.0                     |         - | No  | Dynamic data foundation (early stage)                                                   |
+| Senparc.Xncf.SenMapic        | 0.1.3                     |         - | No  | Crawler demo module                                                                     |
+| Senparc.Xncf.Application     | 0.0.5                     |         - | No  | External program execution module                                                       |
+| Senparc.Xncf.WeixinManager   | 0.21.1                    |      5880 | Yes | WeChat management + MCP support                                                         |
 
 ## 3. Key Mechanisms (Code-Aligned)
 
@@ -141,7 +144,16 @@ Recommendation: keep this baseline for all newly added management APIs.
 
 ## 4. Scenario Playbooks
 
-### 4.1 Scenario A: Build an AI + Prompt + Agent + Knowledge Pipeline
+### 4.1 Scenario A: Design and Operate a NeuChar Workflow
+
+1. Install and enable `Senparc.Xncf.NeuCharWorkflow` in XncfModuleManager; its installation applies its module migrations.
+2. Open **NeuChar Workflow**, create a workflow, choose one trigger, then connect reachable nodes from that trigger.
+3. Configure enabled XNCF Functions, Agent/A2A objects, or system nodes. Use the task list for execution status and read-only replay.
+4. For interval or Webhook execution, enable the workflow only after the graph and referenced modules are valid.
+
+For supported nodes, trigger rules, and the restricted `{{= ... }}` language, see [NeuChar Workflow](../xncf/neuchar-workflow.md).
+
+### 4.2 Scenario B: Build an AI + Prompt + Agent + Knowledge Pipeline
 
 1. Install/open baseline modules: `AIKernel`, `PromptRange`, `AgentsManager`, `KnowledgeBase`.
 2. Configure model sets in `AIKernel` (chat/embedding/vector).
@@ -150,7 +162,7 @@ Recommendation: keep this baseline for all newly added management APIs.
 5. Import files and run embedding in `KnowledgeBase`, then validate retrieval with recall testing.
 6. Connect retrieval output with agent execution loops for iterative quality improvements.
 
-### 4.2 Scenario B: Module Governance (Install, Open, Diagnose)
+### 4.3 Scenario C: Module Governance (Install, Open, Diagnose)
 
 Use `XncfModuleManager` as the first operational entry:
 
@@ -160,13 +172,13 @@ Use `XncfModuleManager` as the first operational entry:
 
 This is the quickest path to diagnose “module exists but capability is unavailable”.
 
-### 4.3 Scenario C: Database Maintenance and Release Safety
+### 4.4 Scenario D: Database Maintenance and Release Safety
 
 - Dev/maintenance: combine `DatabaseToolkit` and `DatabasePlant` for multi-db operations.
 - Release: avoid shipping `DatabasePlant` in production runtime packages.
 - Schema updates: prioritize module-owned DbContext migration flows.
 
-### 4.4 Scenario D: Desktop Package Mirror Backup Channel
+### 4.5 Scenario E: Desktop Package Mirror Backup Channel
 
 `FirmwareUpdate` is suitable for release fallback workflows:
 
@@ -177,7 +189,7 @@ This is the quickest path to diagnose “module exists but capability is unavail
 
 Useful for official mirrors and backup download paths.
 
-### 4.5 Scenario E: Localization and First-Time Installation
+### 4.6 Scenario F: Localization and First-Time Installation
 
 - The site and installer support `zh-CN`, `en`, `ja`, `fr`, `es`, and `ru`.
 - Function parameter descriptions can bind resource keys through `[LocalizedDescription]`.

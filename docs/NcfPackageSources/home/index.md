@@ -112,6 +112,7 @@ The current version is especially relevant for these module combinations:
 - **Prompt engineering**: `Senparc.Xncf.PromptRange`
 - **Agent orchestration**: `Senparc.Xncf.AgentsManager`
 - **Knowledge/RAG foundation**: `Senparc.Xncf.KnowledgeBase`
+- **Visual server-side orchestration**: `Senparc.Xncf.NeuCharWorkflow` — [operator guide](../xncf/neuchar-workflow.md)
 - **Module generation and inventory governance**: `Senparc.Xncf.XncfBuilder`
 - **MCP management**: `Senparc.Xncf.MCP`
 - **Database operations tooling**: `Senparc.Xncf.DatabaseToolkit`
