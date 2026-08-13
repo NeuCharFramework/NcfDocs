@@ -89,12 +89,12 @@ The UI saves upstream fields as a `$template` with binding-source records. Selec
 Each expression is limited to 512 characters; a text field may contain at most 32 expressions; and one rendered expression result may not exceed 8000 characters. Whitespace, parentheses, single/double quoted strings (with `\n`, `\r`, and `\t` escapes), numbers, `true`, `false`, and `null` are supported.
 
 | Category                   | Supported form                                                  |
-| -------------------------- | --------------------------------------------------------------- | --- | --- |
+| -------------------------- | --------------------------------------------------------------- |
 | Values                     | `input`, `vars.customerName`, `input.items[0]`, `value_1`       |
 | Unary                      | `!value`, `-number`                                             |
 | Arithmetic / concatenation | `+`, `-`; `+` adds two numbers and otherwise concatenates text. |
 | Comparison                 | `==`, `!=`, `>`, `>=`, `<`, `<=`                                |
-| Logic                      | `&&`, `                                                         |     | `   |
+| Logic                      | `&&`, `\|\|`                                                   |
 | Conditional                | `condition ? whenTrue : whenFalse`                              |
 
 There is no `*`, `/`, `%`, assignment, loop, reflection, host object, network access, or JavaScript API. Property access applies only to JSON objects and indexing only to JSON arrays; missing properties and out-of-range indexes yield an empty value.
