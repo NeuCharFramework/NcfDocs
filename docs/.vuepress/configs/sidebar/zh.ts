@@ -45,6 +45,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/start/xncf-develop/about-xncf',
         '/zh/start/xncf-develop/contracts-and-interfaces',
         '/zh/start/xncf-develop/create-xncf',
+        '/zh/start/xncf-develop/isolated-xncf-development',
         '/zh/start/xncf-develop/about-custom-xncf',
         '/zh/start/xncf-develop/dev-xncf',
         '/zh/start/xncf-develop/update-xncf',
@@ -125,6 +126,8 @@ export const sidebarZh: SidebarConfig = {
       children: [
         '/zh/NcfPackageSources/home/capability-guide',
         '/zh/NcfPackageSources/home/xncf-extension-modules',
+        '/zh/NcfPackageSources/xncf/module-documentation-map',
+        '/zh/NcfPackageSources/xncf/xncfbuilder-isolated-development',
         '/zh/NcfPackageSources/xncf/neuchar-workflow',
         '/zh/NcfPackageSources/xncf/sandbox-environment',
       ],

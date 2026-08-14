@@ -10,6 +10,13 @@ There are two ways to create an Xncf module:
 
 The following introduces the method of creating the basic code of the Xncf module using the "0 code" creation method.
 
+::: warning Choose the right creation path
+This page describes direct generation into a trusted solution. It changes the
+target solution and is therefore not the path for AI-generated or experimental
+code. For an isolated snapshot, Sandbox preview, diff review, and explicit
+human merge, use [Safely Create, Test, and Merge an XNCF Module](./isolated-xncf-development.md).
+:::
+
 ## Install Senparc.Xncf.XncfBuilder
 
 Run the NCF project, go to the [Module Management] menu, find the `XNCF Module Generator` (Senparc.Xncf.XncfBuilder) in the "Newly Discovered Modules" list, and click the [Install] button:

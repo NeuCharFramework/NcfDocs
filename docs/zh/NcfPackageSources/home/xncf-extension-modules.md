@@ -73,6 +73,7 @@
 
 - **NeuCharWorkflow**：用于创建、测试、触发、观察和回看服务端工作流。支持手动、定时和 Webhook 触发，可调用已启用 XNCF 的 Function、Agent / Agent 组 / A2A 对象及内置控制节点。请从 [NeuChar Workflow](../xncf/neuchar-workflow.md) 开始。
 - **Sandbox**：用于创建可销毁的 Docker/Wasm 实验会话；镜像、私有仓库和主机环境准备以 [Sandbox 环境准备](../xncf/sandbox-environment.md) 为准。
+- **XncfBuilder**：同时支持受信任的直接脚手架和隔离开发流程：源码快照、受限 AI 编辑、Sandbox 预览、人工评审和受保护合入。Template/应用使用者请先看[使用说明](/zh/start/xncf-develop/isolated-xncf-development.html)，源码贡献者继续看[源码剖析](../xncf/xncfbuilder-isolated-development.md)。
 - **DesktopBridge**：通过受保护的 HTTP/SSE 桥接、设备配对和活动通知连接 NCF Host 与已授权的桌面伴侣程序。桥接令牌只是应用层密钥，不能替代 TLS、网络访问控制或 Admin 授权。
 
 ## 4. 开发者约定：如何把 XNCF 当作“单粒度模块”来设计
@@ -97,3 +98,6 @@
 
 - XNCF 开发原理与 Register 细节：
   [Xncf 的构成](/zh/start/xncf-develop/about-xncf.html)
+
+- 文档覆盖度与两条阅读路径：
+  [XNCF 模块文档地图](../xncf/module-documentation-map.md)

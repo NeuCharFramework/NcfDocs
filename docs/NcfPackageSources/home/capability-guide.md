@@ -60,7 +60,7 @@ If you only study base libraries but skip XNCF modules, you understand “how th
 
 | Module                       | Version                   | XncfOrder | MCP | Notes                                                                                   |
 | ---------------------------- | ------------------------- | --------: | --- | --------------------------------------------------------------------------------------- |
-| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5 (project) |      5896 | Yes | Template package `0.13.0`; scaffolding, migrations, and AI code generation              |
+| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5 (project) |      5896 | Yes | Template package `0.13.0`; direct scaffolding plus isolated AI development / Sandbox preview / human merge ([guide](../xncf/xncfbuilder-isolated-development.md)) |
 | Senparc.Xncf.Sandbox         | 0.1.0-preview1            |         - | No  | Disposable Docker/Wasm experiment environments; [setup](../xncf/sandbox-environment.md) |
 | Senparc.Xncf.DesktopBridge   | 0.2.1-preview2            |         - | No  | Protected HTTP/SSE desktop bridge, device pairing, and activity notifications           |
 | Senparc.Xncf.DatabaseToolkit | 0.7.1                     |         - | No  | DB update, backup, schema query, AI-agent DB query integration                          |

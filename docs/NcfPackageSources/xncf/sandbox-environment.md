@@ -81,6 +81,69 @@ Mirror images internally, then configure the host `appsettings.json`:
 - Prefer localhost/intranet experiments; do not expose Jupyter `127.0.0.1` + token URLs to the public internet without a reverse proxy and auth  
 - Without Docker, the module will **not** fall back to bare-process execution of untrusted code  
 
-## 7. Maintenance rule
+## 7. NCF/XNCF Preview Workload
+
+`Senparc.Xncf.XncfBuilder` can send a **sanitized isolated source snapshot**
+to Sandbox for a separate NCF preview. This is intended for review of
+AI-assisted XNCF changes; it is not a general-purpose Docker command runner
+and it does not hot-load a module into the main site.
+
+The workload is disabled by default. Enable it only after an operator has
+prepared a trusted image and a host that supports the preview path base:
+
+```json
+"SenparcXncfSandbox": {
+  "NcfPreview": {
+    "Enabled": true,
+    "AllowDependencyRestoreNetwork": false,
+    "StartupTimeoutSeconds": 180
+  },
+  "Images": {
+    "Overrides": {
+      "ncf-preview": "registry.example.com/ncf/ncf-preview@sha256:<immutable-digest>"
+    }
+  }
+}
+```
+
+Requirements and behavior:
+
+- `ncf-preview` **must** be an approved immutable digest. A tag such as
+  `:latest` or `:10.0` is rejected.
+- With the default `AllowDependencyRestoreNetwork: false`, the container uses
+  `--network none`. The approved image must already contain/cache all required
+  SDK and package dependencies.
+- If package restore must use an internal mirror, enable it explicitly and use
+  only a dedicated Docker network that reaches that mirror, never the general
+  Internet:
+
+  ```json
+  "NcfPreview": {
+    "Enabled": true,
+    "AllowDependencyRestoreNetwork": true,
+    "RestoreNetworkName": "ncf-package-mirror",
+    "StartupTimeoutSeconds": 180
+  }
+  ```
+
+- The fixed container invocation has no caller-supplied shell command, Docker
+  socket, host network, or writable production checkout. It uses a second
+  Sandbox-owned source copy, loopback-only port binding, dropped capabilities,
+  `no-new-privileges`, read-only root filesystem, tmpfs, and CPU/memory/PID
+  limits.
+- It executes only: restore the fixed `Senparc.Web` project, publish it, and
+  start it on port 8080. Preview output is not deployed back to the host.
+- Access uses `/sandbox-preview/{sessionId}/...` through an authenticated Admin
+  proxy. Cookies and `Authorization` headers are removed before proxying to the
+  preview process.
+- The preview `Senparc.Web` must read `NCF_XNCF_PREVIEW_PATH_BASE` and call
+  `UsePathBase` before NCF/routing middleware. The simulated host supports
+  this; a custom host must add the same opt-in.
+
+See [Safely Create, Test, and Merge an XNCF Module](/start/xncf-develop/isolated-xncf-development.html)
+for the operator flow, and [XncfBuilder Isolated Development Source Analysis](./xncfbuilder-isolated-development.md)
+for the implementation boundary.
+
+## 8. Maintenance rule
 
 Update image tags and registry examples **only in this docs page** (and the Chinese counterpart). Keep XNCF copy short and link to `https://doc.ncf.pub`.

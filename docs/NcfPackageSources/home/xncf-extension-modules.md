@@ -80,6 +80,11 @@ For full versions, order, and scenario guidance:
 
 - **NeuCharWorkflow**: create, test, trigger, observe, and replay server-side workflows. The module supports manual, interval, and Webhook triggers; it can invoke enabled XNCF Functions, Agents/Agent groups/A2A objects, and built-in control nodes. Start with [NeuChar Workflow](../xncf/neuchar-workflow.md).
 - **Sandbox**: creates disposable Docker/Wasm experiment sessions. Its image, registry, and host preparation details are intentionally maintained in [Sandbox environment setup](../xncf/sandbox-environment.md).
+- **XncfBuilder**: supports both trusted direct scaffolding and the isolated
+  development workflow: source snapshot, constrained AI edits, Sandbox preview,
+  human review, and guarded merge. Template/application users should start with
+  the [usage guide](/start/xncf-develop/isolated-xncf-development.html); source
+  contributors can continue with the [source analysis](../xncf/xncfbuilder-isolated-development.md).
 - **DesktopBridge**: connects an NCF host to an authorized desktop companion through a protected HTTP/SSE bridge, device pairing, and activity notifications. Treat the bridge token as an application secret, not as a substitute for TLS, network controls, or Admin authorization.
 
 ## 5. Developer Guidance: Design XNCF as Single-Granularity Units
@@ -104,3 +109,6 @@ Recommended baseline rules:
 
 - XNCF design and Register details:
   [Composition of Xncf](/start/xncf-develop/about-xncf.html)
+
+- Documentation coverage and two reading paths:
+  [XNCF Module Documentation Map](../xncf/module-documentation-map.md)

@@ -10,6 +10,10 @@
 
 以下使用“0 代码”创建的方式，对使用可视化自动创建 Xncf 模块基础代码的方式进行介绍。
 
+::: warning 请先选择正确的创建路径
+本文描述的是直接生成到受信任解决方案中的方式，它会修改目标解决方案，因此不适合 AI 生成代码或实验性代码。需要隔离快照、Sandbox 预览、差异评审和显式人工合入时，请使用[安全地创建、测试并合入 XNCF 模块](./isolated-xncf-development.md)。
+:::
+
 ## 安装 Senparc.Xncf.XncfBuilder
 
 运行 NCF 项目，进入到 【模块管理】菜单，在“新发现模块”列表中，找到 `XNCF 模块生成器`（Senparc.Xncf.XncfBuilder），点击【安装】按钮：

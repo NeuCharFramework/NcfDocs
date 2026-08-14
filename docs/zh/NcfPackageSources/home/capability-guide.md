@@ -60,7 +60,7 @@
 
 | 模块                         | 版本                    | XncfOrder | MCP | 说明                                                                       |
 | ---------------------------- | ----------------------- | --------: | --- | -------------------------------------------------------------------------- |
-| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5（项目） |      5896 | 是  | 模板包 `0.13.0`；脚手架、迁移和 AI 代码生成                                |
+| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5（项目） |      5896 | 是  | 模板包 `0.13.0`；直接脚手架及隔离 AI 开发 / Sandbox 预览 / 人工合入（[说明](../xncf/xncfbuilder-isolated-development.md)） |
 | Senparc.Xncf.Sandbox         | 0.1.0-preview1          |         - | 否  | 可销毁 Docker/Wasm 实验环境；见 [环境准备](../xncf/sandbox-environment.md) |
 | Senparc.Xncf.DesktopBridge   | 0.2.1-preview2          |         - | 否  | 受保护的 HTTP/SSE 桌面桥接、设备配对与活动通知                             |
 | Senparc.Xncf.DatabaseToolkit | 0.7.1                   |         - | 否  | 数据库更新、备份、结构查询、Agent 集成查询                                 |

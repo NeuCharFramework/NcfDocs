@@ -116,7 +116,50 @@ docker pull registry.example.com/ncf-sandbox/python:3.12-alpine
 - 无 Docker 时模块**不会**降级为裸进程执行不可信代码
 - 生产环境请配合配额、TTL、网络策略与反向代理鉴权（后续能力以文档更新为准）
 
-## 7. 故障排查速查
+## 7. NCF/XNCF 预览工作负载
+
+`Senparc.Xncf.XncfBuilder` 可以将一份**已清洗的隔离源码快照**交给 Sandbox，启动独立 NCF 预览。它用于评审 AI 协助产生的 XNCF 改动；不是通用 Docker 命令执行器，也不会向主站热加载模块。
+
+该工作负载默认关闭。只有运维人员准备好受信任镜像和支持预览 path base 的宿主后，才应启用：
+
+```json
+"SenparcXncfSandbox": {
+  "NcfPreview": {
+    "Enabled": true,
+    "AllowDependencyRestoreNetwork": false,
+    "StartupTimeoutSeconds": 180
+  },
+  "Images": {
+    "Overrides": {
+      "ncf-preview": "registry.example.com/ncf/ncf-preview@sha256:<immutable-digest>"
+    }
+  }
+}
+```
+
+要求与行为：
+
+- `ncf-preview` **必须**是经过认可的不可变 digest；如 `:latest`、`:10.0` 等 tag 会被拒绝。
+- 默认 `AllowDependencyRestoreNetwork: false` 时，容器使用 `--network none`。认可镜像必须已经包含/缓存所需 SDK 与包依赖。
+- 如确需通过内部镜像还原包，必须显式启用，并且只使用能访问该镜像的专用 Docker 网络，绝不能使用通用 Internet：
+
+  ```json
+  "NcfPreview": {
+    "Enabled": true,
+    "AllowDependencyRestoreNetwork": true,
+    "RestoreNetworkName": "ncf-package-mirror",
+    "StartupTimeoutSeconds": 180
+  }
+  ```
+
+- 固定容器调用不接收调用方提供的 Shell 命令、Docker socket、host 网络或可写生产源码。它使用第二份归 Sandbox 所有的源码副本、仅 loopback 端口、移除能力、`no-new-privileges`、只读根文件系统、tmpfs 和 CPU/内存/PID 限制。
+- 它只执行固定步骤：还原固定的 `Senparc.Web` 项目、发布、在 8080 端口启动。预览输出不会部署回宿主机。
+- 访问使用带 Admin 鉴权的 `/sandbox-preview/{sessionId}/...` 代理；代理到预览进程前会移除 Cookie 和 `Authorization` 头。
+- 预览 `Senparc.Web` 必须读取 `NCF_XNCF_PREVIEW_PATH_BASE`，并在 NCF/路由中间件之前调用 `UsePathBase`。模拟宿主已经支持；自定义宿主必须增加同样的 opt-in。
+
+操作流程请看[安全地创建、测试并合入 XNCF 模块](/zh/start/xncf-develop/isolated-xncf-development.html)，实现边界请看[XncfBuilder 隔离开发源码剖析](./xncfbuilder-isolated-development.md)。
+
+## 8. 故障排查速查
 
 | 现象 | 排查 |
 | --- | --- |
@@ -126,7 +169,7 @@ docker pull registry.example.com/ncf-sandbox/python:3.12-alpine
 | pull 很慢/失败 | 配置镜像加速或改用第 4 节内部仓库 |
 | Jupyter 很卡 | 降低并发，或先只用 Exec 模板 |
 
-## 8. 文档维护约定
+## 9. 文档维护约定
 
 - 镜像 tag、仓库示例、安装链接：**只在本页（及英文对应页）更新**
 - XNCF 内仅保留：检查结果、步骤摘要、指向 `https://doc.ncf.pub` 的链接
