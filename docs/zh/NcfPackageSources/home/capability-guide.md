@@ -50,10 +50,10 @@
 | ---------------------------- | ----------------- | --------: | --- | ------------------------------------------------------------------ |
 | Senparc.Xncf.AIKernel        | 5.0.5             |         - | 否  | AI 模型/向量模型配置与运行基础                                     |
 | Senparc.Xncf.PromptRange     | 0.15.2            |      5897 | 否  | 提示词靶场、PromptCode 体系                                        |
-| Senparc.Xncf.AgentsManager   | 0.3.22            |         - | 否  | 智能体模板、群聊任务、优化流程                                     |
+| Senparc.Xncf.AgentsManager   | 0.3.22            |         - | 否  | 智能体模板、群聊任务、HIL 与 Workflow 集成；见 [集成说明](../xncf/agents-manager-human-in-the-loop.md) |
 | Senparc.Xncf.KnowledgeBase   | 0.1.10            |         - | 否  | 知识库管理、导入、向量化、召回测试                                 |
 | Senparc.Xncf.AIAgentsHub     | 0.1.0             |         - | 否  | Agent Hub（早期）                                                  |
-| Senparc.Xncf.NeuCharWorkflow | 0.1.0-preview1    |      5890 | 否  | 服务端可视化工作流编排；见 [操作说明](../xncf/neuchar-workflow.md) |
+| Senparc.Xncf.NeuCharWorkflow | 0.1.0-preview1    |      5890 | 否  | 服务端可视化工作流、人工输入节点和 HIL 桥接；见 [操作说明](../xncf/neuchar-workflow.md) |
 | Senparc.Xncf.MCP             | 0.1.0（Register） |         - | 是  | NuGet 包为 `0.4.0-preview3`；自动映射 MCP 端点                     |
 
 ### 2.3 开发与运维模块
@@ -161,6 +161,15 @@ services.AddSenparcEventBus(options =>
 4. 在 `AgentsManager` 中通过 PromptCode 生成 AgentTemplate，组装 ChatGroup/Task。
 5. 在 `KnowledgeBase` 导入文件并执行向量化，然后通过 RecallTest 验证召回质量。
 6. 将召回结果与 Agent 工作流串接，形成可迭代链路。
+
+### 4.2.1 场景 B1：Agent/Group HIL 接入 Workflow
+
+1. 确认 `AgentsManager` 和 `NeuCharWorkflow` 均已安装并启用。
+2. 在 Workflow 中搜索并添加 Agent、Agent 组或 A2A 对象，完成 Prompt 和连线配置。
+3. 运行进入 `humanTurn` 或 `toolApproval` 后，在 Workflow 运行面板或 AgentsManager 页面处理 HIL。
+4. 若是纯 Workflow 的审批或补充信息，使用“等待人工输入”系统节点；需要外部程序代为提交时，按节点文档配置恢复密钥和 WebAPI。
+
+HIL 请求当前依赖 Host 进程内的等待句柄。应用重启或多实例路由可能使已有等待无法继续；生产环境需要额外设计持久化 checkpoint、共享协调和审计策略。详见 [AgentsManager HIL 与 Workflow 集成](../xncf/agents-manager-human-in-the-loop.md)。
 
 ### 4.3 场景 C：模块治理（安装、开放、排障）
 

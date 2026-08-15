@@ -19,6 +19,7 @@ NuGet/Template 项目的使用者不应为了操作功能而定位实现文件�
 | `Senparc.Xncf.XncfBuilder` | [有](/zh/start/xncf-develop/isolated-xncf-development.html) | [有](./xncfbuilder-isolated-development.md) | 创建/修改/预览/评审/合入边界。 |
 | `Senparc.Xncf.Sandbox` | [环境准备](./sandbox-environment.md) | 已在 XncfBuilder/Sandbox 集成剖析中说明 | Docker 准备与固定 NCF 预览工作负载。 |
 | `Senparc.Xncf.NeuCharWorkflow` | [操作说明](./neuchar-workflow.md) | 已结合节点级机制说明 | 触发器、节点、受限表达式和回放。 |
+| `Senparc.Xncf.AgentsManager` | [HIL 与 Workflow 集成](./agents-manager-human-in-the-loop.md) | 待补齐完整源码页 | Agent / Group / A2A 的 HIL 请求、NeuBell 和 Workflow 快速处理边界。 |
 | `Senparc.Xncf.MCP` | [独立文档](/zh/MCP/home/index.html) | 通用 Register 剖析为部分覆盖 | 已有安装、使用、API、FAQ；仍需要模块内部专页。 |
 | XNCF 框架/自定义模块 | [Template 开发](/zh/start/xncf-develop/about-xncf.html) | [能力导览](../home/capability-guide.md) | 属于框架级而非单个官方模块。 |
 
@@ -115,4 +116,4 @@ NuGet/Template 项目的使用者不应为了操作功能而定位实现文件�
 
 - Template/应用使用者：[Template 二次开发](/zh/start/xncf-develop/about-xncf.html)，再进入对应模块使用说明；
 - 源码贡献者：[XNCF 扩展库导览](../home/xncf-extension-modules.md)，再读模块源码剖析及相应 NCF 基础库页；
-- 首批详细源码页：[XncfBuilder](./xncfbuilder-isolated-development.md)、[Sandbox](./sandbox-environment.md)、[NeuCharWorkflow](./neuchar-workflow.md)。
+- 首批详细模块页：[XncfBuilder](./xncfbuilder-isolated-development.md)、[Sandbox](./sandbox-environment.md)、[NeuCharWorkflow](./neuchar-workflow.md)、[AgentsManager HIL 集成](./agents-manager-human-in-the-loop.md)。

@@ -50,10 +50,10 @@ If you only study base libraries but skip XNCF modules, you understand “how th
 | ---------------------------- | ---------------- | --------: | --- | ----------------------------------------------------------------------------------- |
 | Senparc.Xncf.AIKernel        | 5.0.5            |         - | No  | AI model/vector model configuration baseline                                        |
 | Senparc.Xncf.PromptRange     | 0.15.2           |      5897 | No  | Prompt range/track and PromptCode assets                                            |
-| Senparc.Xncf.AgentsManager   | 0.3.22           |         - | No  | Agent templates, chat group/task orchestration                                      |
+| Senparc.Xncf.AgentsManager   | 0.3.22           |         - | No  | Agent templates, chat group/task orchestration, HIL and Workflow integration; see [guide](../xncf/agents-manager-human-in-the-loop.md) |
 | Senparc.Xncf.KnowledgeBase   | 0.1.10           |         - | No  | KB management, import, embedding, recall testing                                    |
 | Senparc.Xncf.AIAgentsHub     | 0.1.0            |         - | No  | Early-stage Agent Hub                                                               |
-| Senparc.Xncf.NeuCharWorkflow | 0.1.0-preview1   |      5890 | No  | Visual server-side orchestration; see [operator guide](../xncf/neuchar-workflow.md) |
+| Senparc.Xncf.NeuCharWorkflow | 0.1.0-preview1   |      5890 | No  | Visual workflow, human-input node, and HIL bridge; see [operator guide](../xncf/neuchar-workflow.md) |
 | Senparc.Xncf.MCP             | 0.1.0 (Register) |         - | Yes | NuGet package `0.4.0-preview3`; automatic MCP endpoint mapping                      |
 
 ### 2.3 Tooling and Operations Modules
@@ -161,6 +161,15 @@ For supported nodes, trigger rules, and the restricted `{{= ... }}` language, se
 4. Create AgentTemplate from PromptCode and compose ChatGroup/Task in `AgentsManager`.
 5. Import files and run embedding in `KnowledgeBase`, then validate retrieval with recall testing.
 6. Connect retrieval output with agent execution loops for iterative quality improvements.
+
+### 4.2.1 Scenario B1: Connect Agent/Group HIL to Workflow
+
+1. Confirm that both `AgentsManager` and `NeuCharWorkflow` are installed and enabled.
+2. Search for and add an Agent, Agent group, or A2A object in Workflow, then configure its Prompt and edges.
+3. When execution reaches `humanTurn` or `toolApproval`, resolve HIL from either the Workflow run panel or the AgentsManager page.
+4. For a pure Workflow approval or missing-information step, use the native Wait for human input system node. If an external program must submit it, configure the node resume key and WebAPI from the Workflow guide.
+
+HIL currently depends on in-process wait handles. An application restart or multi-instance routing can leave an existing wait unable to continue; production deployments need additional persistent checkpoints, shared coordination, and audit design. See [AgentsManager HIL and Workflow integration](../xncf/agents-manager-human-in-the-loop.md).
 
 ### 4.3 Scenario C: Module Governance (Install, Open, Diagnose)
 

@@ -50,6 +50,92 @@ Notes:
 - Exec uses `--network none`. The module injects an offline `nuget.config` and sets `PublishAot=false` (file-based apps default to Native AOT, which cannot restore offline). `#:package` restore remains unavailable unless you change network policy or bake packages into a custom image.
 - If host memory is tight, pull only the Python image and skip Jupyter for now. A live Jupyter session often needs about 0.5–1.5GB RAM.
 
+### 3.1 Mainland China networks and pull timeout
+
+The default Jupyter image is hosted on `quay.io`. The commonly used TUNA mirror is for Docker CE
+packages, not a Quay container registry, so `quay.io/jupyter/...` cannot be rewritten to a TUNA URL.
+
+For a temporary third-party Quay proxy, explicitly override the image and allow 15 minutes for the
+complete `docker run` operation:
+
+```json
+"SenparcXncfSandbox": {
+  "Docker": {
+    "InteractiveCreateTimeoutSeconds": 900
+  },
+  "Images": {
+    "Overrides": {
+      "jupyter-python": "quay.dockerproxy.net/jupyter/minimal-notebook:latest"
+    }
+  }
+}
+```
+
+The timeout accepts 60–3600 seconds and includes Docker's automatic image pull when the image is
+missing locally. `quay.dockerproxy.net` is a third-party proxy, not an official Senparc or TUNA
+service. For production, mirror the image into ACR, TCR, or an internal registry and configure a
+pinned tag or digest through `Overrides`.
+
+### 3.2 C# Notebook image
+
+NCF supports two C# workflows:
+
+- `csharp-exec`: a short-lived .NET SDK container for simple code and Functions;
+- `jupyter-csharp`: a Jupyter Notebook with cell-by-cell C# execution, using a separately built image.
+
+The image build context is `tools/SandboxImages/JupyterDotnet` in the NCF source repository. The SDK,
+DLLs, and NuGet packages are not added to the NCF NuGet package. The image build installs the .NET
+SDK and .NET Interactive Kernel, then warms the packages listed by `Learning.csproj`.
+
+Build and verify it from the NCF source repository:
+
+```bash
+cd tools/SandboxImages/JupyterDotnet
+docker build -t ncf-jupyter-dotnet:10.0 .
+docker run --rm ncf-jupyter-dotnet:10.0 dotnet --info
+docker run --rm ncf-jupyter-dotnet:10.0 jupyter kernelspec list
+```
+
+If NCF and Docker use the same local daemon, configure the local image:
+
+```json
+"SenparcXncfSandbox": {
+  "Images": {
+    "Overrides": {
+      "jupyter-csharp": "ncf-jupyter-dotnet:10.0"
+    }
+  }
+}
+```
+
+To publish it to a private registry:
+
+```bash
+docker tag ncf-jupyter-dotnet:10.0 \
+  registry.example.com/ncf-sandbox/jupyter-dotnet:10.0
+docker login registry.example.com
+docker push registry.example.com/ncf-sandbox/jupyter-dotnet:10.0
+```
+
+Then configure the full image reference:
+
+```json
+"jupyter-csharp": "registry.example.com/ncf-sandbox/jupyter-dotnet:10.0"
+```
+
+Use a pinned version or digest in production instead of `latest`. If the build host cannot reach the
+public NuGet feed reliably, pass `--build-arg NUGET_SOURCE=https://your-nuget-feed/v3/index.json`
+to use an organisation's package feed.
+
+After creating a `JupyterLab C#` sandbox, select the C# kernel in JupyterLab and run:
+
+```csharp
+using Newtonsoft.Json;
+
+var value = new { Name = "NCF", Enabled = true };
+Console.WriteLine(JsonConvert.SerializeObject(value));
+```
+
 ## 4. Private registry
 
 Mirror images internally, then configure the host `appsettings.json`:
@@ -61,7 +147,8 @@ Mirror images internally, then configure the host `appsettings.json`:
     "Overrides": {
       "python-exec": "registry.example.com/ncf-sandbox/python:3.12-alpine",
       "csharp-exec": "registry.example.com/ncf-sandbox/dotnet-sdk:10.0",
-      "jupyter-python": "registry.example.com/ncf-sandbox/minimal-notebook:latest"
+      "jupyter-python": "registry.example.com/ncf-sandbox/minimal-notebook:latest",
+      "jupyter-csharp": "registry.example.com/ncf-sandbox/jupyter-dotnet:10.0"
     }
   }
 }

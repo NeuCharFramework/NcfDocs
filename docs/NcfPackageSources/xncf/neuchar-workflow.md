@@ -1,6 +1,6 @@
 # NeuChar Workflow: Operations and `{{= ... }}` Expressions
 
-> Applies to `Senparc.Xncf.NeuCharWorkflow` `0.1.0-preview1`, checked against the `NcfPackageSources` development line on 2026-08-13. This describes the current server-side module. Available nodes depend on the enabled XNCF modules, the current site, and the administrator's permissions.
+> Applies to `Senparc.Xncf.NeuCharWorkflow` `0.1.0-preview1`, checked against the `NcfPackageSources` development line on 2026-08-16. This describes the current server-side module. Available nodes depend on the enabled XNCF modules, the current site, and the administrator's permissions.
 
 `NeuCharWorkflow` is a server-side visual orchestration module. It connects enabled XNCF Functions, Agent / Agent-group / A2A objects, and built-in system nodes as a directed graph executed by the server. It is not a browser scripting engine and it never evaluates arbitrary JavaScript in a template.
 
@@ -20,6 +20,7 @@ The pages require a signed-in administrator. When troubleshooting, check module 
 | Save and run            | Drafts may retain disconnected nodes, but such a draft is treated as disabled and cannot be run as an interval or Webhook workflow.                |
 | Run records             | The task list shows status and summary. A completed run can be replayed read-only from its captured graph without changing the current definition. |
 | Variables and code      | Up to 30 workflow variables; the Safe Code node assigns only declared variables and cannot run arbitrary JavaScript.                               |
+| Human interaction        | The native **Wait for human input** node is available; when AgentsManager is enabled, Agent / Agent-group HIL requests also appear in the same Workflow handling panel. |
 
 ## 2. Create and Safely Run a Workflow
 
@@ -47,6 +48,7 @@ The pages require a signed-in administrator. When troubleshooting, check module 
 | Safe Code                           | Assigns declared `vars` values with restricted templates during this run only, then passes the original input through.                                                      |
 | Console                             | Renders its template to the page Console and **does not change** the original input passed downstream.                                                                      |
 | NeuBell                             | Creates a workflow notification. Opening it from the Footer enters the task list and applies the node's consumption setting.                                                |
+| Wait for human input                | Creates a pending request and NeuBell, pauses the current branch, then emits the submitted text after a human response. An external WebAPI can optionally resume it.         |
 | End                                 | Ends that path.                                                                                                                                                             |
 
 ### 2.2 Interval and Webhook
@@ -66,6 +68,40 @@ curl -X POST 'https://example.test/api/Senparc.Xncf.NeuCharWorkflow/neuchar-work
 - With no configured parameters, the entire request becomes workflow input. A non-JSON request body is stored as `_body`.
 - The request body limit is 1 MB. A valid request returns `202 Accepted` and a `runId`; execution continues asynchronously on the server.
 - Webhook is anonymous by design. Treat its URL, token, and logs as production secrets, and use HTTPS, least privilege, rate limiting, and audit controls.
+
+### 2.3 Wait for Human Input and AgentsManager HIL
+
+**Wait for human input** is a native Workflow system node for approvals, missing information, and human confirmation. When execution reaches it:
+
+1. Workflow creates a one-time pending request associated with the current run, node, administrator, and request ID.
+2. A Workflow NeuBell notifies the current administrator. The Workflow run panel can accept text and continue, or reject the request.
+3. On approval, the submitted text becomes the node's string output and flows downstream. On rejection, the current branch ends.
+
+When an Agent or Agent-group run triggers `humanTurn` (a human conversation turn) or `toolApproval` (tool approval) in AgentsManager, the AgentsManager-to-Workflow HIL bridge associates the request with the current Workflow run. Workflow status polling merges native requests and AgentsManager requests into one panel. Resolution still goes through AgentsManager's access check, one-time completion, and NeuBell-consumption path. See [AgentsManager HIL and Workflow integration](./agents-manager-human-in-the-loop.md) for the complete integration guide.
+
+#### Resuming native human input from an external program
+
+Enable **Allow external resume** in the node inspector and generate a resume key. The key is encrypted at rest and is not returned when the editor is reopened; leaving the field blank when saving preserves the stored key. The API does not require an Admin login, but every call must include the node's resume key:
+
+```http
+GET /api/Senparc.Xncf.NeuCharWorkflow/neuchar-workflow/human-input/pending/{workflowId}
+X-NeuChar-Workflow-Resume-Key: <node-resume-key>
+```
+
+The response lists pending request IDs for the workflow. Submit the one-time input with:
+
+```bash
+curl -X POST 'https://example.test/api/Senparc.Xncf.NeuCharWorkflow/neuchar-workflow/human-input/<requestId>' \
+  -H 'X-NeuChar-Workflow-Resume-Key: <node-resume-key>' \
+  -H 'Content-Type: application/json' \
+  -d '{"approved":true,"input":"Approved; ticket T-100 added"}'
+```
+
+`approved` defaults to `true`; set it to `false` to reject the request, optionally including a `reason`. A request ID becomes invalid immediately after successful handling. This API currently resumes only the native Wait for human input node; AgentsManager HIL continues to use its Admin entry and the Workflow quick-handling panel.
+
+#### Runtime boundary
+
+Both the native human-input queue and the AgentsManager HIL queue currently live in the Host process so they can hold the active execution handle. An application restart, routing a request to a different instance, or running without sticky routing can leave an existing wait unable to continue. Before production use, evaluate persistent checkpoints, shared coordination, HTTPS, key rotation, rate limiting, and audit controls.
 
 ## 3. Text Templates and Variables
 
@@ -148,6 +184,7 @@ For Console, the default `{{input}}` controls only what is printed. The original
 | Saved workflow is not enabled          | Disconnected nodes, invalid references, missing required parameters, loop count, or a sub-workflow reference error. |
 | Interval does not run                  | Enabled state, interval trigger, due next-run time, then the module background-service logs.                        |
 | Webhook returns 401 / 400 / 405        | Token, required parameters, and method. `405` means the configuration allows only GET or POST.                      |
+| Human input does not resume             | Check that Workflow/AgentsManager are enabled, the run still exists, the request was not already handled, and the resume key and instance route are correct. |
 | Expression says variable is unbound    | Use only `input`, `vars`, and UI-inserted upstream binding tokens; verify the name and upstream connection.         |
 | Console differs from downstream result | Expected: Console changes presentation only; the original input continues downstream.                               |
 
@@ -155,3 +192,4 @@ Related documentation:
 
 - [XNCF Extension Library Guide](../home/xncf-extension-modules.md)
 - [NCF Capability Source Deep Dive](../home/capability-guide.md)
+- [AgentsManager HIL and Workflow integration](./agents-manager-human-in-the-loop.md)

@@ -24,6 +24,7 @@ separate source-analysis page when source depth is needed.
 | `Senparc.Xncf.XncfBuilder` | [Yes](/start/xncf-develop/isolated-xncf-development.html) | [Yes](./xncfbuilder-isolated-development.md) | Create/edit/preview/review/merge boundary. |
 | `Senparc.Xncf.Sandbox` | [Environment setup](./sandbox-environment.md) | Included in the XncfBuilder/Sandbox integration analysis | Docker preparation and fixed NCF preview workload. |
 | `Senparc.Xncf.NeuCharWorkflow` | [Operator guide](./neuchar-workflow.md) | Integrated, node-level analysis | Triggers, nodes, restricted expressions, replay. |
+| `Senparc.Xncf.AgentsManager` | [HIL and Workflow integration](./agents-manager-human-in-the-loop.md) | Full source page pending | Agent / Group / A2A HIL requests, NeuBell, and Workflow quick-handling boundaries. |
 | `Senparc.Xncf.MCP` | [Dedicated guides](/MCP/home/index.html) | Partial common-register analysis | Installation, use, API, FAQ exist; module internals still need a focused page. |
 | XNCF framework / custom module | [Template development](/start/xncf-develop/about-xncf.html) | [Capability guide](../home/capability-guide.md) | Framework-level rather than one official module. |
 
@@ -134,4 +135,4 @@ explicitly labelled gap to this map:
 
 - Template/application users: [Template-Based Development](/start/xncf-develop/about-xncf.html), then the individual module usage guide.
 - Source contributors: [XNCF Extension Library Guide](../home/xncf-extension-modules.md), then the module source analysis and the relevant NCF base-library pages.
-- First detailed source pages: [XncfBuilder](./xncfbuilder-isolated-development.md), [Sandbox](./sandbox-environment.md), and [NeuCharWorkflow](./neuchar-workflow.md).
+- First detailed module pages: [XncfBuilder](./xncfbuilder-isolated-development.md), [Sandbox](./sandbox-environment.md), [NeuCharWorkflow](./neuchar-workflow.md), and [AgentsManager HIL integration](./agents-manager-human-in-the-loop.md).

@@ -63,6 +63,91 @@ docker pull quay.io/jupyter/minimal-notebook:latest
 - 内存紧张时，可只拉 `python:3.12-alpine`，暂不使用 Jupyter 模板
 - JupyterLab 活跃实例通常需要约 0.5–1.5GB 内存，请按并发规划宿主资源
 
+### 3.1 国内网络与下载超时
+
+Jupyter 默认镜像位于 `quay.io`。清华 TUNA 常见的是 Docker CE 软件包镜像，并不是
+`quay.io` 的容器仓库，因此不能直接把 `quay.io/jupyter/...` 改写为 TUNA 地址。
+
+如暂时需要使用国内网络中的第三方 Quay 代理，可以在宿主 `appsettings.json` 中显式覆盖，
+并把首次下载的完整 `docker run` 超时时间提高到 15 分钟：
+
+```json
+"SenparcXncfSandbox": {
+  "Docker": {
+    "InteractiveCreateTimeoutSeconds": 900
+  },
+  "Images": {
+    "Overrides": {
+      "jupyter-python": "quay.dockerproxy.net/jupyter/minimal-notebook:latest"
+    }
+  }
+}
+```
+
+`InteractiveCreateTimeoutSeconds` 的有效范围为 60–3600 秒；它覆盖 `docker run` 的完整执行时间，
+包括本地缺少镜像时 Docker 自动进行的镜像拉取。`quay.dockerproxy.net` 是第三方代理，不是
+Senparc 或清华 TUNA 的官方服务，稳定性和可用性请先自行验证。生产环境更建议将镜像同步到
+阿里云 ACR、腾讯云 TCR 或企业内部 Registry，使用固定版本或 digest 后配置到 `Overrides`。
+
+### 3.2 C# Notebook 镜像
+
+NCF 同时提供两种 C# 使用方式：
+
+- `csharp-exec`：使用独立 .NET SDK 容器执行短任务，适合简单代码和 Function；
+- `jupyter-csharp`：使用 Jupyter Notebook 逐单元格运行 C#，需要先构建扩展镜像。
+
+扩展镜像的构建资源位于 NCF 源码的
+`tools/SandboxImages/JupyterDotnet`，不会把 SDK、DLL 或 NuGet 包打入 NCF NuGet 包。
+镜像构建时会安装 .NET SDK、.NET Interactive Kernel，并预热 `Learning.csproj` 中列出的 NuGet 包。
+
+在 NCF 源码目录执行：
+
+```bash
+cd tools/SandboxImages/JupyterDotnet
+docker build -t ncf-jupyter-dotnet:10.0 .
+docker run --rm ncf-jupyter-dotnet:10.0 dotnet --info
+docker run --rm ncf-jupyter-dotnet:10.0 jupyter kernelspec list
+```
+
+本机 Docker 与 NCF 使用同一个 Docker daemon 时，可直接配置本地镜像：
+
+```json
+"SenparcXncfSandbox": {
+  "Images": {
+    "Overrides": {
+      "jupyter-csharp": "ncf-jupyter-dotnet:10.0"
+    }
+  }
+}
+```
+
+镜像也可以发布到私有 Registry：
+
+```bash
+docker tag ncf-jupyter-dotnet:10.0 \
+  registry.example.com/ncf-sandbox/jupyter-dotnet:10.0
+docker login registry.example.com
+docker push registry.example.com/ncf-sandbox/jupyter-dotnet:10.0
+```
+
+然后配置完整镜像地址：
+
+```json
+"jupyter-csharp": "registry.example.com/ncf-sandbox/jupyter-dotnet:10.0"
+```
+
+生产环境建议使用固定版本或 digest，不要使用 `latest`。如果构建机器访问 NuGet 官方源较慢，
+可使用 `--build-arg NUGET_SOURCE=https://your-nuget-feed/v3/index.json` 指向组织内部源。
+
+创建 `JupyterLab C#` 沙箱后，在 JupyterLab 的 Kernel 列表中选择 C#，即可运行：
+
+```csharp
+using Newtonsoft.Json;
+
+var value = new { Name = "NCF", Enabled = true };
+Console.WriteLine(JsonConvert.SerializeObject(value));
+```
+
 ## 4. 内部镜像仓库
 
 企业环境常需从内网 registry 拉取。推荐做法：
@@ -80,7 +165,8 @@ docker pull quay.io/jupyter/minimal-notebook:latest
     "Overrides": {
       "python-exec": "registry.example.com/ncf-sandbox/python:3.12-alpine",
       "csharp-exec": "registry.example.com/ncf-sandbox/dotnet-sdk:10.0",
-      "jupyter-python": "registry.example.com/ncf-sandbox/minimal-notebook:latest"
+      "jupyter-python": "registry.example.com/ncf-sandbox/minimal-notebook:latest",
+      "jupyter-csharp": "registry.example.com/ncf-sandbox/jupyter-dotnet:10.0"
     }
   }
 }
