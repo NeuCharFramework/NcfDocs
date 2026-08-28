@@ -1,7 +1,7 @@
 # NcfPackageSources 源码指南
 
 > 本页面面向“要读源码、改源码、扩模块、做开源协作”的开发者。  
-> 文档基线：`NcfPackageSources` 当前版本代码，`HEAD = 631f16b4`（2026-06-17）。
+> 文档基线：`NcfPackageSources` 当前版本代码，`HEAD = f668bf650`（2026-08-29，Developer-MAF-V3）。
 
 ## 新手先看（建议 3 步）
 

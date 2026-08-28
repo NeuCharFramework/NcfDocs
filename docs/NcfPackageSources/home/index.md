@@ -1,7 +1,7 @@
 # NcfPackageSources Source Guide
 
 > This page is for developers who need to read source code, change internals, extend modules, and contribute back to the project.  
-> Documentation baseline: current `NcfPackageSources` code, `HEAD = 631f16b4` (2026-06-17).
+> Documentation baseline: current `NcfPackageSources` code, `HEAD = f668bf650` (2026-08-29, Developer-MAF-V3).
 
 ## Start Here (3-Step Path for Newcomers)
 

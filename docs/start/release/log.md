@@ -1,5 +1,20 @@
 # Logs
 
+## 2026-08-29 Update
+
+NcfPackageSources (Developer-MAF-V3 branch) released. Highlights:
+
+1. AgentsManager supports Human-in-the-Loop: tasks can require human approval with configurable max chat rounds and tool permissions; independent `AgentExecutionTask` management, AgentTemplate model binding, and empty-output-token retry are added, and the agent editor can be opened in a new window.
+
+2. NeuCharWorkflow adds global NeuCharPivot floating invocation (access-controlled via the `AllowGlobalPivot` attribute), a Workflow Analytics page (filter by date / workflow / status with summary generation), and a Human Input node (user prompts and external resume); timestamps are standardized on `DateTimeOffset`, `AbortRun` supports aborting by execution log ID, and replay supports loading more events.
+
+3. Stability & diagnostics: new `AgentModelRequestDiagnostics` for model request failures (with automatic sensitive-data redaction), the expression engine preserves non-ASCII characters in JSON serialization, and ChatGroupService runs in isolated scopes with refined token logic.
+
+4. Version bumps: XncfBuilder template `1.1.7`, Senparc.Ncf.Database `0.21.8-preview8`; the download page supports source selection (auto / local / GitHub) and shows MD5 fingerprints; NCF Desktop updated to `0.10.1-build10066`.
+
+See [NcfPackageSources Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md) for full upgrade details.
+
+
 ## 2023-04-21 Update
 
 ```
