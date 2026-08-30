@@ -1,7 +1,7 @@
 # NCF Capability Deep Dive (Practical)
 
 > Scope: current `NcfPackageSources` version  
-> Baseline commit: `631f16b4` (2026-06-17)
+> Baseline commit: `f668bf650` (2026-08-29, Developer-MAF-V3)
 
 ## 1. Capability Overview
 
@@ -11,7 +11,12 @@ When learning the current version, focus on these capabilities first:
 - `PromptRange` and `AgentsManager` collaboration is more standardized via event-driven AppService flows.
 - `KnowledgeBase` already supports the base RAG pipeline: file chunks -> embedding -> recall testing.
 - `XncfModuleManager` includes AI-friendly module install/open actions.
-- `FirmwareUpdate` introduces release mirroring from GitHub to local `wwwroot/NcfPackages`.
+- `FirmwareUpdate` now mirrors both NCF Host and NCF Desktop installers from GitHub Release into local `wwwroot/NcfPackages/host` and `/desktop`, with independent download manifests, source picker, and MD5 fingerprints.
+- `NeuCharWorkflow` adds server-side workflow orchestration: visual designer, versioning with auto-save, run replay, webhook triggers, parallel nodes, Human Input nodes, NeuBell notifications, and a Workflow Analytics page.
+- `AgentsManager` supports A2A (Agent-to-Agent) remote agents: remote agent connect/publish, ChatGroup context sharing, and `AgentTemplateRunner` for unified local/A2A execution; it also adds Human-in-the-Loop approval policies and standalone `AgentExecutionTask` management.
+- `Senparc.Xncf.Sandbox` provides standalone sandbox orchestration: create/destroy isolated Docker/Wasm experiment environments (quotas, TTL, optional JupyterLab, workspace file management), decoupled from the XncfBuilder Preview Host.
+- `Senparc.Xncf.DesktopBridge` exposes a secured HTTP/SSE bridge for NCF desktop companion apps (capability discovery, activity snapshots, authorized sync stream, one-time PKCE handoff).
+- `Senparc.Xncf.Dapr` provides a Dapr client abstraction: service invocation, pub/sub, state management, and health checks.
 - MCP integration is now part of the common register contract (`IXncfRegister` + `XncfRegisterBase`).
 
 ### 1.1 XNCF as Single-Granularity Module Units (Framework Meaning)
@@ -36,7 +41,7 @@ If you only study base libraries but skip XNCF modules, you understand “how th
 | Senparc.Xncf.XncfModuleManager | 0.1.2 | 5950 | Module state governance, install/open actions, function status checks |
 | Senparc.Xncf.AreasBase | 0.1 | 5955 | Area baseline capability |
 | Senparc.Xncf.SystemPermission | 0.2.0 | 5960 | Permission management |
-| Senparc.Xncf.SystemManager | 1.1.2 | 5970 | System configuration and management |
+| Senparc.Xncf.SystemManager | 1.1.3 | 5970 | System configuration and management |
 | Senparc.Xncf.SystemCore | 0.1.1 | 5980 | Core system structures |
 | Senparc.Xncf.Tenant | 0.1 | 5990 | Multi-tenant capability |
 
@@ -46,24 +51,29 @@ If you only study base libraries but skip XNCF modules, you understand “how th
 |---|---|---:|---|---|
 | Senparc.Xncf.AIKernel | 5.0.5 | - | No | AI model/vector model configuration baseline |
 | Senparc.Xncf.PromptRange | 0.15.2 | 5897 | No | Prompt range/track and PromptCode assets |
-| Senparc.Xncf.AgentsManager | 0.3.18.9 | - | No | Agent templates, chat group/task orchestration |
+| Senparc.Xncf.AgentsManager | 0.3.22 | - | No | Agent templates, chat group/task orchestration, HITL approvals, A2A remote agents, AgentExecutionTask management |
+| Senparc.Xncf.NeuCharWorkflow | 0.1.0-preview1 | 5890 | No | Server-side workflow orchestration: designer, replay, webhook triggers, parallel/human-input nodes, NeuBell, Analytics |
 | Senparc.Xncf.KnowledgeBase | 0.1.10 | - | No | KB management, import, embedding, recall testing |
-| Senparc.Xncf.AIAgentsHub | 0.1.0 | - | No | Early-stage Agent Hub |
+| Senparc.Xncf.AIAgentsHub | 0.1.0 | - | No | Agent Hub sample module (multi-database contexts, function endpoints, localized resources) |
 | Senparc.Xncf.MCP | 0.1.0 | - | Yes | MCP endpoint and execution management |
+| Senparc.Xncf.Sandbox | 0.1.0-preview1 | - | No | Standalone sandbox orchestration: isolated Docker/Wasm environments, quota/TTL, JupyterLab, workspace file management |
+| *Abstractions contract packages* | - | - | No | `AIKernel.Abstractions`, `AgentsManager.Abstractions`, `MCP.Abstractions`, `PromptRange.Abstractions`, `NeuCharWorkflow.Abstractions`, `Sandbox.Abstractions`: cross-module contracts and integration-event abstractions (no Register) |
 
 ### 2.3 Tooling and Operations Modules
 
 | Module | Version | XncfOrder | MCP | Notes |
 |---|---|---:|---|---|
-| Senparc.Xncf.XncfBuilder | 0.10.1 | 5896 | Yes | Module scaffolding, migration commands, AI-assisted code generation |
+| Senparc.Xncf.XncfBuilder | 0.10.3 | 5896 | No | Module scaffolding, migration commands, AI-assisted code generation, Preview Host (process-level module preview) |
 | Senparc.Xncf.DatabaseToolkit | 0.7.1 | - | No | DB update, backup, schema query, AI-agent DB query integration |
 | Senparc.Xncf.Swagger | 0.7.1 | 0 | No | API documentation module |
 | Senparc.Xncf.Terminal | 0.1.6 | - | No | Server command execution (high privilege) |
-| Senparc.Xncf.FileManager | 0.2.5 | - | No | File management |
-| Senparc.Xncf.FirmwareUpdate | 0.1.0 | - | No | NCF package mirror + latest-release.json maintenance |
+| Senparc.Xncf.FileManager | 0.6.0 | - | No | File management |
+| Senparc.Xncf.FirmwareUpdate | 0.1.0 | - | No | Dual installer mirror for NCF Host / NCF Desktop (GitHub Release -> `wwwroot/NcfPackages/host` and `/desktop`), independent download manifests + latest-release.json |
+| Senparc.Xncf.Dapr | 0.0.1 | - | No | Dapr client abstraction: service invocation (GET/POST/PUT/PATCH/DELETE), pub/sub, state management, health checks |
+| Senparc.Xncf.DesktopBridge | 0.2.1-preview2 | - | No | HTTP/SSE bridge for desktop companion apps: capability discovery, activity snapshots, authorized sync stream, one-time PKCE handoff |
 | Senparc.Xncf.ChangeNamespace | 0.3.9 | - | No | Global namespace replacement (high risk) |
-| Senparc.Xncf.DynamicData | 0.1.0 | - | No | Dynamic data foundation (early stage) |
-| Senparc.Xncf.SenMapic | 0.1.3 | - | No | Crawler demo module |
+| Senparc.Xncf.DynamicData | 0.1.0 | - | No | Dynamic data foundation module (create/manage dynamic data; separate ForNcf variant) |
+| Senparc.Xncf.SenMapic | 0.1.3 | - | No | SenMapic crawler module |
 | Senparc.Xncf.Application | 0.0.5 | - | No | External program execution module |
 | Senparc.Xncf.WeixinManager | 0.21.1 | 5880 | Yes | WeChat management + MCP support |
 

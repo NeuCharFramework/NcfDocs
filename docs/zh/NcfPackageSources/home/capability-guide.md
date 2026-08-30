@@ -1,7 +1,7 @@
 # NCF 核心能力详解（面向实战）
 
 > 适用范围：`NcfPackageSources` 当前版本。  
-> 基线提交：`631f16b4`（2026-06-17）。
+> 基线提交：`f668bf650`（2026-08-29，Developer-MAF-V3）。
 
 ## 1. 核心能力总览
 
@@ -11,7 +11,12 @@
 - `PromptRange` 与 `AgentsManager` 的协作链路已通过事件模型和 AppService 进一步标准化。
 - `KnowledgeBase` 已具备“文件切片 -> 向量化 -> 召回测试”的基础闭环。
 - `XncfModuleManager` 增强了面向 AI 的模块安装/开放能力（UID 或名称关键字匹配）。
-- `FirmwareUpdate` 提供了 GitHub Release 到站点本地 `wwwroot/NcfPackages` 的镜像能力。
+- `FirmwareUpdate` 提供了 GitHub Release 到站点本地 `wwwroot/NcfPackages` 的镜像能力，并扩展为 NCF Host 与 NCF Desktop 双安装包镜像（下载源选择 + MD5 指纹）。
+- `NeuCharWorkflow` 新增服务端工作流编排能力：可视化设计器、版本管理与自动保存、运行回放、Webhook 触发、并行节点、Human Input 人工输入节点、NeuBell 通知与 Workflow 分析（Analytics）页面。
+- `AgentsManager` 支持 A2A（Agent-to-Agent）远程智能体：远程智能体接入/发布、ChatGroup 上下文共享、`AgentTemplateRunner` 统一本地与 A2A 执行；并新增 Human-in-the-Loop 审批策略与独立 `AgentExecutionTask` 管理。
+- `Senparc.Xncf.Sandbox` 提供独立沙箱编排：Docker/Wasm 快速创建/销毁隔离实验环境（配额、TTL、JupyterLab、工作区文件管理），与 XncfBuilder Preview Host 解耦。
+- `Senparc.Xncf.DesktopBridge` 为 NCF 桌面伴侣应用提供受保护的 HTTP/SSE 状态发现与事件流桥接（Token 边界 + 一次性 PKCE 交接）。
+- `Senparc.Xncf.Dapr` 提供 Dapr 客户端抽象：服务调用、Pub/Sub、状态管理与健康检查。
 - MCP 相关能力已下沉到 `IXncfRegister`/`XncfRegisterBase` 统一协议，可按模块开关。
 
 ### 1.1 XNCF 的单粒度模块定义（框架意义）
@@ -36,7 +41,7 @@
 | Senparc.Xncf.XncfModuleManager | 0.1.2 | 5950 | 模块状态治理、安装开放、Function 状态检查 |
 | Senparc.Xncf.AreasBase | 0.1 | 5955 | Area 基础能力 |
 | Senparc.Xncf.SystemPermission | 0.2.0 | 5960 | 权限管理 |
-| Senparc.Xncf.SystemManager | 1.1.2 | 5970 | 系统管理与核心配置 |
+| Senparc.Xncf.SystemManager | 1.1.3 | 5970 | 系统管理与核心配置 |
 | Senparc.Xncf.SystemCore | 0.1.1 | 5980 | 系统核心数据结构 |
 | Senparc.Xncf.Tenant | 0.1 | 5990 | 多租户能力 |
 
@@ -46,24 +51,29 @@
 |---|---|---:|---|---|
 | Senparc.Xncf.AIKernel | 5.0.5 | - | 否 | AI 模型/向量模型配置与运行基础 |
 | Senparc.Xncf.PromptRange | 0.15.2 | 5897 | 否 | 提示词靶场、PromptCode 体系 |
-| Senparc.Xncf.AgentsManager | 0.3.18.9 | - | 否 | 智能体模板、群聊任务、优化流程 |
+| Senparc.Xncf.AgentsManager | 0.3.22 | - | 否 | 智能体模板、群聊任务、HITL 审批、A2A 远程智能体、AgentExecutionTask 管理 |
+| Senparc.Xncf.NeuCharWorkflow | 0.1.0-preview1 | 5890 | 否 | 服务端工作流编排：设计器、回放、Webhook 触发、并行/人工输入节点、NeuBell、Analytics |
 | Senparc.Xncf.KnowledgeBase | 0.1.10 | - | 否 | 知识库管理、导入、向量化、召回测试 |
-| Senparc.Xncf.AIAgentsHub | 0.1.0 | - | 否 | Agent Hub（早期） |
+| Senparc.Xncf.AIAgentsHub | 0.1.0 | - | 否 | Agent Hub 示例模块（多数据库 Context、Function 端点、本地化资源） |
 | Senparc.Xncf.MCP | 0.1.0 | - | 是 | MCP 端点与调用管理 |
+| Senparc.Xncf.Sandbox | 0.1.0-preview1 | - | 否 | 独立沙箱编排：Docker/Wasm 隔离实验环境、配额/TTL、JupyterLab、工作区文件管理 |
+| *Abstractions 契约包* | - | - | 否 | `AIKernel.Abstractions`、`AgentsManager.Abstractions`、`MCP.Abstractions`、`PromptRange.Abstractions`、`NeuCharWorkflow.Abstractions`、`Sandbox.Abstractions`：跨模块契约与集成事件抽象（不含 Register） |
 
 ### 2.3 开发与运维模块
 
 | 模块 | 版本 | XncfOrder | MCP | 说明 |
 |---|---|---:|---|---|
-| Senparc.Xncf.XncfBuilder | 0.10.1 | 5896 | 是 | 模块脚手架、迁移命令、AI 辅助代码生成 |
+| Senparc.Xncf.XncfBuilder | 0.10.3 | 5896 | 否 | 模块脚手架、迁移命令、AI 辅助代码生成、Preview Host（进程级模块预览） |
 | Senparc.Xncf.DatabaseToolkit | 0.7.1 | - | 否 | 数据库更新、备份、结构查询、Agent 集成查询 |
 | Senparc.Xncf.Swagger | 0.7.1 | 0 | 否 | 接口文档 |
 | Senparc.Xncf.Terminal | 0.1.6 | - | 否 | 服务器终端命令执行（高权限） |
-| Senparc.Xncf.FileManager | 0.2.5 | - | 否 | 文件管理 |
-| Senparc.Xncf.FirmwareUpdate | 0.1.0 | - | 否 | 同步 NCF 安装包并维护 latest-release.json |
+| Senparc.Xncf.FileManager | 0.6.0 | - | 否 | 文件管理 |
+| Senparc.Xncf.FirmwareUpdate | 0.1.0 | - | 否 | NCF Host / NCF Desktop 双安装包镜像（GitHub Release -> `wwwroot/NcfPackages/host` 与 `/desktop`），独立下载清单 + latest-release.json |
+| Senparc.Xncf.Dapr | 0.0.1 | - | 否 | Dapr 客户端抽象：服务调用（GET/POST/PUT/PATCH/DELETE）、Pub/Sub、状态管理、健康检查 |
+| Senparc.Xncf.DesktopBridge | 0.2.1-preview2 | - | 否 | 桌面伴侣应用 HTTP/SSE 桥接：能力发现、活动快照、授权同步流、一次性 PKCE 交接 |
 | Senparc.Xncf.ChangeNamespace | 0.3.9 | - | 否 | 全局命名空间替换（高风险） |
-| Senparc.Xncf.DynamicData | 0.1.0 | - | 否 | 动态数据基础模块（早期） |
-| Senparc.Xncf.SenMapic | 0.1.3 | - | 否 | 爬虫示例模块 |
+| Senparc.Xncf.DynamicData | 0.1.0 | - | 否 | 动态数据基础模块（创建和管理动态数据，另有 ForNcf 变体） |
+| Senparc.Xncf.SenMapic | 0.1.3 | - | 否 | SenMapic 爬虫模块 |
 | Senparc.Xncf.Application | 0.0.5 | - | 否 | 外部程序调用模块 |
 | Senparc.Xncf.WeixinManager | 0.21.1 | 5880 | 是 | 微信管理与对应 MCP 能力 |
 

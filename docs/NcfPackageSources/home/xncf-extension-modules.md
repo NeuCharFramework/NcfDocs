@@ -49,22 +49,32 @@ This is the core engineering value of NCF modularity: **capabilities are split i
 
 ### 4.2 AI / Agent / RAG Modules
 
-- `Senparc.Xncf.AIKernel`
-- `Senparc.Xncf.PromptRange`
-- `Senparc.Xncf.AgentsManager`
-- `Senparc.Xncf.KnowledgeBase`
-- `Senparc.Xncf.MCP`
-- `Senparc.Xncf.AIAgentsHub`
+- `Senparc.Xncf.AIKernel`: AI model/vector model configuration and runtime baseline
+- `Senparc.Xncf.PromptRange`: prompt range/track and PromptCode assets
+- `Senparc.Xncf.AgentsManager`: agent templates, chat group/task orchestration, HITL approvals, A2A remote agents, AgentExecutionTask management
+- `Senparc.Xncf.NeuCharWorkflow`: server-side workflow orchestration (visual designer, versioning with auto-save, run replay, webhook triggers, parallel nodes, Human Input nodes, NeuBell notifications, Analytics)
+- `Senparc.Xncf.KnowledgeBase`: KB management, import, embedding, recall testing
+- `Senparc.Xncf.AIAgentsHub`: Agent Hub sample module (multi-database contexts, function endpoints, localized resources)
+- `Senparc.Xncf.MCP`: MCP endpoint and execution management (`EnableMcpServer`)
+- `Senparc.Xncf.Sandbox`: standalone sandbox orchestration (isolated Docker/Wasm environments, quota/TTL, JupyterLab, workspace file management)
+- Contract packages: `AIKernel.Abstractions`, `AgentsManager.Abstractions`, `MCP.Abstractions`, `PromptRange.Abstractions`, `NeuCharWorkflow.Abstractions`, `Sandbox.Abstractions`
 
 ### 4.3 Tooling and Ops Modules
 
-- `Senparc.Xncf.XncfBuilder`
-- `Senparc.Xncf.DatabaseToolkit`
-- `Senparc.Xncf.FileManager`
-- `Senparc.Xncf.Terminal`
-- `Senparc.Xncf.FirmwareUpdate`
-- `Senparc.Xncf.ChangeNamespace`
-- `Senparc.Xncf.WeixinManager`
+- `Senparc.Xncf.XncfBuilder`: module scaffolding, migration commands, AI-assisted code generation, Preview Host (process-level module preview)
+- `Senparc.Xncf.DatabaseToolkit`: DB update, backup, schema query, AI-agent DB query integration
+- `Senparc.Xncf.FileManager`: file management
+- `Senparc.Xncf.Terminal`: server command execution (high privilege)
+- `Senparc.Xncf.FirmwareUpdate`: dual installer mirror for NCF Host / NCF Desktop (GitHub Release -> `wwwroot/NcfPackages/host` and `/desktop`, independent download manifests + MD5 fingerprints)
+- `Senparc.Xncf.Dapr`: Dapr client abstraction (service invocation, pub/sub, state management, health checks)
+- `Senparc.Xncf.DesktopBridge`: HTTP/SSE bridge for desktop companion apps (capability discovery, activity snapshots, authorized sync stream, one-time PKCE handoff)
+- `Senparc.Xncf.ChangeNamespace`: global namespace replacement (high risk)
+- `Senparc.Xncf.DynamicData`: dynamic data foundation module (separate ForNcf variant)
+- `Senparc.Xncf.SenMapic`: SenMapic crawler module
+- `Senparc.Xncf.Application`: external program execution module
+- `Senparc.Xncf.WeixinManager`: WeChat management console + MCP support
+- `Senparc.Xncf.Swagger`: API documentation module
+- Unpublished: `EmailExtension`, `OfficeExtension`, `SmsExtension`, `ReloadPage` (source repo only, not published to NuGet)
 
 For full versions, order, and scenario guidance:
 

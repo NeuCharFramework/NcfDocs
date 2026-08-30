@@ -1,5 +1,26 @@
 # Logs
 
+## 2026-08-30 update
+
+Documentation sync for all XNCF module capabilities in NcfPackageSources (Developer-MAF-V3 branch), highlights:
+
+1. NeuCharWorkflow (0.1.0-preview1, XncfOrder 5890): a complete server-side workflow orchestration suite — visual designer with layout management, versioning with auto-save, run replay (persisted events/snapshots, load-more events), webhook triggers, parallel nodes (concurrent downstream branches), Human Input nodes (external resume), NeuBell notification consumption, and a Workflow Analytics page; template expression binding/validation and observed output schemas; global NeuCharPivot floating invocation gated by the `AllowGlobalPivot` attribute for role-level access control.
+
+2. AgentsManager (0.3.22): A2A (Agent-to-Agent) remote agent support — remote agent connect/publish management, configurable ChatGroup context sharing, `AgentTemplateRunner` for unified local/A2A agent execution, manual-prompt execution of published A2A agents with deployment-model fallback; `AgentModelRequestDiagnostics` for model request diagnostics with sensitive-data redaction; thread management now uses cancellation tokens for graceful shutdown.
+
+3. New modules:
+- `Senparc.Xncf.Sandbox` (0.1.0-preview1): standalone sandbox orchestration — create/destroy isolated Docker/Wasm experiment environments with quota/TTL, optional JupyterLab, csharp-exec (.NET 10), and persistent Lab workspace file upload/download; decoupled from the XncfBuilder Preview Host.
+- `Senparc.Xncf.DesktopBridge` (0.2.1-preview2): secured HTTP/SSE bridge for NCF desktop companion apps — capability discovery, activity snapshots, authorized resource-change sync stream, one-time PKCE session handoff; `NCF_DESKTOP_BRIDGE_TOKEN` acts as the startup security boundary.
+- `Senparc.Xncf.Dapr` (0.0.1): Dapr client abstraction with service invocation (GET/POST/PUT/PATCH/DELETE), pub/sub publishing, state read/write/delete, health checks, and serializer abstractions.
+- A new set of Abstractions contract packages: `AIKernel.Abstractions`, `AgentsManager.Abstractions` (0.3.0), `NeuCharWorkflow.Abstractions` (0.2.0), `PromptRange.Abstractions` (0.2.5-preview5), `Sandbox.Abstractions` (0.2.0), `MCP.Abstractions` — cross-module contracts and integration-event abstractions.
+
+4. FirmwareUpdate now mirrors both NCF Host and NCF Desktop installers (`wwwroot/NcfPackages/host` and `/desktop`), with independent download manifests, a download source picker (auto/local/GitHub), and MD5 fingerprint display.
+
+5. Others: `SystemManager` 1.1.3, `XncfBuilder` 0.10.3 (Preview Host process-level module preview), `FileManager` 0.6.0; PromptRange adds API documentation XML (ApiDocXML).
+
+For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+
+
 ## 2026-08-29 Update
 
 NcfPackageSources (Developer-MAF-V3 branch) released. Highlights:

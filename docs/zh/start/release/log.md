@@ -1,5 +1,26 @@
 # 日志
 
+## 2026-08-30更新
+
+NcfPackageSources（Developer-MAF-V3 分支）各 XNCF 模块功能文档同步更新，主要内容：
+
+1、NeuCharWorkflow（0.1.0-preview1，XncfOrder 5890）：服务端工作流编排能力成体系——可视化设计器与布局管理、版本管理与自动保存、运行回放（事件/快照持久化、加载更多事件）、Webhook 触发、并行节点（并发执行下游分支）、Human Input 人工输入节点（外部恢复 resume）、NeuBell 通知消费、Workflow 分析（Analytics）页面；模板表达式绑定与校验、观测输出 Schema；全局 NeuCharPivot 悬浮调用（`AllowGlobalPivot` 特性控制角色级访问）。
+
+2、AgentsManager（0.3.22）：A2A（Agent-to-Agent）远程智能体支持——远程智能体接入/发布管理、ChatGroup 上下文共享（可配置）、`AgentTemplateRunner` 统一本地与 A2A 智能体执行、已发布 A2A 智能体手动 Prompt 执行与部署模型回退机制；`AgentModelRequestDiagnostics` 模型请求诊断（敏感数据脱敏）；线程管理引入取消令牌实现优雅停机。
+
+3、新增模块：
+- `Senparc.Xncf.Sandbox`（0.1.0-preview1）：独立沙箱编排，Docker/Wasm 快速创建/销毁隔离实验环境，支持配额/TTL、JupyterLab、csharp-exec（.NET 10）、持久化 Lab 工作区文件上传/下载，与 XncfBuilder Preview Host 解耦。
+- `Senparc.Xncf.DesktopBridge`（0.2.1-preview2）：为 NCF 桌面伴侣应用提供受保护的 HTTP/SSE 桥接：能力发现、活动快照、授权资源变更同步流、一次性 PKCE 会话交接；以 `NCF_DESKTOP_BRIDGE_TOKEN` 作为启动安全边界。
+- `Senparc.Xncf.Dapr`（0.0.1）：Dapr 客户端抽象，提供服务调用（GET/POST/PUT/PATCH/DELETE）、Pub/Sub 发布、状态读写删除、健康检查与序列化抽象。
+- 新增一批 Abstractions 契约包：`AIKernel.Abstractions`、`AgentsManager.Abstractions`（0.3.0）、`NeuCharWorkflow.Abstractions`（0.2.0）、`PromptRange.Abstractions`（0.2.5-preview5）、`Sandbox.Abstractions`（0.2.0）、`MCP.Abstractions`，用于跨模块契约与集成事件抽象。
+
+4、FirmwareUpdate 扩展为 NCF Host 与 NCF Desktop 双安装包镜像（`wwwroot/NcfPackages/host` 与 `/desktop`），提供独立下载清单、下载源选择（自动/本地/GitHub）与 MD5 指纹展示。
+
+5、其他：`SystemManager` 1.1.3、`XncfBuilder` 0.10.3（Preview Host 进程级模块预览）、`FileManager` 0.6.0；PromptRange 新增 API 文档 XML（ApiDocXML）。
+
+详细模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+
+
 ## 2026-08-29更新
 
 NcfPackageSources（Developer-MAF-V3 分支）发布更新，主要内容：
