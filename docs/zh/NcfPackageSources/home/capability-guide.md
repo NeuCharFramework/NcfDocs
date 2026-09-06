@@ -17,6 +17,12 @@
 - `Senparc.Xncf.Sandbox` 提供独立沙箱编排：Docker/Wasm 快速创建/销毁隔离实验环境（配额、TTL、JupyterLab、工作区文件管理），与 XncfBuilder Preview Host 解耦。
 - `Senparc.Xncf.DesktopBridge` 为 NCF 桌面伴侣应用提供受保护的 HTTP/SSE 状态发现与事件流桥接（Token 边界 + 一次性 PKCE 交接）。
 - `Senparc.Xncf.Dapr` 提供 Dapr 客户端抽象：服务调用、Pub/Sub、状态管理与健康检查。
+- **NeuBell WebHook（WebAPI）通知设置**（Senparc.Areas.Admin）：管理员可按纽铃 Provider（或全部 Provider）注册 WebHook 端点；当纽铃条目新增或移除时，系统以异步方式（fire-and-forget、并发受限）POST 通知，支持可选的 HMAC-SHA256 签名头（`X-NeuBell-Signature`）与测试发送。后台监测（轮询 + 变更唤醒）按 Provider 维护基线做差异对比，避免进程重启或瞬时快照失败造成误报。
+- **AIKernel Token 用量监测**：实时聚合 + 按运行异步进度；AI 模型列表页直接展示用量。
+- **后台菜单搜索 + 配置模式**：左侧菜单新增搜索过滤，配置模式下可拖拽调整一级菜单顺序，保存后真实更新存储的 Sort 值。
+- **Provits（NeuCharPivot）**：逐个创建 Provit，支持通过 AI Chat 创建或修改，并可构建绑定到特定页面（如后台首页 `admin-home`）的"Provit Panel"，组合来自任意 XNCF 模块的 Provit Block，支持拖拽排序与 AI 辅助编辑。
+- **Admin Chat Harness 模式**：基于 Microsoft Agent Framework（MAF）的可选长任务模式，具备步数预算、超时控制与 `[[DONE]]` 完成标记；普通对话仍为默认。
+- **CloudflareProtect 站点防护**（Senparc.Web）：新增 `CloudflareProtect` SystemConfig 配置节（默认关闭），开启后自首个请求起立即生效固定窗口限流与安全响应头。
 - MCP 相关能力已下沉到 `IXncfRegister`/`XncfRegisterBase` 统一协议，可按模块开关。
 
 ### 1.1 XNCF 的单粒度模块定义（框架意义）

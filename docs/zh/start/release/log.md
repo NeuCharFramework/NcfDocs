@@ -1,4 +1,23 @@
-# 日志
+﻿# 日志
+
+## 2026-09-06更新
+
+NcfPackageSources（Developer-MAF-V3 分支）——后台体验、AIKernel 可观测性、站点防护与 NeuBell WebHook 通知：
+
+1、NeuBell WebHook（WebAPI）通知设置（Senparc.Areas.Admin）：管理员可为纽铃（NeuBell）添加 WebHook 通知端点，按 Provider 过滤（留空为全部 Provider）。当任一纽铃 Provider 的条目发生新增（added）或移除（removed）时，系统以异步方式（fire-and-forget，`SemaphoreSlim(4)` 限制并发出站）POST 通知，不阻塞业务请求与 Footer 刷新。每条设置支持：新增/移除分别开关、启用开关、可选 HMAC-SHA256 签名密钥（请求携带 `X-NeuBell-Signature: t=<unix>,v1=<hex>`，`v1 = HMAC-SHA256(secret, t + "." + body)`）；管理页"测试"按钮发送 `kind=test` 事件验证连通性。数据表 `ADMIN_NeuBellWebHook`（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL 六库迁移已同步）；后台 `IHostedService` 监测循环（`NeuBellWebHook:PollingIntervalSeconds` 配置轮询间隔，默认 30 秒、最小 5 秒，并订阅纽铃变更事件提前唤醒）按 Provider 基线做差异对比：首次观测只建基线避免重启误报，Provider 本轮缺席但仍在开放列表（快照获取失败）时保留基线，模块被关闭才将存量条目按"移除"通知。管理入口：页脚"纽铃"抽屉 → "WebHook 设置"（`/Admin/NeuBell/Index`，仅超级管理员）。
+
+2、AIKernel：Token 用量监测——实时聚合 + 按运行异步进度；AI 模型列表页直接展示用量。
+
+3、后台菜单：左侧菜单新增搜索过滤；菜单"配置模式"支持拖拽调整一级菜单（如 XNCF）顺序，保存后真实更新存储的 Sort 数值。
+
+4、Provits（NeuCharPivot）：支持逐个创建 Provit，支持通过 AI Chat 创建或修改；可创建"Provit Panel"面板并绑定到特定页面（如后台首页 `admin-home`），面板组合来自任意 XNCF 模块的 Provit Block，支持拖拽排序与 AI 辅助编辑块。
+
+5、Admin Chat：新增可选的"长任务（Harness）"模式，基于 Microsoft Agent Framework（MAF）多步骤自主执行——步数预算、超时控制、`[[DONE]]` 完成标记识别，执行步骤返回前端展示；默认仍为普通对话模式。
+
+6、站点防护：Senparc.Web 新增 `CloudflareProtect` SystemConfig 配置节（默认关闭）。开启后，自用户打开网站（首个请求）起立即生效固定窗口限流与安全响应头。
+
+完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+
 
 ## 2026-08-30更新
 

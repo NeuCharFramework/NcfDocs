@@ -13,7 +13,7 @@ For each upgrade, check in this order:
 
 ## Current Baseline
 
-- Documentation baseline commit: `f668bf650` (2026-08-29, Developer-MAF-V3)
+- Documentation baseline commit: `eca233bea` (2026-09-06, Developer-MAF-V3)
 - Capability docs:
   - [NcfPackageSources Source Guide](./index.md)
   - [NCF Capability Deep Dive](./capability-guide.md)
@@ -38,6 +38,35 @@ For each upgrade, check in this order:
 
 - Docs now include minimal templates for high-quality Issues and PRs.
 - The “user-to-contributor” workflow is documented for easier collaboration.
+
+### 2026-09-06 / `f668bf650..eca233bea` (Developer-MAF-V3)
+
+- **Affected module(s)**: `Senparc.Areas.Admin`, `Senparc.Xncf.AIKernel`, `Senparc.Web` (site host), `Senparc.Xncf.NeuCharPivot` (Provits)
+- **Change type**: Added / Changed
+- **Key change(s)**:
+  - **NeuBell WebHook (WebAPI) notification settings** (Senparc.Areas.Admin): administrators register WebHook endpoints per NeuBell provider (or all); on NeuBell item add/remove the system dispatches an asynchronous POST (fire-and-forget, `SemaphoreSlim(4)` gate). Per-setting provider filter, per-event toggles (added/removed), enable switch, optional HMAC-SHA256 signature (`X-NeuBell-Signature: t=<unix>,v1=<hex>`), and a test-send action. New table `ADMIN_NeuBellWebHook` with migrations for Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL; an `IHostedService` monitor (polling via `NeuBellWebHook:PollingIntervalSeconds`, default 30s / min 5s, wake-on-change via the NeuBell change stream) diffs per-provider baselines to avoid false positives on restart or transient snapshot failure. Management page `/Admin/NeuBell/Index` (super admin only), linked from the footer NeuBell drawer.
+  - **AIKernel**: token-usage monitoring with real-time aggregation and async per-run progress; the AI model list page shows usage directly.
+  - **Admin menu**: left-menu search filter plus a menu "config mode" where first-level menus can be drag-reordered; saving really updates the stored Sort values.
+  - **Provits (NeuCharPivot)**: create Provits one by one, create/modify them via AI Chat, and build a "Provit Panel" bound to a special page (e.g. admin home `admin-home`) composing Provit Blocks from any XNCF module, with drag sorting and AI-assisted block editing.
+  - **Admin Chat Harness mode**: optional long-task mode based on Microsoft Agent Framework (MAF) — step budget, timeout control, `[[DONE]]` completion marker, execution steps returned to the UI; simple chat remains default.
+  - **CloudflareProtect** (Senparc.Web): new `CloudflareProtect` SystemConfig section (off by default); when enabled, fixed-window rate limiting + security headers activate immediately from the first request of a site visit.
+- **Upgrade action(s)**:
+  - Pull the latest code, re-run `dotnet restore` / `dotnet build` (see [NcfPackageSources Source Guide](./index.md)).
+  - Run database migrations in the host site for Senparc.Areas.Admin (adds `ADMIN_NeuBellWebHook`); back up databases before upgrading.
+  - Optionally configure `NeuBellWebHook:PollingIntervalSeconds` (default 30s) and `CloudflareProtect` in `appsettings.json`; both are safe defaults.
+- **Rollback guidance**:
+  - Keep previous NuGet packages and migration baselines; the `ADMIN_NeuBellWebHook` table is additive and not required for rollback. Restore from backup if a schema change misbehaves.
+- **Validation checklist**:
+  - `ADMIN_NeuBellWebHook` migration succeeds across all supported databases.
+  - Footer NeuBell drawer shows the "WebHook Settings" entry; `/Admin/NeuBell/Index` is reachable for super admin only.
+  - Creating/saving/toggling/deleting a WebHook works; the test button returns success against a reachable endpoint.
+  - A NeuBell item add/remove triggers exactly one POST to matching endpoints; disabled / non-matching / non-subscribed endpoints are not called.
+  - AIKernel model list page displays token usage; the token monitor advances asynchronously per run.
+  - Admin left-menu search filters results; config-mode drag reorder persists real Sort values.
+  - Provits can be created one-by-one and via AI Chat; a Provit Panel bound to `admin-home` renders blocks from multiple modules.
+  - Admin Chat Harness mode runs a long task and reports execution steps; Simple mode is unchanged.
+  - With `CloudflareProtect.Enabled=true`, the site enforces rate limiting and security headers from the first request.
+
 
 ### 2026-08-29 / `8ccc5316b..f668bf650` (Developer-MAF-V3)
 

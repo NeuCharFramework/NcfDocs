@@ -1,4 +1,23 @@
-# Logs
+﻿# Logs
+
+## 2026-09-06 update
+
+NcfPackageSources (Developer-MAF-V3 branch) — Admin experience, AIKernel observability, site protection, and NeuBell WebHook notifications:
+
+1. NeuBell WebHook (WebAPI) notification settings (Senparc.Areas.Admin): administrators can add WebHook endpoints per NeuBell provider (or all providers); when NeuBell items are added or removed, the system dispatches an asynchronous POST notification (fire-and-forget, concurrency-gated). Each setting supports a provider filter, per-event toggles (added / removed), an enable switch, and an optional HMAC-SHA256 signature header (`X-NeuBell-Signature: t=<unix>,v1=<hex>`); a test button sends a `kind=test` event for connectivity checks. Backed by a new `ADMIN_NeuBellWebHook` table (migrations for Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL), an `IHostedService` monitor (polling interval configurable via `NeuBellWebHook:PollingIntervalSeconds`, wake-on-change via the NeuBell change stream) with baseline diffing that avoids false positives on restart or transient snapshot failures. Management page: footer NeuBell drawer -> "WebHook Settings" (`/Admin/NeuBell/Index`, super admin only).
+
+2. AIKernel: token-usage monitor with real-time aggregation and async per-run progress; the AI model list page now shows usage directly.
+
+3. Admin menu: left-menu search filter; a menu "config mode" where first-level menus (e.g. XNCF) can be drag-reordered and saving really updates the stored Sort numbers.
+
+4. Provits (NeuCharPivot): create Provits one by one, create or modify them through AI Chat, and build a "Provit Panel" bound to special pages (e.g. the admin home page `admin-home`) that composes Provit Blocks from any XNCF module, with drag sorting and AI-assisted block editing.
+
+5. Admin Chat: new "Harness" long-task mode (optional, selectable per message) based on Microsoft Agent Framework (MAF) — multi-step autonomous execution with a step budget, timeout control, and `[[DONE]]` completion marker; execution steps are returned to the UI. Default remains the simple chat mode.
+
+6. Site protection: new `CloudflareProtect` SystemConfig section in Senparc.Web (off by default). When enabled, protection (fixed-window rate limiting + security headers) activates immediately from the first request of a site visit.
+
+For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+
 
 ## 2026-08-30 update
 

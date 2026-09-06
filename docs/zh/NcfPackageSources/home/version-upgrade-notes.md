@@ -13,7 +13,7 @@
 
 ## 当前基线
 
-- 文档基线提交：`f668bf650`（2026-08-29，Developer-MAF-V3）
+- 文档基线提交：`eca233bea`（2026-09-06，Developer-MAF-V3）
 - 对应能力文档：
   - [NcfPackageSources 源码指南](./index.md)
   - [NCF 核心能力详解](./capability-guide.md)
@@ -36,6 +36,35 @@
 
 - 文档明确了 Issue / PR 最小信息模板与提交建议。
 - 新增了“从使用者到贡献者”的流程说明，便于团队内外协作。
+
+### 2026-09-06 / `f668bf650..eca233bea`（Developer-MAF-V3）
+
+- **影响模块**：`Senparc.Areas.Admin`、`Senparc.Xncf.AIKernel`、`Senparc.Web`（站点宿主）、`Senparc.Xncf.NeuCharPivot`（Provits）
+- **变化类型**：新增 / 调整
+- **关键变化**：
+  - **NeuBell WebHook（WebAPI）通知设置**（Senparc.Areas.Admin）：管理员可按纽铃 Provider（或全部）注册 WebHook 端点；纽铃条目新增/移除时系统以异步方式（fire-and-forget，`SemaphoreSlim(4)` 并发限制）POST 通知。每条设置支持 Provider 过滤、新增/移除分别开关、启用开关、可选 HMAC-SHA256 签名（`X-NeuBell-Signature: t=<unix>,v1=<hex>`）与测试发送。新增数据表 `ADMIN_NeuBellWebHook`（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL 六库迁移）；后台 `IHostedService` 监测（`NeuBellWebHook:PollingIntervalSeconds` 轮询，默认 30 秒 / 最小 5 秒，订阅纽铃变更事件提前唤醒）按 Provider 基线差异对比，避免进程重启或瞬时快照失败误报。管理页 `/Admin/NeuBell/Index`（仅超级管理员），页脚纽铃抽屉提供入口。
+  - **AIKernel**：Token 用量监测——实时聚合 + 按运行异步进度；AI 模型列表页直接展示用量。
+  - **后台菜单**：左侧菜单搜索过滤；菜单"配置模式"支持拖拽调整一级菜单顺序，保存后真实更新存储的 Sort 值。
+  - **Provits（NeuCharPivot）**：逐个创建 Provit，支持 AI Chat 创建或修改；可创建绑定特定页面（如后台首页 `admin-home`）的 "Provit Panel"，组合任意 XNCF 模块的 Provit Block，支持拖拽排序与 AI 辅助编辑。
+  - **Admin Chat Harness 模式**：基于 Microsoft Agent Framework（MAF）的可选长任务模式——步数预算、超时控制、`[[DONE]]` 完成标记，执行步骤返回前端；普通对话仍为默认。
+  - **CloudflareProtect**（Senparc.Web）：新增 `CloudflareProtect` SystemConfig 配置节（默认关闭），开启后自用户打开网站首个请求起立即生效固定窗口限流与安全响应头。
+- **升级动作**：
+  - 拉取最新代码后重新执行 `dotnet restore` / `dotnet build`（见 [NcfPackageSources 源码指南](./index.md)）。
+  - 在宿主站点为 Senparc.Areas.Admin 执行数据库迁移（新增 `ADMIN_NeuBellWebHook` 表），升级前建议备份数据库。
+  - 可选在 `appsettings.json` 配置 `NeuBellWebHook:PollingIntervalSeconds`（默认 30 秒）与 `CloudflareProtect`，均为安全默认值。
+- **回退建议**：
+  - 保留上一版本 NuGet 包与迁移基线；`ADMIN_NeuBellWebHook` 为增量表，回退无需处理，必要时按备份恢复。
+- **验证清单**：
+  - `ADMIN_NeuBellWebHook` 在各数据库迁移成功。
+  - 页脚纽铃抽屉出现"WebHook 设置"入口；`/Admin/NeuBell/Index` 仅超级管理员可访问。
+  - WebHook 新增/保存/开关/删除正常；"测试"按钮对可达端点返回成功。
+  - 纽铃条目新增/移除时，匹配端点恰好收到一次 POST；停用 / 不匹配 / 未订阅端点不被调用。
+  - AIKernel 模型列表页展示 Token 用量，监测按运行异步推进。
+  - 后台左侧菜单搜索生效；配置模式拖拽排序持久化为真实 Sort 值。
+  - Provits 可逐个创建与 AI Chat 创建/修改；绑定 `admin-home` 的 Provit Panel 渲染多模块块。
+  - Admin Chat Harness 模式可执行长任务并展示步骤；Simple 模式无变化。
+  - `CloudflareProtect.Enabled=true` 时，站点自首个请求起限流与安全响应头生效。
+
 
 ### 2026-08-29 / `8ccc5316b..f668bf650`（Developer-MAF-V3）
 

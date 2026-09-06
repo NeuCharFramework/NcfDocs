@@ -17,6 +17,12 @@ When learning the current version, focus on these capabilities first:
 - `Senparc.Xncf.Sandbox` provides standalone sandbox orchestration: create/destroy isolated Docker/Wasm experiment environments (quotas, TTL, optional JupyterLab, workspace file management), decoupled from the XncfBuilder Preview Host.
 - `Senparc.Xncf.DesktopBridge` exposes a secured HTTP/SSE bridge for NCF desktop companion apps (capability discovery, activity snapshots, authorized sync stream, one-time PKCE handoff).
 - `Senparc.Xncf.Dapr` provides a Dapr client abstraction: service invocation, pub/sub, state management, and health checks.
+- **NeuBell WebHook (WebAPI) notification settings** (Senparc.Areas.Admin): administrators can register WebHook endpoints per NeuBell provider (or all providers); when NeuBell items are added or removed, the system dispatches an asynchronous POST notification (fire-and-forget, concurrency-gated), with an optional HMAC-SHA256 signature header (`X-NeuBell-Signature`) and a test-send action. A background monitor (polling + wake-on-change) diffs per-provider baselines to avoid false positives on restart or transient snapshot failures.
+- **AIKernel token-usage monitoring**: real-time aggregation with async per-run progress; usage is now visible directly on the AI model list page.
+- **Admin menu search + config mode**: the left menu has a search filter, and a config mode allows drag-reordering first-level menus; saving really updates the stored Sort values.
+- **Provits (NeuCharPivot)**: create Provits one by one, create or modify them via AI Chat, and build a "Provit Panel" bound to a special page (e.g. admin home `admin-home`) composed of Provit Blocks from any XNCF module, with drag sorting and AI-assisted block editing.
+- **Admin Chat Harness mode**: an optional long-task mode based on Microsoft Agent Framework (MAF) with step budget, timeout control, and a `[[DONE]]` completion marker; the simple chat mode remains the default.
+- **CloudflareProtect site protection** (Senparc.Web): a new `CloudflareProtect` SystemConfig section (off by default) that activates fixed-window rate limiting and security headers immediately from the first request when enabled.
 - MCP integration is now part of the common register contract (`IXncfRegister` + `XncfRegisterBase`).
 
 ### 1.1 XNCF as Single-Granularity Module Units (Framework Meaning)
