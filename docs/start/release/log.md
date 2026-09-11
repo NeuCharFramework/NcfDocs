@@ -1,4 +1,14 @@
-﻿# Logs
+# Logs
+
+## 2026-09-11 update
+
+NcfPackageSources (Developer-MAF-V3-Spark branch) — NeuBell WebHook v2: per-call notification on item creation + full request/result logging:
+
+1. Per-call WebHook on NeuBell creation (Senparc.Areas.Admin): the `纽铃可见提醒测试` FunctionRender (send action) now has an optional `WebHookUrl` parameter. When filled, creating that NeuBell immediately fires an asynchronous POST (`kind=item-created`) to the given URL — fire-and-forget, the Function response is never blocked; an invalid URL sends no HTTP request but still leaves a failed log entry for troubleshooting.
+
+2. WebHook request log: every outbound WebHook request (`item-created` / `items-changed` / `test`) now records its full payload and result in a new `ADMIN_NeuBellWebHookLog` table (status sending → success/failed, HTTP status code, elapsed milliseconds, admin user id). The NeuBell management page adds a "请求日志" (request log) list with payload inspection (pretty-printed JSON), per-row delete and bulk clear (keeps the latest 50). Logging failures only warn — they never block or fail a notification. Migrations synced for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL).
+
+For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
 
 ## 2026-09-06 update
 

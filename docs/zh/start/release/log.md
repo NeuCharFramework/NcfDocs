@@ -1,4 +1,14 @@
-﻿# 日志
+# 日志
+
+## 2026-09-11更新
+
+NcfPackageSources（Developer-MAF-V3-Spark 分支）——NeuBell WebHook v2：创建时按参数通知 + 请求数据与结果全量留痕：
+
+1、创建 NeuBell 时按调用触发 WebHook（Senparc.Areas.Admin）：FunctionRender「纽铃可见提醒测试」（send 动作）新增可选参数 `WebHookUrl`。填写后，创建该条纽铃时会立即向该地址以异步方式（fire-and-forget，不阻塞 Function 响应）POST 一条 `kind=item-created` 事件；地址留空则不触发。无效地址不会发起 HTTP 请求，但会落一条失败日志便于排查。
+
+2、WebHook 请求日志：每一次出站 WebHook 请求（`item-created` / `items-changed` / `test`）的完整请求报文与结果均记录到新表 `ADMIN_NeuBellWebHookLog`（状态 sending → success/failed、HTTP 状态码、耗时毫秒、触发管理员 Id）。NeuBell 管理页新增「请求日志」列表：查看报文（JSON 美化展示）、按条删除、批量清空（保留最近 50 条）。日志写入失败仅记警告，绝不影响通知本身。数据库迁移已同步 Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL 六个提供方。
+
+完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
 
 ## 2026-09-06更新
 
