@@ -1,4 +1,26 @@
-# Logs
+﻿# Logs
+
+## 2026-09-14 update
+
+NcfPackageSources (Developer-MAF-V3-Spark branch) — NeuBell WebHook v3: request method, body template, and placeholders:
+
+1. Request method: every WebHook endpoint now supports `GET` / `POST` / `PUT` (default `POST`). `GET` sends no request body (data is carried by URL placeholders) and no signature; the HMAC-SHA256 signature (`X-NeuBell-Signature`) now always covers the exact body bytes actually sent. The create function (`纽铃可见提醒测试`) gains an optional `WebHookMethod` parameter.
+
+2. Body template + placeholders: each endpoint may define an optional request-body template using `{{token}}` placeholders (same format as Workflow text templates). A template starting with `{` or `[` is treated as JSON (string tokens are JSON-escaped automatically; `{{payload}}` is embedded verbatim as a JSON fragment, `Content-Type: application/json`); anything else is sent as plain text. The WebHook URL itself may also contain placeholders — substituted values are percent-encoded, and the rendered URL is strictly re-validated before sending (an invalid rendered URL leaves a failed log entry but sends no HTTP request). Tokens: `{{kind}}` `{{provider}}` `{{providerName}}` `{{time}}` `{{payload}}`, item tokens `{{id}}` `{{title}}` `{{summary}}` `{{link}}` `{{status}}` `{{count}}` `{{updated}}`, and change tokens `{{addedCount}}` `{{removedCount}}` `{{addedTitles}}` `{{removedTitles}}`. Unknown tokens render as an empty string. Set `NeuBellWebHook:BaseUrl` (optional, appsettings) to make `{{link}}` emit absolute URLs.
+
+3. Request log now records the HTTP method and the actually-rendered URL/body of each request; the management page and request log gain a "method" column, and the settings form gains a method selector, a body-template editor, and a built-in placeholder reference. A previously latent bug is also fixed: successful change notifications were incorrectly finalized as "请求未完成" (incomplete) in the log. Migrations synced for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL); unit tests extended (renderer behavior, GET semantics, templated URLs, re-validation, log status).
+
+For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+
+## 2026-09-13 update
+
+NcfPackageSources (Developer-MAF-V3-Spark branch) — NeuCharWorkflow (v0.4.0): Chat trigger + chat message persistence:
+
+1. Chat trigger: choosing "Chat trigger" in the workflow designer gives the workflow a directly shareable chat page URL. Opening that page lets users send messages one by one, and **each message launches a workflow run** (executed entirely by the server-side run coordinator; the browser never takes part in execution). Both signed-in users (Claims identity) and anonymous guests (a 32-byte random token in an HttpOnly cookie, guest access switchable off in settings) are supported, and the two identities never mix within one workflow. The page is self-contained HTML: message bubbles, live node status while a run executes, and a "new conversation" reset button; the admin designer gains the Chat settings (title, greeting, guest toggle) and a "chat page" entry.
+
+2. Chat message persistence: chat history is now stored in a new `NEUCHAR_WORKFLOW_NeuCharWorkflowChatMessage` table (latest 200 messages per session; only the SHA256 digest of the participant key is stored, raw guest tokens never reach the database). After a host restart, opening the page restores the history from the database (n8n-style rebuild-on-load); history is retained for 30 days and expired rows are cleaned daily by a hosted service; resetting a session clears memory and database together; deleting a workflow deletes all of its chat history. Message content is capped at 8000 characters. Migrations synced for all six providers (Sqlite / SqlServer / MySql / PostgreSQL / Oracle / Dm; the Oracle chat content column uses NCLOB, and the replay JSON columns remain CLOB per the original migration to avoid shrinking column types).
+
+For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
 
 ## 2026-09-11 update
 

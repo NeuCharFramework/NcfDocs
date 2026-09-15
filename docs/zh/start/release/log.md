@@ -1,4 +1,26 @@
-# 日志
+﻿# 日志
+
+## 2026-09-14更新
+
+NcfPackageSources（Developer-MAF-V3-Spark 分支）——NeuBell WebHook v3：请求方式、请求体模板与占位符：
+
+1、请求方式：每个 WebHook 端点支持 `GET` / `POST` / `PUT`（默认 `POST`）。`GET` 不发送请求体（数据经地址占位符传递）也不携带签名；HMAC-SHA256 签名（`X-NeuBell-Signature`）始终覆盖实际发出的请求体字节。创建函数（「纽铃可见提醒测试」）新增可选参数 `WebHookMethod`。
+
+2、请求体模板 + 占位符：每个端点可配置可选的请求体模板，使用 `{{token}}` 占位符（与 Workflow 文本模板同格式）。模板（去首尾空白后）以 `{` 或 `[` 开头时按 JSON 处理（字符串占位符自动 JSON 转义，`{{payload}}` 原样嵌入为 JSON 片段，`Content-Type: application/json`）；否则按纯文本发送。WebHook 地址本身也可包含占位符——替换值自动 URL 编码，且发送前对渲染后的真实地址再次严格校验（渲染后不合法的地址只记失败日志、不发起 HTTP 请求）。可用占位符：`{{kind}}` `{{provider}}` `{{providerName}}` `{{time}}` `{{payload}}`，条目占位符 `{{id}}` `{{title}}` `{{summary}}` `{{link}}` `{{status}}` `{{count}}` `{{updated}}`，变更占位符 `{{addedCount}}` `{{removedCount}}` `{{addedTitles}}` `{{removedTitles}}`；未知占位符替换为空字符串。配置 `NeuBellWebHook:BaseUrl`（appsettings 可选）可让 `{{link}}` 输出绝对链接。
+
+3、请求日志新增记录实际请求方式与渲染后的真实地址/报文；管理页设置表格与请求日志新增「方式」列，设置表单新增请求方式选择、请求体模板编辑器与内置占位符说明。同时修复一个隐性缺陷：变更通知成功后日志曾被错误地标记为“请求未完成”。数据库迁移已同步六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL），单元测试同步扩展（渲染器行为、GET 语义、模板地址、渲染后二次校验、日志状态）。
+
+完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+
+## 2026-09-13更新
+
+NcfPackageSources（Developer-MAF-V3-Spark 分支）——NeuCharWorkflow（v0.4.0）：Chat 触发器 + Chat 消息持久化：
+
+1、Chat 触发器：工作流设计器中选择“Chat 触发”后，工作流获得一个可直接分享的聊天页面 URL。打开该页面即可像聊天一样逐条发送消息，**每条消息都会作为输入启动一次工作流运行**（完全由服务端运行协调器执行，浏览器端不参与运行）。支持登录用户（Claims 身份）与未登录访客（32 字节随机令牌写入 HttpOnly Cookie，访客开关可在设置中关闭）；同一工作流下两种身份互不混用。页面为自包含 HTML：消息气泡、运行中的节点状态提示与“新对话”重置按钮；管理端设计器同步新增 Chat 配置（标题、欢迎语、访客开关）与“聊天页面”入口。
+
+2、Chat 消息持久化：聊天历史落库到新表 `NEUCHAR_WORKFLOW_NeuCharWorkflowChatMessage`（每会话保留最近 200 条；数据库只保存参与者标识的 SHA256 摘要，原始访客令牌不落库）。主机重启后打开页面自动从数据库恢复历史（类似 n8n 的按数据库重建方式）；历史保留 30 天，宿主服务每日清理过期数据；会话重置时内存与数据库一并清空；工作流删除时其全部聊天历史随之删除。消息内容上限 8000 字符。数据库迁移已同步 Sqlite / SqlServer / MySql / PostgreSQL / Oracle / Dm 六个提供方（Oracle 的 Chat 内容列使用 NCLOB；回放 JSON 列沿用原迁移保持 CLOB，避免收缩列类型）。
+
+完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
 
 ## 2026-09-11更新
 

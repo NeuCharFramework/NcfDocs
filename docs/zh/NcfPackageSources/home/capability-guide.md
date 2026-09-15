@@ -1,4 +1,4 @@
-# NCF 核心能力详解（面向实战）
+﻿# NCF 核心能力详解（面向实战）
 
 > 适用范围：`NcfPackageSources` 当前版本。  
 > 基线提交：`f668bf650`（2026-08-29，Developer-MAF-V3）。
@@ -17,7 +17,7 @@
 - `Senparc.Xncf.Sandbox` 提供独立沙箱编排：Docker/Wasm 快速创建/销毁隔离实验环境（配额、TTL、JupyterLab、工作区文件管理），与 XncfBuilder Preview Host 解耦。
 - `Senparc.Xncf.DesktopBridge` 为 NCF 桌面伴侣应用提供受保护的 HTTP/SSE 状态发现与事件流桥接（Token 边界 + 一次性 PKCE 交接）。
 - `Senparc.Xncf.Dapr` 提供 Dapr 客户端抽象：服务调用、Pub/Sub、状态管理与健康检查。
-- **NeuBell WebHook（WebAPI）通知设置**（Senparc.Areas.Admin）：管理员可按纽铃 Provider（或全部 Provider）注册 WebHook 端点；当纽铃条目新增或移除时，系统以异步方式（fire-and-forget、并发受限）POST 通知，支持可选的 HMAC-SHA256 签名头（`X-NeuBell-Signature`）与测试发送。创建函数（「纽铃可见提醒测试」）提供可选 `WebHookUrl` 参数：创建纽铃时若填写，则立即向该地址异步 POST 一条一次性 `item-created` 事件（fire-and-forget，不阻塞响应）。所有出站请求（`item-created` / `items-changed` / `test`）的完整报文与结果均记录在管理页的「请求日志」列表中（查看 / 删除 / 批量清空）。后台监测（轮询 + 变更唤醒）按 Provider 维护基线做差异对比，避免进程重启或瞬时快照失败造成误报。
+- **NeuBell WebHook（WebAPI）通知设置**（Senparc.Areas.Admin）：管理员可按纽铃 Provider（或全部 Provider）注册 WebHook 端点；当纽铃条目新增或移除时，系统以异步方式（fire-and-forget、并发受限）发送通知，支持可配置请求方式（`GET` / `POST` / `PUT`）、可选请求体模板与 `{{token}}` 占位符（与 Workflow 文本模板同格式，地址与 JSON 请求体均可用）、可选 HMAC-SHA256 签名头（`X-NeuBell-Signature`，覆盖实际发出的请求体）与测试发送。创建函数（「纽铃可见提醒测试」）提供可选 `WebHookUrl` / `WebHookMethod` 参数：创建纽铃时若填写，则立即向该地址异步发送一条一次性 `item-created` 事件（fire-and-forget，不阻塞响应）。所有出站请求（`item-created` / `items-changed` / `test`）的请求方式、渲染后的真实地址与完整报文/结果均记录在管理页的「请求日志」列表中（查看 / 删除 / 批量清空）。后台监测（轮询 + 变更唤醒）按 Provider 维护基线做差异对比，避免进程重启或瞬时快照失败造成误报。
 - **AIKernel Token 用量监测**：实时聚合 + 按运行异步进度；AI 模型列表页直接展示用量。
 - **后台菜单搜索 + 配置模式**：左侧菜单新增搜索过滤，配置模式下可拖拽调整一级菜单顺序，保存后真实更新存储的 Sort 值。
 - **Provits（NeuCharPivot）**：逐个创建 Provit，支持通过 AI Chat 创建或修改，并可构建绑定到特定页面（如后台首页 `admin-home`）的"Provit Panel"，组合来自任意 XNCF 模块的 Provit Block，支持拖拽排序与 AI 辅助编辑。
