@@ -1,4 +1,17 @@
-﻿# Logs
+# Logs
+
+## 2026-09-18 update
+
+NcfPackageSources (Developer-MAF-V3-Spark branch) — Function global Provit access control: database policies that override code attributes:
+
+1. Database-backed access policies (Senparc.Areas.Admin): global Provit (cross-module floating invocation) access for a Function was previously constrained only in code via `FunctionRenderAttribute` (`AllowGlobalPivot` / `GlobalPivotRoleCodes` / `GlobalPivotPermissionCodes`). Administrators can now store a per-Function policy in a new `ADMIN_NeuCharFunctionProvitAccess` table (unique on `ModuleUid + FunctionKey`), modeled as an ontology-style subject–resource–effect triple: the resource is the stable `(ModuleUid, FunctionKey)` key, subjects are admin users, role codes and/or permission codes (any match passes), and the effect is one of Inherit / Open / Restricted / Deny. A non-inherit policy overrides the code attributes in both directions — it can expose a Function the code does not declare global, or deny one the code allows; Inherit (or an absent policy) falls back to the code baseline.
+
+2. Caching + module-clear resilience: all policy rows are cached in memory by `FullNeuCharFunctionProvitAccessCache` (CO2NET cache strategy, same pattern as `FullSystemConfigCache`), invalidated on every write; a database failure degrades gracefully to the code baseline so global Provit keeps working. Policy rows are intentionally not deleted when an XNCF module is cleared — they survive as "orphan" policies and automatically re-apply when the module is reinstalled. Only manual clearing on the management page deletes them.
+
+3. Access Control management page: a new page under the NeuCharPivot menu (`/Admin/NeuCharPivot/Access`, super admin only) shows the full decision context for every Function — module identity/version/availability, code baseline, current DB policy, and the resulting effective policy (with source: DB or code) — plus orphan policies whose module was cleared. Supports single-row editing (policy mode, user/role/permission pickers, remark) and batch operations across selected rows: apply Open / Restricted / Deny / Inherit, or clear. Migrations synced for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL); unit tests extended for override semantics, restricted subject matching, orphan retention, and binding normalization.
+
+For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+
 
 ## 2026-09-14 update
 

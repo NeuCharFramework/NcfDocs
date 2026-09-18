@@ -1,4 +1,4 @@
-﻿# NCF 核心能力详解（面向实战）
+# NCF 核心能力详解（面向实战）
 
 > 适用范围：`NcfPackageSources` 当前版本。  
 > 基线提交：`f668bf650`（2026-08-29，Developer-MAF-V3）。
@@ -21,6 +21,7 @@
 - **AIKernel Token 用量监测**：实时聚合 + 按运行异步进度；AI 模型列表页直接展示用量。
 - **后台菜单搜索 + 配置模式**：左侧菜单新增搜索过滤，配置模式下可拖拽调整一级菜单顺序，保存后真实更新存储的 Sort 值。
 - **Provits（NeuCharPivot）**：逐个创建 Provit，支持通过 AI Chat 创建或修改，并可构建绑定到特定页面（如后台首页 `admin-home`）的"Provit Panel"，组合来自任意 XNCF 模块的 Provit Block，支持拖拽排序与 AI 辅助编辑。
+- **Provit 访问控制（数据库策略）**（Senparc.Areas.Admin）：Function 的全局 Provit（跨模块浮动调用）访问不再仅限代码约束。除 `FunctionRenderAttribute` 代码基线（`AllowGlobalPivot` / `GlobalPivotRoleCodes` / `GlobalPivotPermissionCodes`）外，管理员可为每个 Function 在新表 `ADMIN_NeuCharFunctionProvitAccess` 中维护数据库策略。每条策略是 Ontology 风格的「主体–资源–效果」三元组：**资源**为稳定键 `(ModuleUid, FunctionKey)`；**主体**为后台管理员用户、角色码与/或权限码（任一命中即放行）；**效果**为 继承 / 开放 / 受限 / 禁用 四态之一。非“继承”策略始终**覆盖代码属性**（可让代码未声明全局的 Function 出现在全局 Provit，也可禁用代码允许的 Function）。全部策略行缓存在内存（`FullNeuCharFunctionProvitAccessCache`，写入即失效），鉴权查找为 O(1) 且无数据库往返。策略行**不随 XNCF 模块清除而删除**——模块被清除后以“孤儿策略”形式冗余保留，模块重装后自动继续生效；只有手动清除才会删除。维护入口为 NeuCharPivot 菜单下的「访问控制」页（`/Admin/NeuCharPivot/Access`，超级管理员）：每行完整展示决策上下文（代码基线 + 数据库策略 + 生效策略），支持单条编辑（用户/角色/权限选择器）与批量开放 / 受限 / 禁用 / 恢复继承 / 清除。
 - **Admin Chat Harness 模式**：基于 Microsoft Agent Framework（MAF）的可选长任务模式，具备步数预算、超时控制与 `[[DONE]]` 完成标记；普通对话仍为默认。
 - **CloudflareProtect 站点防护**（Senparc.Web）：新增 `CloudflareProtect` SystemConfig 配置节（默认关闭），开启后自首个请求起立即生效固定窗口限流与安全响应头。
 - MCP 相关能力已下沉到 `IXncfRegister`/`XncfRegisterBase` 统一协议，可按模块开关。
@@ -145,6 +146,18 @@ services.AddSenparcEventBus(options =>
 - 前端对 401/403 进行了明确跳转与提示处理
 
 建议：后续新增管理型 API 时，保持同一鉴权基线，不要绕过 `ApiAuthorize`。
+
+### 3.5 全局 Provit 访问：代码基线 + 数据库策略覆盖层
+
+核心机制：
+
+- 代码基线：`[FunctionRender(AllowGlobalPivot = true, GlobalPivotRoleCodes = ..., GlobalPivotPermissionCodes = ...)]` 声明 Function 是否允许被全局 Provit 调用，以及角色/权限级限制。
+- 数据库覆盖层：`ADMIN_NeuCharFunctionProvitAccess` 按 `(ModuleUid, FunctionKey)` 至多一条策略，`AccessMode` = 继承（0）/ 开放（1）/ 受限（2）/ 禁用（3），并附逗号分隔的主体绑定（角色码、权限码、后台管理员用户 ID）。
+- 解析顺序：策略为“继承”或不存在时回退代码基线；其余模式完全覆盖代码属性。受限模式下，绑定的用户、角色码、权限码任一命中即放行。
+- 缓存：全部策略行位于 `FullNeuCharFunctionProvitAccessCache`（CO2NET 缓存策略，与 `FullSystemConfigCache` 同范式）；每次写入都失效缓存。
+- 生命周期：模块卸载**不会**触碰策略行（孤儿冗余保留）；模块卸载只删除模块自身 DbContext 的表。访问控制页的手动清除执行物理删除。
+
+建议：模块随包发布时用代码属性作为默认契约，用数据库策略做站点级治理（紧急禁用、灰度开放、临时授权），无需重新发布模块。
 
 ## 4. 按场景落地（推荐路径）
 

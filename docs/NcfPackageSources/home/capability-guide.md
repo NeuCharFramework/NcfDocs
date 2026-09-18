@@ -1,4 +1,4 @@
-﻿# NCF Capability Deep Dive (Practical)
+# NCF Capability Deep Dive (Practical)
 
 > Scope: current `NcfPackageSources` version  
 > Baseline commit: `f668bf650` (2026-08-29, Developer-MAF-V3)
@@ -21,6 +21,7 @@ When learning the current version, focus on these capabilities first:
 - **AIKernel token-usage monitoring**: real-time aggregation with async per-run progress; usage is now visible directly on the AI model list page.
 - **Admin menu search + config mode**: the left menu has a search filter, and a config mode allows drag-reordering first-level menus; saving really updates the stored Sort values.
 - **Provits (NeuCharPivot)**: create Provits one by one, create or modify them via AI Chat, and build a "Provit Panel" bound to a special page (e.g. admin home `admin-home`) composed of Provit Blocks from any XNCF module, with drag sorting and AI-assisted block editing.
+- **Provit access control (DB-backed policies)** (Senparc.Areas.Admin): global Provit (cross-module floating invocation) access for a Function is no longer code-only. Besides the `FunctionRenderAttribute` baseline (`AllowGlobalPivot` / `GlobalPivotRoleCodes` / `GlobalPivotPermissionCodes`), administrators can store a per-Function database policy in the new `ADMIN_NeuCharFunctionProvitAccess` table. Each policy is an ontology-style subject–resource–effect triple: the **resource** is the stable key `(ModuleUid, FunctionKey)`, the **subjects** are admin users, role codes and/or permission codes (any match passes), and the **effect** is one of Inherit / Open / Restricted / Deny. A non-inherit policy always **overrides the code attributes** (it can expose a Function the code does not declare global, or deny one the code allows). Policy rows are cached in memory (`FullNeuCharFunctionProvitAccessCache`, invalidated on write) so enforcement stays O(1) without a database round-trip. Policies are deliberately **not removed when an XNCF module is cleared** — they survive as "orphan" rows and automatically re-apply when the module is reinstalled; only manual clearing deletes them. Managed on the **Access Control** page under the NeuCharPivot menu (`/Admin/NeuCharPivot/Access`, super admin): each row shows the full decision context (code baseline + DB policy + effective policy), single-row editing with user/role/permission pickers, and batch open / restrict / deny / restore-inherit / clear across selected Functions.
 - **Admin Chat Harness mode**: an optional long-task mode based on Microsoft Agent Framework (MAF) with step budget, timeout control, and a `[[DONE]]` completion marker; the simple chat mode remains the default.
 - **CloudflareProtect site protection** (Senparc.Web): a new `CloudflareProtect` SystemConfig section (off by default) that activates fixed-window rate limiting and security headers immediately from the first request when enabled.
 - MCP integration is now part of the common register contract (`IXncfRegister` + `XncfRegisterBase`).
@@ -145,6 +146,18 @@ The current version applies stronger auth baseline for management AppServices:
 - explicit frontend handling for 401/403
 
 Recommendation: keep this baseline for all newly added management APIs.
+
+### 3.5 Global Provit Access: Code Baseline + Database Policy Overlay
+
+Mechanism:
+
+- Code baseline: `[FunctionRender(AllowGlobalPivot = true, GlobalPivotRoleCodes = ..., GlobalPivotPermissionCodes = ...)]` declares whether a Function may be invoked through the global Provit and with which role/permission restrictions.
+- Database overlay: `ADMIN_NeuCharFunctionProvitAccess` holds at most one policy per `(ModuleUid, FunctionKey)` with `AccessMode` = Inherit (0) / Open (1) / Restricted (2) / Deny (3) plus comma-separated subject bindings (role codes, permission codes, admin user IDs).
+- Resolution order: an Inherit (or absent) policy falls back to the code baseline; any other mode fully overrides the code attributes. Restricted passes when any bound user, role code or permission code matches.
+- Caching: all policy rows live in `FullNeuCharFunctionProvitAccessCache` (CO2NET cache strategy, same pattern as `FullSystemConfigCache`); every write invalidates the cache.
+- Lifecycle: module uninstall does **not** touch policy rows (orphan retention); the module's tables are dropped only for the module's own DbContext. Manual clear on the Access Control page performs a hard delete.
+
+Recommendation: use code attributes for the default contract shipped with a module, and the database policies for per-site governance (emergency deny, scoped rollout, temporary exposure) without republishing the module.
 
 ## 4. Scenario Playbooks
 

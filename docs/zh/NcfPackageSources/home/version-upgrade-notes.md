@@ -37,6 +37,29 @@
 - 文档明确了 Issue / PR 最小信息模板与提交建议。
 - 新增了“从使用者到贡献者”的流程说明，便于团队内外协作。
 
+### 2026-09-18（Developer-MAF-V3-Spark）
+
+- **影响模块**：`Senparc.Areas.Admin`
+- **变更类型**：新增
+- **关键变更**：
+  - **Function 全局 Provit 访问控制（数据库策略）**（Senparc.Areas.Admin）：Function 的全局 Provit（跨模块浮动调用）访问此前仅在代码中约束（`FunctionRenderAttribute`：`AllowGlobalPivot` / `GlobalPivotRoleCodes` / `GlobalPivotPermissionCodes`）。现可为每个 Function 在新表 `ADMIN_NeuCharFunctionProvitAccess`（`ModuleUid + FunctionKey` 唯一）中维护数据库策略，采用 Ontology 风格的「主体–资源–效果」模型：资源 = `(ModuleUid, FunctionKey)`；主体 = 后台管理员用户、角色码与/或权限码（任一命中即放行）；效果 = 继承（0）/ 开放（1）/ 受限（2）/ 禁用（3）。非“继承”策略**覆盖代码属性**——可让代码未声明全局的 Function 出现在全局 Provit，也可禁用代码允许的 Function；“继承”或策略不存在时回退代码基线。
+  - **缓存**：全部策略行缓存在 `FullNeuCharFunctionProvitAccessCache`（CO2NET 缓存策略，与 `FullSystemConfigCache` 同范式）；每次写入失效缓存，数据库异常时优雅降级为代码基线。
+  - **模块清除韧性**：XNCF 模块卸载时**不会**删除策略行（模块卸载只删除模块自身 DbContext 的表）。策略以“孤儿策略”形式冗余保留，模块重装后自动继续生效；仅管理页的手动清除执行物理删除。
+  - **管理页**：NeuCharPivot 菜单下新增「访问控制」页（`/Admin/NeuCharPivot/Access`，仅超级管理员，页面鉴权 `AdminOnly`）。每行完整展示决策上下文——模块/Function 标识、代码基线、当前数据库策略与最终生效策略——支持单条编辑（策略模式、用户/角色/权限选择器、备注）与批量操作：对选中行批量应用 开放 / 受限 / 禁用 / 继承，或批量清除。
+  - 数据库迁移已同步六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL）；单元测试同步扩展（DB 覆盖语义、受限主体匹配、孤儿保留、绑定规范化）。
+- **升级操作**：
+  - 拉取最新代码，重新执行 `dotnet restore` / `dotnet build`（见 [NcfPackageSources 源码指南](./index.md)）。
+  - 在宿主站点执行 Senparc.Areas.Admin 数据库迁移（新增 `ADMIN_NeuCharFunctionProvitAccess` 表）；升级前备份数据库。
+- **回滚指引**：
+  - 新表为增量表；未创建策略行时既有行为完全不变。回滚后旧代码只读代码属性，存量策略行会被自然忽略。
+- **验证清单**：
+  - `ADMIN_NeuCharFunctionProvitAccess` 迁移在所有支持的数据库上成功。
+  - 访问控制页列出全部目录 Function 与孤儿策略；代码基线、数据库策略、生效策略三列渲染正确。
+  - 对代码受限 Function 保存“开放”策略后，任意登录管理员可经全局 Provit 访问；对代码允许 Function 保存“禁用”策略后，全局 Provit 一律拒绝。
+  - “受限”策略仅放行绑定的用户 / 角色 / 权限码（任一命中），未命中任何绑定的账号被拒绝。
+  - 卸载模块后其策略行保留（显示为孤儿策略）；重装模块后自动恢复生效。
+  - 批量 开放 / 受限 / 禁用 / 继承 / 清除 作用于选中行，列表刷新后计数正确。
+
 ### 2026-09-06 / `f668bf650..eca233bea`（Developer-MAF-V3）
 
 - **影响模块**：`Senparc.Areas.Admin`、`Senparc.Xncf.AIKernel`、`Senparc.Web`（站点宿主）、`Senparc.Xncf.NeuCharPivot`（Provits）

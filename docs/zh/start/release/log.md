@@ -1,4 +1,17 @@
-﻿# 日志
+# 日志
+
+## 2026-09-18更新
+
+NcfPackageSources（Developer-MAF-V3-Spark 分支）——Function 全局 Provit 访问控制：覆盖代码属性的数据库策略：
+
+1、数据库访问策略（Senparc.Areas.Admin）：Function 的全局 Provit（跨模块浮动调用）访问此前仅在代码中约束（`FunctionRenderAttribute` 的 `AllowGlobalPivot` / `GlobalPivotRoleCodes` / `GlobalPivotPermissionCodes`）。现可为每个 Function 在新表 `ADMIN_NeuCharFunctionProvitAccess`（`ModuleUid + FunctionKey` 唯一）中维护策略，采用 Ontology 风格的「主体–资源–效果」三元组：资源为稳定键 `(ModuleUid, FunctionKey)`；主体为后台管理员用户、角色码与/或权限码（任一命中即放行）；效果为 继承 / 开放 / 受限 / 禁用 四态之一。非“继承”策略双向覆盖代码属性——可让代码未声明全局的 Function 出现在全局 Provit，也可禁用代码允许的 Function；“继承”或策略不存在时回退代码基线。
+
+2、缓存 + 模块清除韧性：全部策略行由 `FullNeuCharFunctionProvitAccessCache` 缓存在内存（CO2NET 缓存策略，与 `FullSystemConfigCache` 同范式），每次写入即失效；数据库异常时优雅降级为代码基线，全局 Provit 不受影响。策略行**不随 XNCF 模块清除而删除**——模块被清除后以“孤儿策略”形式冗余保留，模块重装后自动继续生效；仅管理页的手动清除才会删除。
+
+3、访问控制管理页：NeuCharPivot 菜单下新增页面（`/Admin/NeuCharPivot/Access`，仅超级管理员），为每个 Function 完整展示决策上下文——模块标识/版本/可用状态、代码基线、当前数据库策略与最终生效策略（含来源：数据库或代码）——以及模块已清除的孤儿策略。支持单条编辑（策略模式、用户/角色/权限选择器、备注）与对选中行的批量操作：批量应用 开放 / 受限 / 禁用 / 继承，或批量清除。数据库迁移已同步六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL）；单元测试同步扩展（覆盖语义、受限主体匹配、孤儿保留、绑定规范化）。
+
+完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+
 
 ## 2026-09-14更新
 

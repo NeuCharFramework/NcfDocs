@@ -39,6 +39,29 @@ For each upgrade, check in this order:
 - Docs now include minimal templates for high-quality Issues and PRs.
 - The “user-to-contributor” workflow is documented for easier collaboration.
 
+### 2026-09-18 (Developer-MAF-V3-Spark)
+
+- **Affected module(s)**: `Senparc.Areas.Admin`
+- **Change type**: Added
+- **Key change(s)**:
+  - **Function global Provit access control via database policies** (Senparc.Areas.Admin): global Provit (cross-module floating invocation) access for a Function was previously constrained only in code (`FunctionRenderAttribute`: `AllowGlobalPivot` / `GlobalPivotRoleCodes` / `GlobalPivotPermissionCodes`). Administrators can now store a per-Function database policy in a new `ADMIN_NeuCharFunctionProvitAccess` table (unique on `ModuleUid + FunctionKey`), following an ontology-style subject–resource–effect model: resource = `(ModuleUid, FunctionKey)`; subjects = admin users, role codes and/or permission codes (any match passes); effect = Inherit (0) / Open (1) / Restricted (2) / Deny (3). A non-inherit policy **overrides the code attributes** — it can expose a Function the code does not declare global, or deny one the code allows; Inherit (or an absent policy) falls back to the code baseline.
+  - **Caching**: all policy rows are cached in `FullNeuCharFunctionProvitAccessCache` (CO2NET cache strategy, same pattern as `FullSystemConfigCache`); every write invalidates the cache, and a database failure degrades gracefully to the code baseline.
+  - **Module-clear resilience**: policy rows are intentionally **not** deleted when an XNCF module is uninstalled (module uninstall only drops the module's own DbContext tables). They remain as "orphan" policies and automatically re-apply after the module is reinstalled; only manual clearing on the management page performs a hard delete.
+  - **Management page**: new **Access Control** page under the NeuCharPivot menu (`/Admin/NeuCharPivot/Access`, super admin only, page authorization `AdminOnly`). Each row shows the full decision context — module/Function identity, code baseline, current DB policy, and the resulting effective policy — with single-row editing (policy mode, user/role/permission pickers, remark) and batch operations: apply Open / Restricted / Deny / Inherit, or clear, across all selected rows.
+  - Migrations synced for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL); unit tests extended (DB override semantics, Restricted subject matching, orphan retention, binding normalization).
+- **Upgrade action(s)**:
+  - Pull the latest code, re-run `dotnet restore` / `dotnet build` (see [NcfPackageSources Source Guide](./index.md)).
+  - Run database migrations in the host site for Senparc.Areas.Admin (adds `ADMIN_NeuCharFunctionProvitAccess`); back up databases before upgrading.
+- **Rollback guidance**:
+  - The new table is additive; no existing behavior changes unless a policy row is created. On rollback, existing policy rows are simply ignored by the old code (which only reads code attributes).
+- **Validation checklist**:
+  - `ADMIN_NeuCharFunctionProvitAccess` migration succeeds across all supported databases.
+  - Access Control page lists every catalog Function plus orphan policies; code baseline, DB policy and effective policy columns render correctly.
+  - Saving an Open policy on a code-restricted Function allows any signed-in admin via global Provit; a Deny policy on a code-allowed Function rejects all global Provit access.
+  - A Restricted policy grants access only to bound users / roles / permission codes (any match), and rejects accounts with none of the bindings.
+  - Uninstalling a module keeps its policy rows (shown as orphans); reinstalling the module re-applies them automatically.
+  - Batch open / restrict / deny / inherit / clear operate on the selected rows and the list refreshes with updated counts.
+
 ### 2026-09-06 / `f668bf650..eca233bea` (Developer-MAF-V3)
 
 - **Affected module(s)**: `Senparc.Areas.Admin`, `Senparc.Xncf.AIKernel`, `Senparc.Web` (site host), `Senparc.Xncf.NeuCharPivot` (Provits)
