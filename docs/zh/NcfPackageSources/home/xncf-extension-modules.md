@@ -51,7 +51,7 @@
 - `Senparc.Xncf.KnowledgeBase`（v0.1.10）：知识库管理、导入、向量化、召回测试
 - `Senparc.Xncf.AIAgentsHub`（v0.1.0）：Agent Hub 示例模块（多数据库 Context、Function 端点、本地化资源）
 - `Senparc.Xncf.MCP`（v0.1.0）：MCP 端点与调用管理（`EnableMcpServer`）
-- `Senparc.Xncf.Sandbox`（v0.1.0-preview1）：独立沙箱编排（Docker/Wasm 隔离实验环境、配额/TTL、JupyterLab、工作区文件管理）
+- `Senparc.Xncf.Sandbox`（v0.3.3）：独立沙箱编排（Docker/Wasm 隔离实验环境、配额（每用户 10 / 全局 50）/TTL、JupyterLab 外部控制——命令 + 标准输入与 Python/C# Notebook 创建、可选附加端口映射、会话别名、工作区文件管理）
 - 契约包：`AIKernel.Abstractions`、`AgentsManager.Abstractions`、`MCP.Abstractions`、`PromptRange.Abstractions`、`NeuCharWorkflow.Abstractions`、`Sandbox.Abstractions`
 
 ### 3.3 开发与运维模块

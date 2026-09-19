@@ -37,6 +37,29 @@
 - 文档明确了 Issue / PR 最小信息模板与提交建议。
 - 新增了“从使用者到贡献者”的流程说明，便于团队内外协作。
 
+### 2026-09-19（Developer-MAF-V3-Spark）
+
+- **影响模块**：`Senparc.Xncf.Sandbox`、`Senparc.Xncf.Sandbox.Abstractions`
+- **变更类型**：新增 / 变更
+- **关键变更**：
+  - **JupyterLab 外部控制**：新增可被 AI 调用的「创建 Notebook」（`LabCreateNotebook`）Function，在运行中的 Lab 工作区写入 nbformat-4 的 `.ipynb` 文件，支持 Python 与 C#（dotnet-interactive，内核 `C# .NET SDK`）。Notebook 源码使用 Jupyter 百分号文件约定（`# %%` 分隔代码单元格、`# %% [markdown]` 标记 Markdown 单元格；可选标题生成首个 Markdown 标题单元格）。既有「执行 Lab 命令」Function 新增可选 `StdinContent` 参数（最多 32 KB），经 `docker exec -i` 执行，可向容器内终端程序 / REPL 批量提交指令。
+  - **创建容器时可选附加端口映射**：JupyterLab 沙箱（`jupyter-python` / `jupyter-csharp`）创建时接受可选 `ExtraPortMappings` 字符串（最多 8 条，`;` 或 `,` 分隔）：`3000`（自动分配 loopback 宿主端口）、`9000:3000`（指定 loopback 宿主端口）、`*:3000`（自动分配 `0.0.0.0` 宿主端口）、`*:9000:3000`（指定 `0.0.0.0` 宿主端口）。默认仅绑定 loopback，`0.0.0.0` 外部暴露为显式可选。非法条目 / 超范围端口 / 重复宿主端口在创建时即被拒绝。NCF 预览工作负载不变，保持加固状态。
+  - **会话别名**：会话支持可选显示别名（≤ 128 字符），创建时可设置，之后可随时经新增「修改别名」（`UpdateAlias`）Function 修改或清除；管理端会话列表新增别名与附加端口两列，并支持行内重命名对话框。
+  - **配额提升**：每用户并发会话 2 → 10；全局并发会话 20 → 50。
+  - **持久化**：新增两个可空列 `SandboxSession.Alias` 与 `SandboxSession.ExtraPorts`，随六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL）的迁移加入。两列均不随容器销毁清除，运行时永不自动清空，仅手动重命名/清除会变更。
+- **升级操作**：
+  - 拉取最新代码，重新执行 `dotnet restore` / `dotnet build`（见 [NcfPackageSources 源码指南](./index.md)）。
+  - 在宿主站点执行 Senparc.Xncf.Sandbox 数据库迁移（`20260918120000_AddAliasAndExtraPorts`）；升级前备份数据库。
+- **回滚指引**：
+  - 两列均为增量可空列，旧代码会忽略它们。只要不回退迁移即可安全回滚；回退迁移会丢失别名/端口记录。
+- **验证清单**：
+  - 迁移在所有支持的数据库上成功；存量会话在 `Alias` / `ExtraPorts` 为 null 时继续正常工作。
+  - 带 `ExtraPortMappings` 创建 JupyterLab 沙箱时按请求绑定端口（默认 loopback；`*:` 条目可在 `0.0.0.0` 上访问）；非法条目快速失败并给出清晰错误。
+  - 「创建 Notebook」为 Python 与 C# 内核均生成合法 `.ipynb`，可在 JupyterLab 中打开，且遵循 `Overwrite` 标记。
+  - 带 `StdinContent` 的「执行 Lab 命令」可将输入管道到目标命令（如 REPL），超时行为不变。
+  - 别名可在创建时设置、在管理列表重命名与清除；别名列对全部行正常渲染。
+  - 单用户最多可持有 10 个并发会话；全局上限为 50。
+
 ### 2026-09-18（Developer-MAF-V3-Spark）
 
 - **影响模块**：`Senparc.Areas.Admin`

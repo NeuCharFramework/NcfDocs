@@ -1,5 +1,22 @@
 # Logs
 
+## 2026-09-19 update
+
+NcfPackageSources (Developer-MAF-V3-Spark branch) — Sandbox v0.3.3: external JupyterLab control, optional container port mappings, and session aliases:
+
+1. External JupyterLab control: the module now exposes complete external interfaces for operating a running JupyterLab container. A new AI-callable Function 创建 Notebook (`LabCreateNotebook`) writes nbformat-4 `.ipynb` files into the Lab workspace for Python or C# (dotnet-interactive, kernel `C# .NET SDK`); the notebook source follows the Jupyter percent-file convention (`# %%` separates code cells, `# %% [markdown]` marks markdown cells, and an optional title becomes the first markdown heading), so one string fully describes the notebook. The existing 执行 Lab 命令 Function now accepts an optional `StdinContent` (up to 32 KB) — executed via `docker exec -i` — so commands can be piped into terminal programs or REPLs inside the container.
+
+2. Optional extra port mappings at container creation: creating a JupyterLab sandbox (`jupyter-python` / `jupyter-csharp`) now accepts an optional `ExtraPortMappings` string (max 8 mappings, `;` or `,` separated). Formats: `3000` — auto-allocated loopback host port → container port 3000; `9000:3000` — explicit loopback host port; `*:3000` — auto host port bound to `0.0.0.0` (externally reachable); `*:9000:3000` — explicit external host port. Loopback-only binding is the default; `0.0.0.0` exposure is opt-in, intended for web sites running inside the container. Invalid entries, out-of-range ports, and duplicate host ports are rejected at creation; the NCF preview workload is unaffected and remains hardened.
+
+3. Session alias: each sandbox session supports an optional display alias (≤ 128 characters), settable at creation (`Alias` parameter) and changeable/clearable any time via the new 修改别名 (`UpdateAlias`) Function. The admin session list now shows alias and extra-ports columns with an inline rename dialog.
+
+4. Quota raised: the per-user concurrent session limit went from 2 to 10 (global limit 20 → 50).
+
+Persistence: two new nullable columns `SandboxSession.Alias` / `SandboxSession.ExtraPorts` are added by migrations for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL). Both fields survive container destroy and are never cleared by the runtime — only manual rename/clear changes them. Unit tests extended (port-mapping parsing, notebook builder, quota policy, alias normalization; 52 passing).
+
+For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+
+
 ## 2026-09-18 update
 
 NcfPackageSources (Developer-MAF-V3-Spark branch) — Function global Provit access control: database policies that override code attributes:

@@ -14,7 +14,7 @@
 - `FirmwareUpdate` 提供了 GitHub Release 到站点本地 `wwwroot/NcfPackages` 的镜像能力，并扩展为 NCF Host 与 NCF Desktop 双安装包镜像（下载源选择 + MD5 指纹）。
 - `NeuCharWorkflow` 新增服务端工作流编排能力：可视化设计器、版本管理与自动保存、运行回放、Webhook 触发、并行节点、Human Input 人工输入节点、NeuBell 通知与 Workflow 分析（Analytics）页面。
 - `AgentsManager` 支持 A2A（Agent-to-Agent）远程智能体：远程智能体接入/发布、ChatGroup 上下文共享、`AgentTemplateRunner` 统一本地与 A2A 执行；并新增 Human-in-the-Loop 审批策略与独立 `AgentExecutionTask` 管理。
-- `Senparc.Xncf.Sandbox` 提供独立沙箱编排：Docker/Wasm 快速创建/销毁隔离实验环境（配额、TTL、JupyterLab、工作区文件管理），与 XncfBuilder Preview Host 解耦。
+- `Senparc.Xncf.Sandbox` 提供独立沙箱编排：Docker/Wasm 快速创建/销毁隔离实验环境（配额（每用户 10 / 全局 50）、TTL、JupyterLab 外部控制（命令执行 + 标准输入、创建 Python/C# Notebook）、可选附加端口映射（暴露容器内 Web 服务）、会话别名、工作区文件管理），与 XncfBuilder Preview Host 解耦。
 - `Senparc.Xncf.DesktopBridge` 为 NCF 桌面伴侣应用提供受保护的 HTTP/SSE 状态发现与事件流桥接（Token 边界 + 一次性 PKCE 交接）。
 - `Senparc.Xncf.Dapr` 提供 Dapr 客户端抽象：服务调用、Pub/Sub、状态管理与健康检查。
 - **NeuBell WebHook（WebAPI）通知设置**（Senparc.Areas.Admin）：管理员可按纽铃 Provider（或全部 Provider）注册 WebHook 端点；当纽铃条目新增或移除时，系统以异步方式（fire-and-forget、并发受限）发送通知，支持可配置请求方式（`GET` / `POST` / `PUT`）、可选请求体模板与 `{{token}}` 占位符（与 Workflow 文本模板同格式，地址与 JSON 请求体均可用）、可选 HMAC-SHA256 签名头（`X-NeuBell-Signature`，覆盖实际发出的请求体）与测试发送。创建函数（「纽铃可见提醒测试」）提供可选 `WebHookUrl` / `WebHookMethod` 参数：创建纽铃时若填写，则立即向该地址异步发送一条一次性 `item-created` 事件（fire-and-forget，不阻塞响应）。所有出站请求（`item-created` / `items-changed` / `test`）的请求方式、渲染后的真实地址与完整报文/结果均记录在管理页的「请求日志」列表中（查看 / 删除 / 批量清空）。后台监测（轮询 + 变更唤醒）按 Provider 维护基线做差异对比，避免进程重启或瞬时快照失败造成误报。
@@ -63,7 +63,7 @@
 | Senparc.Xncf.KnowledgeBase | 0.1.10 | - | 否 | 知识库管理、导入、向量化、召回测试 |
 | Senparc.Xncf.AIAgentsHub | 0.1.0 | - | 否 | Agent Hub 示例模块（多数据库 Context、Function 端点、本地化资源） |
 | Senparc.Xncf.MCP | 0.1.0 | - | 是 | MCP 端点与调用管理 |
-| Senparc.Xncf.Sandbox | 0.1.0-preview1 | - | 否 | 独立沙箱编排：Docker/Wasm 隔离实验环境、配额/TTL、JupyterLab、工作区文件管理 |
+| Senparc.Xncf.Sandbox | 0.3.3 | - | 否 | 独立沙箱编排：Docker/Wasm 隔离实验环境、配额（每用户 10 / 全局 50）/TTL、JupyterLab 外部控制（命令 + 标准输入、Python/C# Notebook 创建）、附加端口映射、会话别名、工作区文件管理 |
 | *Abstractions 契约包* | - | - | 否 | `AIKernel.Abstractions`、`AgentsManager.Abstractions`、`MCP.Abstractions`、`PromptRange.Abstractions`、`NeuCharWorkflow.Abstractions`、`Sandbox.Abstractions`：跨模块契约与集成事件抽象（不含 Register） |
 
 ### 2.3 开发与运维模块

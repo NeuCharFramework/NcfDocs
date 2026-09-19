@@ -39,6 +39,29 @@ For each upgrade, check in this order:
 - Docs now include minimal templates for high-quality Issues and PRs.
 - The “user-to-contributor” workflow is documented for easier collaboration.
 
+### 2026-09-19 (Developer-MAF-V3-Spark)
+
+- **Affected module(s)**: `Senparc.Xncf.Sandbox`, `Senparc.Xncf.Sandbox.Abstractions`
+- **Change type**: Added / Changed
+- **Key change(s)**:
+  - **External JupyterLab control**: a new AI-callable Function 创建 Notebook (`LabCreateNotebook`) writes nbformat-4 `.ipynb` files into the running Lab workspace for Python or C# (dotnet-interactive, kernel `C# .NET SDK`). The notebook source uses the Jupyter percent-file convention (`# %%` code-cell separator, `# %% [markdown]` markdown cells; an optional title becomes the first markdown heading). The existing 执行 Lab 命令 Function gains an optional `StdinContent` parameter (up to 32 KB) executed via `docker exec -i`, so commands can be piped into terminal programs or REPLs inside the container.
+  - **Optional extra port mappings at creation**: JupyterLab sandboxes (`jupyter-python` / `jupyter-csharp`) accept an optional `ExtraPortMappings` string at creation (max 8 mappings; `;` or `,` separated): `3000` (auto-allocated loopback host port), `9000:3000` (explicit loopback host port), `*:3000` (auto host port on `0.0.0.0`), `*:9000:3000` (explicit external host port). Loopback binding is the default; `0.0.0.0` exposure is opt-in. Invalid entries, out-of-range ports, and duplicate host ports are rejected at creation. The NCF preview workload is unchanged and remains hardened.
+  - **Session alias**: sessions support an optional display alias (≤ 128 characters), settable at creation and changeable/clearable any time via the new 修改别名 (`UpdateAlias`) Function; the admin session list shows alias and extra-port columns with an inline rename dialog.
+  - **Quota raised**: per-user concurrent sessions 2 → 10; global concurrent sessions 20 → 50.
+  - **Persistence**: two new nullable columns `SandboxSession.Alias` and `SandboxSession.ExtraPorts` are added by migrations for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL). Both survive container destroy and are never cleared by the runtime — only manual rename/clear changes them.
+- **Upgrade action(s)**:
+  - Pull the latest code, re-run `dotnet restore` / `dotnet build` (see [NcfPackageSources Source Guide](./index.md)).
+  - Run the Senparc.Xncf.Sandbox database migration (`20260918120000_AddAliasAndExtraPorts`) in the host site; back up databases before upgrading.
+- **Rollback guidance**:
+  - Both columns are additive and nullable; old code ignores them. Rollback is safe as long as the migration is not reversed; reversing the migration drops alias/port history.
+- **Validation checklist**:
+  - Migration succeeds across all supported databases; existing sessions keep working with `Alias` / `ExtraPorts` null.
+  - Creating a JupyterLab sandbox with `ExtraPortMappings` binds the requested ports (loopback by default; `*:` entries reachable on `0.0.0.0`); invalid entries fail fast with a clear error.
+  - 创建 Notebook produces a valid `.ipynb` for both Python and C# kernels, opens in JupyterLab, and respects the `Overwrite` flag.
+  - 执行 Lab 命令 with `StdinContent` pipes input into the target command (e.g. a REPL) and times out as before.
+  - Alias can be set at creation, renamed, and cleared from the admin list; the alias column renders for all rows.
+  - A user can now hold up to 10 concurrent sessions; the global cap is 50.
+
 ### 2026-09-18 (Developer-MAF-V3-Spark)
 
 - **Affected module(s)**: `Senparc.Areas.Admin`

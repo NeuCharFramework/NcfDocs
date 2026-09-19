@@ -1,5 +1,22 @@
 # 日志
 
+## 2026-09-19更新
+
+NcfPackageSources（Developer-MAF-V3-Spark 分支）——Sandbox v0.3.3：JupyterLab 外部控制、可选容器端口映射与会话别名：
+
+1、JupyterLab 外部控制：模块现具备完整的外部操作接口。新增可被 AI 调用的「创建 Notebook」（`LabCreateNotebook`）Function：在运行中的 Lab 工作区写入 nbformat-4 的 `.ipynb` 文件，支持 Python 与 C#（dotnet-interactive，内核 `C# .NET SDK`）；Notebook 源码遵循 Jupyter 百分号文件约定（`# %%` 分隔代码单元格、`# %% [markdown]` 标记 Markdown 单元格；可选标题生成首个 Markdown 标题单元格），单个字符串即可完整描述 Notebook。「执行 Lab 命令」Function 新增可选 `StdinContent` 参数（最多 32 KB），经 `docker exec -i` 执行，可向容器内终端程序 / REPL 批量提交指令。
+
+2、创建容器时可选的附加端口映射：创建 JupyterLab 沙箱（`jupyter-python` / `jupyter-csharp`）时可传入可选 `ExtraPortMappings` 字符串（最多 8 条，`;` 或 `,` 分隔）。格式：`3000` —— 自动分配 loopback 宿主端口到容器 3000 端口；`9000:3000` —— 指定 loopback 宿主端口；`*:3000` —— 自动分配绑定 `0.0.0.0` 的宿主端口（外部可访问）；`*:9000:3000` —— 指定 `0.0.0.0` 宿主端口。默认仅绑定 loopback，`0.0.0.0` 外部暴露为显式可选，用于暴露容器内运行的 Web 站点。非法条目、超范围端口与重复宿主端口在创建时即被拒绝；NCF 预览工作负载不受影响，保持加固状态。
+
+3、会话别名：每个沙箱会话支持可选显示别名（≤ 128 字符），创建时通过 `Alias` 参数设置，之后可随时经新增「修改别名」（`UpdateAlias`）Function 修改或清除。管理端会话列表新增别名与附加端口两列，并支持行内重命名对话框。
+
+4、配额提升：每用户并发会话上限由 2 提高到 10，全局并发上限由 20 提高到 50。
+
+持久化：`SandboxSession.Alias` / `SandboxSession.ExtraPorts` 两个新的可空列随六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL）的迁移加入。两个字段均不随容器销毁清除、运行时永不自动清空，仅手动重命名/清除会变更。单元测试同步扩展（端口映射解析、Notebook 构建、配额策略、别名规范化；共 52 个用例通过）。
+
+完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+
+
 ## 2026-09-18更新
 
 NcfPackageSources（Developer-MAF-V3-Spark 分支）——Function 全局 Provit 访问控制：覆盖代码属性的数据库策略：

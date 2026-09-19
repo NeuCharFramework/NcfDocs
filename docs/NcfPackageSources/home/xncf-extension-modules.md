@@ -57,7 +57,7 @@ This is the core engineering value of NCF modularity: **capabilities are split i
 - `Senparc.Xncf.KnowledgeBase` (v0.1.10): KB management, import, embedding, recall testing
 - `Senparc.Xncf.AIAgentsHub` (v0.1.0): Agent Hub sample module (multi-database contexts, function endpoints, localized resources)
 - `Senparc.Xncf.MCP` (v0.1.0): MCP endpoint and execution management (`EnableMcpServer`)
-- `Senparc.Xncf.Sandbox` (v0.1.0-preview1): standalone sandbox orchestration (isolated Docker/Wasm environments, quota/TTL, JupyterLab, workspace file management)
+- `Senparc.Xncf.Sandbox` (v0.3.3): standalone sandbox orchestration (isolated Docker/Wasm environments, quota 10/user / 50 global, TTL, JupyterLab external control — commands with stdin and Python/C# Notebook creation, optional extra port mappings, session aliases, workspace file management)
 - Contract packages: `AIKernel.Abstractions`, `AgentsManager.Abstractions`, `MCP.Abstractions`, `PromptRange.Abstractions`, `NeuCharWorkflow.Abstractions`, `Sandbox.Abstractions`
 
 ### 4.3 Tooling and Ops Modules
