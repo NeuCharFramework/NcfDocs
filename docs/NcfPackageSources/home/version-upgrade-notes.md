@@ -39,6 +39,31 @@ For each upgrade, check in this order:
 - Docs now include minimal templates for high-quality Issues and PRs.
 - The “user-to-contributor” workflow is documented for easier collaboration.
 
+### 2026-09-20 (Developer-MAF-V3-Spark)
+
+- **Affected modules**: `Senparc.Ncf.XncfBase` (XncfDatabaseDbContext), `Senparc.Xncf.Tenant`, `Senparc.Areas.Admin` (login / tenant management / AdminChat), `Senparc.Web` (site host)
+- **Change type**: behavior change (when multi-tenancy is enabled) / new features / defect fixes
+- **Key changes**:
+  - **XNCF database multi-tenant engine**: `XncfDatabaseDbContext.SetGlobalQuery` is now aligned with `SenparcEntitiesDbContextBase` — when multi-tenancy is enabled, entities implementing `IMultiTenancy` but not `IIgnoreMulitTenant` automatically get a `TenantId == current request tenant Id` global query filter (stacked with the soft-delete filter); `SaveChanges`/`SaveChangesAsync` automatically stamp the current `TenantId` onto new entities. **In single-tenant mode (the default, `EnableMultiTenant: false`) only the soft-delete filter applies — behavior is identical to previous versions.**
+  - **Defect fix (TenantInfo mapping)**: restored the `[NotMapped] new string TenantId` shadow property on the `TenantInfo` model. The `TenantInfos` table (tenant registry) intentionally stores no TenantId column; without the shadow, EF Core maps the base-class `int TenantId` to a non-existent column and every tenant query fails at runtime.
+  - **JWT login tenant resolution**: `AdminUserInfoService.LoginAsync` now behaves like the Cookie login — when multi-tenancy is enabled and the login supplies a `TenantKey`, the tenant is resolved and `SetTenantInfo` applied **before** the admin account query (previously the query ran before tenant resolution, so under the `LoginInput` rule that tenant's accounts were not found); the resolved `TenantKey` is written into the JWT claim so the `LoginInput` rule also works for JWT (desktop/backend) authentication. Unknown/disabled tenants return the same generic "wrong account or password" message.
+  - **Tenant management page** (`/Admin/TenantInfo`): new **Admins** column (admin account count per tenant); new guarded delete handler `OnPostDeleteAsync` — the in-use tenant cannot be deleted, at least one enabled tenant must remain, and tenants with existing admin accounts cannot be deleted (prevents orphaned accounts) — returning localized, specific reasons on failure.
+  - **AdminChat per-account isolation**: all session/message endpoints (list, detail, send, archive, delete, feedback) and Harness trajectory operations perform ownership checks against the logged-in admin; cross-account access returns "session not found or forbidden". Message feedback additionally has defensive ownership validation. Super administrators (`administrator` role) get a new **Usage Stats** panel: per-account session counts (total/active/archived/deleted), message counts, last-active time — counts only, no content; with multi-tenancy enabled the statistics are constrained by the tenant filter.
+- **Upgrade steps**:
+  - Pull the latest code and re-run `dotnet restore` / `dotnet build` (see the [NcfPackageSources source guide](./index.md)).
+  - **No new database migrations** (everything uses the existing `TenantId` columns); back up the database before upgrading.
+  - If you plan to enable multi-tenancy: confirm business tables already have the `TenantId` column; plan legacy-data ownership (`TenantId = 0` is system-wide data and invisible to specific tenants once enabled — update legacy rows' `TenantId` to the target tenant Id at the database level if needed); choose a `TenantRule` (`DomainName` / `RequestHeader` / `LoginInput`).
+- **Rollback guidance**:
+  - Single-tenant deployments need no action. For multi-tenant deployments rolling back the code, the `TenantId` columns and stamped values remain and do not affect single-tenant mode (no filtering is applied).
+- **Verification checklist**:
+  - Single-tenant (default): login and all module query/write behavior match pre-upgrade (soft-delete filter unchanged).
+  - Multi-tenant + `LoginInput`: entering the tenant name on the login page logs in that tenant's account; JWT login with `TenantKey` returns a valid token containing the `TenantKey` claim; a wrong tenant name returns the generic "wrong account or password".
+  - Multi-tenant + `DomainName`/`RequestHeader`: different domains/headers resolve to different tenants with mutually invisible data; new entities are stamped with the current `TenantId` automatically.
+  - Tenant management page: the **Admins** column values are correct; deleting the in-use tenant / the last enabled tenant / a tenant with accounts is each rejected with the corresponding message.
+  - AdminChat: account A cannot access account B's sessions (not listed; direct access returns "not found or forbidden"); the super-admin **Usage Stats** panel shows only per-account counts and last-active time — no content fields.
+  - All 166 `Senparc.Areas.Admin` unit tests pass (including the new `AdminChatAccountIsolationTests`).
+
+
 ### 2026-09-19 (Developer-MAF-V3-Spark)
 
 - **Affected module(s)**: `Senparc.Xncf.Sandbox`, `Senparc.Xncf.Sandbox.Abstractions`

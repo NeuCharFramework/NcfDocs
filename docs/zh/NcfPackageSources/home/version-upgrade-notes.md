@@ -37,6 +37,31 @@
 - 文档明确了 Issue / PR 最小信息模板与提交建议。
 - 新增了“从使用者到贡献者”的流程说明，便于团队内外协作。
 
+### 2026-09-20（Developer-MAF-V3-Spark）
+
+- **影响模块**：`Senparc.Ncf.XncfBase`（XncfDatabaseDbContext）、`Senparc.Xncf.Tenant`、`Senparc.Areas.Admin`（登录 / 租户管理 / AdminChat）、`Senparc.Web`（站点宿主）
+- **变更类型**：行为变更（多租户开启时）/ 新增 / 缺陷修复
+- **关键变更**：
+  - **XNCF 数据库多租户引擎**：`XncfDatabaseDbContext.SetGlobalQuery` 与 `SenparcEntitiesDbContextBase` 对齐——开启多租户后，实现 `IMultiTenancy` 且未实现 `IIgnoreMulitTenant` 的实体自动追加 `TenantId == 当前请求租户Id` 全局查询过滤器（与软删除过滤叠加）；`SaveChanges`/`SaveChangesAsync` 自动为新增实体写入当前 `TenantId`。**单租户模式（默认，`EnableMultiTenant: false`）仅保留软删除过滤，行为与旧版本完全一致。**
+  - **缺陷修复（TenantInfo 映射）**：恢复 `TenantInfo` 模型上的 `[NotMapped] new string TenantId` 遮蔽属性。`TenantInfos` 表（租户注册表）按设计不存储 TenantId 列，若移除该遮蔽，EF Core 会将基类 `int TenantId` 映射到不存在的列，导致所有租户查询在运行时失败。
+  - **JWT 登录租户解析**：`AdminUserInfoService.LoginAsync` 现与 Cookie 登录一致——开启多租户且登录传入 `TenantKey` 时，先解析租户并 `SetTenantInfo` 设置租户上下文，再查询管理员账号（此前查询先于租户解析，`LoginInput` 规则下查不到该租户账号）；解析出的 `TenantKey` 写入 JWT Claim，`LoginInput` 规则在 JWT（桌面/后端）场景同样生效。租户不存在/停用返回与“账号或密码错误”一致的提示。
+  - **租户管理页**（`/Admin/TenantInfo`）：新增「管理员数」列（每租户管理员账号数）；新增受保护删除接口 `OnPostDeleteAsync`：不能删除当前使用的租户、必须保留至少一个启用租户、租户下仍有管理员账号时禁止删除（防孤儿账号），失败返回本地化具体原因。
+  - **AdminChat 按账号隔离**：会话/消息列表、详情、发送、归档、删除、反馈与 Harness Trajectory 全部接口按登录管理员做归属校验，跨账号访问返回“会话不存在或无权限”；消息反馈增加防御性归属校验。超级管理员（`administrator` 角色）新增「用量统计」面板：各账号会话数（总数/活跃/归档/删除）、消息数、最后活跃时间，仅数量、不含内容；多租户开启时统计受租户过滤器约束。
+- **升级操作**：
+  - 拉取最新代码，重新执行 `dotnet restore` / `dotnet build`（见 [NcfPackageSources 源码指南](./index.md)）。
+  - **无新增数据库迁移**（全部使用既有 `TenantId` 列）；升级前建议备份数据库。
+  - 若计划开启多租户：确认各业务表已有 `TenantId` 列；规划存量数据归属（`TenantId = 0` 为系统公共数据，开启后对具体租户不可见，必要时在数据库层面将存量行 `TenantId` 更新为目标租户 Id）；选择 `TenantRule`（`DomainName` / `RequestHeader` / `LoginInput`）。
+- **回滚指引**：
+  - 单租户部署无需任何操作。多租户部署回滚代码后，`TenantId` 列与已写入值保留，不影响单租户模式（不启用过滤）。
+- **验证清单**：
+  - 单租户（默认）：登录、各模块查询/写入行为与升级前一致（软删除过滤不变）。
+  - 多租户 + `LoginInput`：登录页输入租户名后可登录该租户账号；JWT 登录传 `TenantKey` 可正常取回 Token 且 Claim 含 `TenantKey`；错误租户名返回通用“账号或密码错误”。
+  - 多租户 + `DomainName`/`RequestHeader`：不同域名/请求头解析到不同租户，各自数据互不可见；新增实体自动带当前 `TenantId`。
+  - 租户管理页：「管理员数」列数值正确；删除当前租户/最后一个启用租户/仍有账号的租户时分别被拒绝并给出对应提示。
+  - AdminChat：账号 A 无法访问账号 B 的会话（列表不可见、直链访问返回“不存在或无权限”）；超级管理员「用量统计」面板仅展示各账号数量与最后活跃时间，无内容字段。
+  - `Senparc.Areas.Admin` 单元测试 166 个用例全部通过（含新增 `AdminChatAccountIsolationTests`）。
+
+
 ### 2026-09-19（Developer-MAF-V3-Spark）
 
 - **影响模块**：`Senparc.Xncf.Sandbox`、`Senparc.Xncf.Sandbox.Abstractions`

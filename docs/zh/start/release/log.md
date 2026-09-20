@@ -1,6 +1,22 @@
 # 日志
 
-## 2026-09-19更新
+## 2026-09-20更新
+
+NcfPackageSources（Developer-MAF-V3-Spark 分支）——多租户模块完整升级 + AdminChat 按账号隔离：
+
+1、XNCF 数据库多租户引擎（Senparc.Ncf.XncfBase）：`XncfDatabaseDbContext` 的全局查询过滤器与 `SenparcEntitiesDbContextBase` 对齐——开启多租户（`SenparcCoreSetting:EnableMultiTenant: true`）后，所有实现 `IMultiTenancy` 且未实现 `IIgnoreMulitTenant` 的实体自动追加 `TenantId == 当前请求租户Id` 过滤（与软删除过滤叠加）；`SaveChanges`/`SaveChangesAsync` 自动为新增实体写入当前 `TenantId`。租户注册表 `TenantInfo` 等全局实体通过 `IIgnoreMulitTenant` 豁免（`TenantInfos` 表按设计不存储 TenantId 列，模型以 `[NotMapped]` 遮蔽基类属性，升级中修复了该遮蔽被误删导致 EF 映射不存在列的缺陷）。单租户模式（默认）行为与旧版本完全一致。
+
+2、登录链路的租户解析：Web（Cookie）登录页在开启多租户时支持输入租户（`TenantKey`），先解析租户并设置租户上下文再查询账号；JWT（桌面/后端 API）登录 `LoginAsync` 同步补齐——按 `TenantKey` 入参先解析租户、设置租户上下文、再将 `TenantKey` 写入 JWT Claim（此前查询发生在租户解析之前，`LoginInput` 规则下会查不到该租户的账号）。租户不存在/停用时返回与“账号或密码错误”一致的提示，避免租户枚举。
+
+3、租户管理页升级（`/Admin/TenantInfo`）：新增「管理员数」列（每个租户下的管理员账号数量，辅助决策）；新增受保护的删除接口 `OnPostDeleteAsync`，内置三级校验——不能删除当前正在使用的租户、必须保留至少一个启用租户、租户下仍有管理员账号时禁止删除（防孤儿账号），失败时返回本地化的具体原因。
+
+4、AdminChat 按账号隔离：会话/消息的列表、详情、发送、归档、删除、反馈与 Harness Trajectory 全部接口均按登录管理员做归属校验，跨账号访问返回“会话不存在或无权限”；消息反馈接口增加防御性归属校验。超级管理员（`administrator` 角色）在 AdminChat 页面新增「用量统计」面板：展示各账号会话（总数/活跃/归档/删除）、消息数与最后活跃时间，**仅数量、不含任何内容**；多租户开启时统计同样受租户过滤器约束。
+
+单元测试：新增 `AdminChatAccountIsolationTests`（跨账号会话/消息越权拒绝、按用户统计口径、超级管理员角色判定），Admin 测试工程 166 个用例全部通过。
+
+详见 [配置多租户](../config/mutiple-tenant.md)。
+
+
 
 NcfPackageSources（Developer-MAF-V3-Spark 分支）——Sandbox v0.3.3：JupyterLab 外部控制、可选容器端口映射与会话别名：
 

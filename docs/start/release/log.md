@@ -1,6 +1,22 @@
 # Logs
 
-## 2026-09-19 update
+## 2026-09-20 update
+
+NcfPackageSources (Developer-MAF-V3-Spark branch) — full multi-tenant module upgrade + AdminChat per-account isolation:
+
+1. XNCF database multi-tenant engine (Senparc.Ncf.XncfBase): the `XncfDatabaseDbContext` global query filter is now aligned with `SenparcEntitiesDbContextBase` — when multi-tenancy is enabled (`SenparcCoreSetting:EnableMultiTenant: true`), every entity implementing `IMultiTenancy` and not `IIgnoreMulitTenant` automatically gets a `TenantId == current request tenant Id` filter (stacked with the soft-delete filter); `SaveChanges`/`SaveChangesAsync` automatically stamp the current `TenantId` onto new entities. Global entities such as the tenant registry `TenantInfo` opt out via `IIgnoreMulitTenant` (the `TenantInfos` table intentionally stores no TenantId column; the model hides the base-class property with `[NotMapped]` — this upgrade fixes a defect where that shadow was accidentally removed, making EF map a non-existent column). Single-tenant mode (the default) behaves exactly as before.
+
+2. Login tenant resolution: the Web (Cookie) login page accepts an optional tenant (`TenantKey`) when multi-tenancy is enabled — the tenant is resolved and the tenant context is set before the account lookup. The JWT (desktop / backend API) login `LoginAsync` now does the same: resolve the tenant from the `TenantKey` parameter, set the tenant context, then write `TenantKey` into the JWT claim (previously the account query ran before tenant resolution, so under the `LoginInput` rule that tenant's accounts were not found). Unknown/disabled tenants produce the same generic message as "wrong account or password" to prevent tenant enumeration.
+
+3. Tenant management page upgrade (`/Admin/TenantInfo`): a new **Admins** column shows the admin account count per tenant (decision support); a new guarded delete handler `OnPostDeleteAsync` enforces three checks — the currently in-use tenant cannot be deleted, at least one enabled tenant must remain, and a tenant with existing admin accounts cannot be deleted (prevents orphaned accounts) — returning localized, specific reasons on failure.
+
+4. AdminChat per-account isolation: all session/message endpoints (list, detail, send, archive, delete, feedback) and Harness trajectory operations now perform ownership checks against the logged-in admin; cross-account access returns "session not found or forbidden". Message feedback additionally has defensive ownership validation. Super administrators (`administrator` role) get a new **Usage Stats** panel on the AdminChat page: per-account session counts (total/active/archived/deleted), message counts and last-active time — **counts only, no content is exposed**; with multi-tenancy enabled the statistics are likewise constrained by the tenant filter.
+
+Unit tests: new `AdminChatAccountIsolationTests` (cross-account session/message access denial, per-user statistics semantics, super-admin role detection); all 166 tests in the Admin test project pass.
+
+See [Configure Multi-Tenant](../config/mutiple-tenant.md).
+
+
 
 NcfPackageSources (Developer-MAF-V3-Spark branch) — Sandbox v0.3.3: external JupyterLab control, optional container port mappings, and session aliases:
 
