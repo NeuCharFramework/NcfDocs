@@ -1,8 +1,61 @@
 # 版本升级说明
 
-> 本页记录 `NcfPackageSources` 开发分支的重要升级项，内容于 2026-07-27
-> 核对。开发分支中的项目版本、Register 版本和已发布 NuGet 版本可能不同，
+> 本页记录 `NcfPackageSources` 开发分支的重要升级项。2026-07 章节保留
+> 2026-07-27 核对的历史基线；2026-10-02 补充本轮 Repository 与后台租户
+> 作用域升级。项目版本、Register 版本和已发布 NuGet 版本可能不同，
 > 升级时应分别核对。
+
+## Repository 与后台租户作用域升级（2026-10-02）
+
+下表是本轮开发分支源码中的项目版本，**不是公开 NuGet 包发布状态声明**：
+
+| 项目                             | 源码项目版本       |
+| -------------------------------- | ------------------ |
+| `Senparc.Ncf.Core`               | `0.30.2-preview9`  |
+| `Senparc.Ncf.Repository`         | `0.20.10-preview9` |
+| `Senparc.Ncf.XncfBase`           | `0.28.1`           |
+| `Senparc.Xncf.Tenant`            | `0.15.14`          |
+| `Senparc.Xncf.WeixinManager`     | `0.24.11`          |
+| `Senparc.Xncf.NeuCharWorkflow`   | `0.4.3`            |
+| `Senparc.Xncf.XncfModuleManager` | `0.15.11`          |
+
+### 数据访问边界
+
+- XNCF Service 注入并复用现有 Repository；普通 CRUD 使用 ServiceBase，
+  组合筛选、投影和可取消查询使用 `RepositoryBase.GeAll(...)`。
+- WeixinClaw 和工作流业务查询不再直接使用 DbContext。普通业务层不复制
+  租户或软删除控制，不调用 `IgnoreQueryFilters()`。
+- 模块菜单权限通过现有 `SysRolePermissionService` 保存；租户缓存查询复用
+  现有 `TenantInfoRepository`。
+- 基础仓储新增 `SavePropertiesAsync`。工作流运行状态只保存指定字段，避免
+  将运行期间的旧 `GraphJson` 或 `Revision` 覆盖到并发编辑后的定义。
+- 安装、迁移、建表、备份等基础设施访问不属于普通业务 CRUD，本次不机械改写。
+
+### 后台租户作用域
+
+- Core 提供 `IBackgroundTenantScopeFactory`；XncfBase 注册工厂，Tenant 模块
+  的 `IBackgroundTenantProvider` 复用现有启用租户缓存。
+- `ForEachEnabledTenantAsync` 在独立、已初始化的租户作用域中执行回调；
+  `TryCreateScopeAsync` 为指定启用租户创建作用域，未找到时返回 `null`。
+- 单租户模式使用默认作用域；多租户模式缺少 Provider 或返回无效数据时抛出
+  异常，不回退到全局访问。
+- WeixinClaw 已移除租户缓存反射和重复上下文设置，并统一处理任务取消、完成
+  及资源释放。其他后台实现不会因新增公共入口而自动完成迁移。
+
+### 升级与验证
+
+1. 升级互相兼容的基础库与模块版本，重新编译宿主；不要把源码版本当作已发布
+   NuGet 版本。
+2. 本轮不需要新增实体或数据库迁移；**重启宿主**以使新的 DI 注册生效。
+3. 验证普通请求和后台新作用域中的租户隔离、软删除与业务筛选。
+4. 验证租户停用后不再新建其执行作用域，已有账号轮询在扫描后取消；验证单租户
+   模式不依赖租户注册表。
+5. 验证宿主退出、重复扫描和取消回调中的资源释放无异常或死锁；验证工作流
+   运行状态保存不会覆盖新的图定义和修订号。
+
+接口示例与约束见 [多租户配置与后台任务](../../start/config/mutiple-tenant.md)、
+[Repository 指南](../libs/Senparc.Ncf.Repository.md) 和
+[Service 指南](../libs/Senparc.Ncf.Service.md)。
 
 ## 本轮升级摘要（2026-07）
 

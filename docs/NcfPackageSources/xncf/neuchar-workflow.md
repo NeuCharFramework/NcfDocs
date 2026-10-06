@@ -1,6 +1,7 @@
 # NeuChar Workflow: Operations and `{{= ... }}` Expressions
 
 > Applies to `Senparc.Xncf.NeuCharWorkflow` `0.1.0-preview1`, checked against the `NcfPackageSources` development line on 2026-08-16. This describes the current server-side module. Available nodes depend on the enabled XNCF modules, the current site, and the administrator's permissions.
+> The data-access/runtime-state section was separately added on 2026-10-02 against development project version `0.4.3`.
 
 `NeuCharWorkflow` is a server-side visual orchestration module. It connects enabled XNCF Functions, Agent / Agent-group / A2A objects, and built-in system nodes as a directed graph executed by the server. It is not a browser scripting engine and it never evaluates arbitrary JavaScript in a template.
 
@@ -13,14 +14,32 @@ Installation runs the module's database migrations and adds two Admin entries:
 
 The pages require a signed-in administrator. When troubleshooting, check module installation/enabled state, administrator permission, the state of referenced XNCF modules, and whether the referenced Function or object still exists.
 
-| Scope                   | Current behavior                                                                                                                                   |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Triggers                | Manual, interval, and Webhook. Each graph must contain exactly one matching trigger.                                                               |
-| Executable capabilities | `[FunctionRender]` Functions from enabled modules, available Agent / Agent-group / A2A objects, and built-in system nodes.                         |
-| Save and run            | Drafts may retain disconnected nodes, but such a draft is treated as disabled and cannot be run as an interval or Webhook workflow.                |
-| Run records             | The task list shows status and summary. A completed run can be replayed read-only from its captured graph without changing the current definition. |
-| Variables and code      | Up to 30 workflow variables; the Safe Code node assigns only declared variables and cannot run arbitrary JavaScript.                               |
-| Human interaction        | The native **Wait for human input** node is available; when AgentsManager is enabled, Agent / Agent-group HIL requests also appear in the same Workflow handling panel. |
+| Scope                   | Current behavior                                                                                                                                                        |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Triggers                | Manual, interval, and Webhook. Each graph must contain exactly one matching trigger.                                                                                    |
+| Executable capabilities | `[FunctionRender]` Functions from enabled modules, available Agent / Agent-group / A2A objects, and built-in system nodes.                                              |
+| Save and run            | Drafts may retain disconnected nodes, but such a draft is treated as disabled and cannot be run as an interval or Webhook workflow.                                     |
+| Run records             | The task list shows status and summary. A completed run can be replayed read-only from its captured graph without changing the current definition.                      |
+| Variables and code      | Up to 30 workflow variables; the Safe Code node assigns only declared variables and cannot run arbitrary JavaScript.                                                    |
+| Human interaction       | The native **Wait for human input** node is available; when AgentsManager is enabled, Agent / Agent-group HIL requests also appear in the same Workflow handling panel. |
+
+### 1.1 Data Access and Runtime State Persistence (2026-10-02)
+
+- Workflow Service queries reuse the existing `RepositoryBase.GeAll(...)`,
+  preserving database-side projections, paging, and cancellation. The
+  underlying context centrally applies tenant and soft-delete filters.
+- `SaveRuntimeStartedAsync` uses the base repository's `SavePropertiesAsync`
+  to save only `LastRunAt`, `NextRunAt`, and `LastUpdateTime`.
+- `SaveRuntimeCompletedAsync` saves only `LastSucceeded`, `LastError`, and
+  `LastUpdateTime`, without writing stale `GraphJson` or `Revision` values
+  over a newer definition saved by an administrator during execution.
+- Partial saves require an already persisted entity tracked by the current
+  context. Do not manipulate ChangeTracker inside the module Service or
+  replace the partial update with a full save of the stale entity.
+
+See the [Repository Guide](../libs/Senparc.Ncf.Repository.md) for API
+constraints and [Multi-Tenant Configuration and Background Work](../../start/config/mutiple-tenant.md)
+for host-wide background tenant scope conventions.
 
 ## 2. Create and Safely Run a Workflow
 
@@ -48,7 +67,7 @@ The pages require a signed-in administrator. When troubleshooting, check module 
 | Safe Code                           | Assigns declared `vars` values with restricted templates during this run only, then passes the original input through.                                                      |
 | Console                             | Renders its template to the page Console and **does not change** the original input passed downstream.                                                                      |
 | NeuBell                             | Creates a workflow notification. Opening it from the Footer enters the task list and applies the node's consumption setting.                                                |
-| Wait for human input                | Creates a pending request and NeuBell, pauses the current branch, then emits the submitted text after a human response. An external WebAPI can optionally resume it.         |
+| Wait for human input                | Creates a pending request and NeuBell, pauses the current branch, then emits the submitted text after a human response. An external WebAPI can optionally resume it.        |
 | End                                 | Ends that path.                                                                                                                                                             |
 
 ### 2.2 Interval and Webhook
@@ -130,7 +149,7 @@ Each expression is limited to 512 characters; a text field may contain at most 3
 | Unary                      | `!value`, `-number`                                             |
 | Arithmetic / concatenation | `+`, `-`; `+` adds two numbers and otherwise concatenates text. |
 | Comparison                 | `==`, `!=`, `>`, `>=`, `<`, `<=`                                |
-| Logic                      | `&&`, `\|\|`                                                   |
+| Logic                      | `&&`, `\|\|`                                                    |
 | Conditional                | `condition ? whenTrue : whenFalse`                              |
 
 There is no `*`, `/`, `%`, assignment, loop, reflection, host object, network access, or JavaScript API. Property access applies only to JSON objects and indexing only to JSON arrays; missing properties and out-of-range indexes yield an empty value.
@@ -178,15 +197,15 @@ For Console, the default `{{input}}` controls only what is printed. The original
 
 ## 5. Troubleshooting
 
-| Symptom                                | Check first                                                                                                         |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Function or Agent node cannot run      | Referenced XNCF module is installed/enabled, Function remains scanned, and object remains available.                |
-| Saved workflow is not enabled          | Disconnected nodes, invalid references, missing required parameters, loop count, or a sub-workflow reference error. |
-| Interval does not run                  | Enabled state, interval trigger, due next-run time, then the module background-service logs.                        |
-| Webhook returns 401 / 400 / 405        | Token, required parameters, and method. `405` means the configuration allows only GET or POST.                      |
-| Human input does not resume             | Check that Workflow/AgentsManager are enabled, the run still exists, the request was not already handled, and the resume key and instance route are correct. |
-| Expression says variable is unbound    | Use only `input`, `vars`, and UI-inserted upstream binding tokens; verify the name and upstream connection.         |
-| Console differs from downstream result | Expected: Console changes presentation only; the original input continues downstream.                               |
+| Symptom                                | Check first                                                                                                                                                  |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Function or Agent node cannot run      | Referenced XNCF module is installed/enabled, Function remains scanned, and object remains available.                                                         |
+| Saved workflow is not enabled          | Disconnected nodes, invalid references, missing required parameters, loop count, or a sub-workflow reference error.                                          |
+| Interval does not run                  | Enabled state, interval trigger, due next-run time, then the module background-service logs.                                                                 |
+| Webhook returns 401 / 400 / 405        | Token, required parameters, and method. `405` means the configuration allows only GET or POST.                                                               |
+| Human input does not resume            | Check that Workflow/AgentsManager are enabled, the run still exists, the request was not already handled, and the resume key and instance route are correct. |
+| Expression says variable is unbound    | Use only `input`, `vars`, and UI-inserted upstream binding tokens; verify the name and upstream connection.                                                  |
+| Console differs from downstream result | Expected: Console changes presentation only; the original input continues downstream.                                                                        |
 
 Related documentation:
 

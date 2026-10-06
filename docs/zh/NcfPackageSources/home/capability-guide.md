@@ -162,6 +162,8 @@ services.AddSenparcEventBus(options =>
 5. 在 `KnowledgeBase` 导入文件并执行向量化，然后通过 RecallTest 验证召回质量。
 6. 将召回结果与 Agent 工作流串接，形成可迭代链路。
 
+需要额外适配行为或输出格式时，可参见 [AIKernel 本地微调](../xncf/aikernel-local-fine-tuning.md)。训练在独立鉴权的 worker 中执行，不在 NCF Web 进程内运行。经过评估的 adapter 或合并模型仍需单独部署、注册为推理模型；微调不能替代第 5、6 步，也不能提供实时且带访问控制的知识。
+
 ### 4.2.1 场景 B1：Agent/Group HIL 接入 Workflow
 
 1. 确认 `AgentsManager` 和 `NeuCharWorkflow` 均已安装并启用。

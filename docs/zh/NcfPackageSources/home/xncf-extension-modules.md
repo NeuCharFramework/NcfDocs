@@ -44,7 +44,7 @@
 
 ### 3.2 AI / Agent / RAG 模块
 
-- `Senparc.Xncf.AIKernel`
+- `Senparc.Xncf.AIKernel`：模型/向量配置，以及通过独立部署 worker 提供的可选[本地微调](../xncf/aikernel-local-fine-tuning.md)。
 - `Senparc.Xncf.PromptRange`
 - `Senparc.Xncf.AgentsManager`
 - `Senparc.Xncf.KnowledgeBase`
@@ -71,6 +71,7 @@
 
 ### 3.4 近期模块入口
 
+- **AIKernel 本地微调**：管理数据集和有资源边界的 LoRA/QLoRA 任务，查看持久化训练事件，评估 adapter 后再独立部署推理模型。训练默认关闭，需要经过鉴权的伴随 worker，不能替代 KnowledgeBase 检索。参见[概念、部署与操作指南](../xncf/aikernel-local-fine-tuning.md)。
 - **NeuCharWorkflow**：用于创建、测试、触发、观察和回看服务端工作流。支持手动、定时和 Webhook 触发，可调用已启用 XNCF 的 Function、Agent / Agent 组 / A2A 对象及内置控制节点。请从 [NeuChar Workflow](../xncf/neuchar-workflow.md) 开始。
 - **Sandbox**：用于创建可销毁的 Docker/Wasm 实验会话；镜像、私有仓库和主机环境准备以 [Sandbox 环境准备](../xncf/sandbox-environment.md) 为准。
 - **XncfBuilder**：同时支持受信任的直接脚手架和隔离开发流程：源码快照、受限 AI 编辑、Sandbox 预览、人工评审和受保护合入。Template/应用使用者请先看[使用说明](/zh/start/xncf-develop/isolated-xncf-development.html)，源码贡献者继续看[源码剖析](../xncf/xncfbuilder-isolated-development.md)。

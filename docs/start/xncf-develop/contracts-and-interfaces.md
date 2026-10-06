@@ -52,19 +52,42 @@ template version instead of depending on the internal scanner implementation.
 
 Not every module needs these capabilities:
 
-| Requirement                    | Extension point                                    | Typical template location                                   |
-| ------------------------------ | -------------------------------------------------- | ----------------------------------------------------------- |
-| Module database and migrations | `IXncfDatabase`                                    | `Register.Database.cs`, `Domain/Migrations`                 |
-| Admin Razor Area               | `IAreaRegister`                                    | `Register.Area.cs`, `Areas/Admin`                           |
-| Razor runtime compilation      | `IXncfRazorRuntimeCompilation`                     | Implement only when runtime Razor compilation is required   |
-| Module middleware              | `IXncfMiddleware`                                  | Implement on the register class as needed                   |
-| Long-running background work   | `IXncfThread`                                      | Use only for work that needs framework lifecycle management |
-| MCP server                     | `EnableMcpServer => true` plus MCP Tool attributes | Register class and Tool classes                             |
+| Requirement                    | Extension point                                        | Typical template location                                 |
+| ------------------------------ | ------------------------------------------------------ | --------------------------------------------------------- |
+| Module database and migrations | `IXncfDatabase`                                        | `Register.Database.cs`, `Domain/Migrations`               |
+| Admin Razor Area               | `IAreaRegister`                                        | `Register.Area.cs`, `Areas/Admin`                         |
+| Razor runtime compilation      | `IXncfRazorRuntimeCompilation`                         | Implement only when runtime Razor compilation is required |
+| Module middleware              | `IXncfMiddleware`                                      | Implement on the register class as needed                 |
+| Long-running background work   | `IHostedService` / `BackgroundService` / `IXncfThread` | Choose according to the task's host lifecycle management  |
+| Tenant-aware background work   | `IBackgroundTenantScopeFactory`                        | Reuse initialized tenant scopes in hosted tasks           |
+| MCP server                     | `EnableMcpServer => true` plus MCP Tool attributes     | Register class and Tool classes                           |
 
 Keep generated capabilities that the business needs; do not implement every
 interface merely for structural completeness. Database uninstall behavior,
 background threads, and public MCP endpoints require explicit data-safety,
 shutdown, authentication, and audit decisions.
+
+## Service and Data-Access Boundaries
+
+- Derive Services from `ServiceBase<TEntity>`, inject an existing
+  `IRepositoryBase<TEntity>`, and pass it to the base constructor. Services own
+  business rules, transactions, and cross-service orchestration.
+- Reuse ServiceBase methods for ordinary CRUD; use the existing
+  `RepositoryBase.GeAll(...)` for composed queries and projections. Do not add
+  module repositories merely to wrap ordinary queries.
+- Ordinary business code does not resolve DbContext directly or replace
+  framework tenant/soft-delete constraints with `IgnoreQueryFilters()` or
+  handwritten `TenantId` / `!Flag` predicates.
+- Host-wide background tasks inject `IBackgroundTenantScopeFactory` and
+  resolve Services in its initialized, independent scopes. Do not reflect over
+  the tenant cache or repeat tenant enablement/identification. Retain only task
+  metadata outside the scope; the task still owns cancellation and resource
+  cleanup.
+
+For complete examples and constraints, see
+[Multi-Tenant Configuration and Background Work](../config/mutiple-tenant.md),
+the [Service Guide](../../NcfPackageSources/libs/Senparc.Ncf.Service.md), and the
+[Repository Guide](../../NcfPackageSources/libs/Senparc.Ncf.Repository.md).
 
 ## What Template developers do not need first
 

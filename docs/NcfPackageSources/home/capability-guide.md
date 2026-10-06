@@ -162,6 +162,8 @@ For supported nodes, trigger rules, and the restricted `{{= ... }}` language, se
 5. Import files and run embedding in `KnowledgeBase`, then validate retrieval with recall testing.
 6. Connect retrieval output with agent execution loops for iterative quality improvements.
 
+For optional behavior/format adaptation, see [AIKernel local fine-tuning](../xncf/aikernel-local-fine-tuning.md). It runs in a separate authenticated worker, not the NCF web process. An evaluated adapter or merged model must be deployed and registered for inference separately; it does not replace steps 5 and 6 or supply current, access-controlled knowledge.
+
 ### 4.2.1 Scenario B1: Connect Agent/Group HIL to Workflow
 
 1. Confirm that both `AgentsManager` and `NeuCharWorkflow` are installed and enabled.

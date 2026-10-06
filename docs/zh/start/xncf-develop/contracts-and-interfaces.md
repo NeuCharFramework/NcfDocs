@@ -50,18 +50,35 @@
 
 这些接口不是每个模块都需要：
 
-| 需求             | 扩展入口                                   | 模板中的常见位置                            |
-| ---------------- | ------------------------------------------ | ------------------------------------------- |
-| 模块数据库与迁移 | `IXncfDatabase`                            | `Register.Database.cs`、`Domain/Migrations` |
-| 后台 Razor Area  | `IAreaRegister`                            | `Register.Area.cs`、`Areas/Admin`           |
-| Razor 运行时编译 | `IXncfRazorRuntimeCompilation`             | 有运行时 Razor 需求时实现                   |
-| 模块中间件       | `IXncfMiddleware`                          | 在注册类中按需实现                          |
-| 后台常驻任务     | `IXncfThread`                              | 仅用于确有生命周期管理需求的任务            |
-| MCP Server       | `EnableMcpServer => true` 和 MCP Tool 特性 | 模块注册类与 Tool 类                        |
+| 需求             | 扩展入口                                               | 模板中的常见位置                            |
+| ---------------- | ------------------------------------------------------ | ------------------------------------------- |
+| 模块数据库与迁移 | `IXncfDatabase`                                        | `Register.Database.cs`、`Domain/Migrations` |
+| 后台 Razor Area  | `IAreaRegister`                                        | `Register.Area.cs`、`Areas/Admin`           |
+| Razor 运行时编译 | `IXncfRazorRuntimeCompilation`                         | 有运行时 Razor 需求时实现                   |
+| 模块中间件       | `IXncfMiddleware`                                      | 在注册类中按需实现                          |
+| 后台常驻任务     | `IHostedService` / `BackgroundService` / `IXncfThread` | 按任务的宿主生命周期管理方式选用            |
+| 租户后台执行     | `IBackgroundTenantScopeFactory`                        | 托管任务中复用框架初始化的租户作用域        |
+| MCP Server       | `EnableMcpServer => true` 和 MCP Tool 特性             | 模块注册类与 Tool 类                        |
 
 选择原则很简单：模板中已经存在且业务需要的能力可以保留；不需要的能力不要
 为了“结构完整”而实现。特别是数据库卸载、后台线程和对外 MCP，必须同时考虑
 数据安全、停止机制、鉴权和审计。
+
+## Service 与数据访问边界
+
+- Service 继承 `ServiceBase<TEntity>`，注入现有 `IRepositoryBase<TEntity>` 并
+  传给基类，负责业务规则、事务和跨服务编排。
+- 普通 CRUD 复用 ServiceBase 的方法；需要组合查询或投影时使用现有
+  `RepositoryBase.GeAll(...)`。不要仅为普通查询重复创建模块仓储。
+- 普通业务代码不直接解析 DbContext，也不通过 `IgnoreQueryFilters()` 或手写
+  `TenantId` / `!Flag` 条件替代框架统一的租户、软删除约束。
+- 宿主级后台任务注入 `IBackgroundTenantScopeFactory`，在其初始化的独立作用域
+  中解析 Service；不反射租户缓存，不重复实现启停或识别。作用域外只保留任务
+  元数据，任务本身仍负责取消与资源释放。
+
+完整示例与约束见 [多租户配置与后台任务](../config/mutiple-tenant.md)、
+[Service 指南](../../NcfPackageSources/libs/Senparc.Ncf.Service.md) 和
+[Repository 指南](../../NcfPackageSources/libs/Senparc.Ncf.Repository.md)。
 
 ## Template 开发者不需要先了解的内容
 

@@ -23,6 +23,7 @@ Template users.
 2. Understand repository boundaries in [Project Relationships, Synchronization, and Release](./project-relationships.md)
 3. Continue with [NCF Capability Source Deep Dive](./capability-guide.md)
 4. Complete module source understanding with [XNCF Extension Library Guide](./xncf-extension-modules.md)
+5. Use the [complete solution project map](./solution-project-map.md) to locate every project in `NcfPackageSources_Include_NcfSimulatedSite.sln`, including `Senparc.Web`, Admin, and all XNCF modules.
 
 ## What You Will Get From This Guide
 
@@ -159,6 +160,7 @@ For full symptom -> cause -> fix matrix:
 - [Senparc.Ncf.DatabasePlant](../libs/Senparc.Ncf.DatabasePlant.md)
 - [Senparc.Ncf.Database](../libs/Senparc.Ncf.Database.md)
 - [IXncfRegister (Current Contract)](../libs/Senparc.Ncf.AreaBase/IxncfRegister.md)
+- [Complete Solution Project Map](./solution-project-map.md)
 
 ## 8. Open-Source Entry Points (Issue / PR / Discussion Guidance)
 

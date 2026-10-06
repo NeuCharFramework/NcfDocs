@@ -95,6 +95,16 @@ AgentsManager HIL 创建后会生成 AgentsManager NeuBell。原生 Workflow 人
 - 若要支持可靠生产审批，应增加持久化 checkpoint、共享请求状态、实例协调、超时/过期策略和幂等恢复机制。
 - 任何外部恢复接口都应使用 HTTPS、网关限流、访问审计和密钥轮换；不要把请求 ID 或 NeuBell ID 单独当作授权凭据。
 
+## 7.1 首页 3D 中的 HIL 暂停
+
+AgentsManager 首页 3D 会把普通暂停与等待 HIL 的暂停区分显示：
+
+- 普通 `Paused` 任务使用橙色柱体和橙色顶部状态环。
+- 存在待处理 `humanTurn` 或 `toolApproval` 请求时，Group 使用紫红色柱体、脉冲状态环，并显示 `HIL等待` 计数。
+- 3D 的 `Paused` 和 `HIL等待` 都是当前轮询快照；具体请求是否存在、是否已经被处理，仍以 `GetHumanRequests`、任务历史和 HIL 处理结果为准。
+
+完整的柱体高度公式、技能标记和 Agent 空间布局见 [AgentsManager 3D 状态视图](./agents-manager-3d-status.md)。
+
 ## 7. 排障顺序
 
 1. 确认 `AgentsManager`、`NeuCharWorkflow` 及其依赖模块已安装并启用。

@@ -1,9 +1,77 @@
 # Version Upgrade Notes
 
 > This page tracks important changes on the `NcfPackageSources` development
-> branch and was checked on 2026-07-27. Project versions, Register versions, and
-> published NuGet versions can differ; verify each one separately during an
-> upgrade.
+> branch. The 2026-07 section retains the historical baseline checked on
+> 2026-07-27; the Repository/background tenant scope upgrade was added on
+> 2026-10-02. Project versions, Register versions, and published NuGet versions
+> can differ; verify each separately during an upgrade.
+
+## Repository and Background Tenant Scope Upgrade (2026-10-02)
+
+These are project versions in the development source for this upgrade,
+**not a statement that these NuGet packages have been publicly released**:
+
+| Project                          | Source project version |
+| -------------------------------- | ---------------------- |
+| `Senparc.Ncf.Core`               | `0.30.2-preview9`      |
+| `Senparc.Ncf.Repository`         | `0.20.10-preview9`     |
+| `Senparc.Ncf.XncfBase`           | `0.28.1`               |
+| `Senparc.Xncf.Tenant`            | `0.15.14`              |
+| `Senparc.Xncf.WeixinManager`     | `0.24.11`              |
+| `Senparc.Xncf.NeuCharWorkflow`   | `0.4.3`                |
+| `Senparc.Xncf.XncfModuleManager` | `0.15.11`              |
+
+### Data-Access Boundaries
+
+- XNCF Services inject and reuse existing repositories. Use ServiceBase for
+  ordinary CRUD and `RepositoryBase.GeAll(...)` for composed filters,
+  projections, and cancellable queries.
+- WeixinClaw and workflow business queries no longer access DbContext
+  directly. Ordinary business code does not duplicate tenant/soft-delete
+  controls or call `IgnoreQueryFilters()`.
+- Module menu permissions are saved through the existing
+  `SysRolePermissionService`; tenant cache queries reuse
+  `TenantInfoRepository`.
+- The base repository now provides `SavePropertiesAsync`. Workflow runtime
+  updates save only selected properties, avoiding overwrites of a newer
+  definition's `GraphJson` or `Revision` with stale runtime data.
+- Installation, migrations, table creation, and backups are infrastructure
+  operations rather than ordinary business CRUD; this upgrade does not
+  mechanically rewrite them.
+
+### Background Tenant Scopes
+
+- Core provides `IBackgroundTenantScopeFactory`. XncfBase registers the
+  factory; the Tenant module's `IBackgroundTenantProvider` reuses the existing
+  enabled-tenant cache.
+- `ForEachEnabledTenantAsync` runs callbacks in independent initialized
+  tenant scopes. `TryCreateScopeAsync` creates a scope for a specified enabled
+  tenant and returns `null` when none matches.
+- Single-tenant mode uses the default scope. Multi-tenant mode throws for a
+  missing Provider or invalid data instead of falling back to global access.
+- WeixinClaw has removed cache reflection and repeated tenant setup, and now
+  consistently handles task cancellation, completion, and disposal. Other
+  background implementations are not automatically migrated by the new API.
+
+### Upgrade and Validation
+
+1. Upgrade mutually compatible library/module versions and rebuild the host.
+   Do not equate source versions with published NuGet versions.
+2. No new entity or database migration is required for this change.
+   **Restart the host** to activate the new DI registrations.
+3. Verify tenant isolation, soft deletion, and business filters in ordinary
+   requests and newly created background scopes.
+4. Verify that disabled tenants receive no new execution scopes and that
+   existing account polling is canceled after scanning. Verify single-tenant
+   mode without a tenant registry.
+5. Verify shutdown, repeated scans, and cancellation-callback disposal without
+   exceptions or deadlocks. Ensure workflow runtime saves do not overwrite a
+   newer graph definition or revision.
+
+For API examples and constraints, see
+[Multi-Tenant Configuration and Background Work](../../start/config/mutiple-tenant.md),
+the [Repository Guide](../libs/Senparc.Ncf.Repository.md), and the
+[Service Guide](../libs/Senparc.Ncf.Service.md).
 
 ## Upgrade Summary (2026-07)
 

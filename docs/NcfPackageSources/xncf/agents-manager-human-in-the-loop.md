@@ -95,6 +95,16 @@ The current HIL queues hold the active execution handles in process memory:
 - Reliable production approval requires persistent checkpoints, shared request state, instance coordination, expiry/timeout policy, and idempotent resolution.
 - Any external resume endpoint should use HTTPS, gateway rate limiting, access auditing, and key rotation. Do not use a request ID or NeuBell ID alone as an authorization credential.
 
+## 6.1 HIL pause state in the home-page 3D view
+
+The AgentsManager home-page 3D view distinguishes an ordinary pause from a pause waiting for HIL:
+
+- Ordinary `Paused` tasks use an orange pillar and orange top ring.
+- When a pending `humanTurn` or `toolApproval` request exists, the Group uses a magenta pillar, a pulsing status ring, and an `HIL waiting` count.
+- Both `Paused` and `HIL waiting` are polled snapshot states. The authoritative evidence for whether a request still exists or was already handled is `GetHumanRequests`, task history, and the HIL resolution result.
+
+See [AgentsManager 3D Status View](./agents-manager-3d-status.md) for the pillar-height formula, skill markers, and Agent spatial layout.
+
 ## 7. Troubleshooting order
 
 1. Confirm that `AgentsManager`, `NeuCharWorkflow`, and their prerequisite modules are installed and enabled.

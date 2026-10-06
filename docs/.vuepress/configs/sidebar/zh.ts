@@ -119,6 +119,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/NcfPackageSources/home/index.md',
         '/zh/NcfPackageSources/home/project-relationships',
         '/zh/NcfPackageSources/home/version-upgrade-notes',
+        '/zh/NcfPackageSources/home/solution-project-map',
       ],
     },
     {
@@ -127,6 +128,8 @@ export const sidebarZh: SidebarConfig = {
         '/zh/NcfPackageSources/home/capability-guide',
         '/zh/NcfPackageSources/home/xncf-extension-modules',
         '/zh/NcfPackageSources/xncf/module-documentation-map',
+        '/zh/NcfPackageSources/xncf/senparc-web-admin',
+        '/zh/NcfPackageSources/xncf/aikernel-local-fine-tuning',
         '/zh/NcfPackageSources/xncf/xncfbuilder-isolated-development',
         '/zh/NcfPackageSources/xncf/neuchar-workflow',
         '/zh/NcfPackageSources/xncf/sandbox-environment',

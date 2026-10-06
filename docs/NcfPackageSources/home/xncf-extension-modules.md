@@ -51,7 +51,7 @@ This is the core engineering value of NCF modularity: **capabilities are split i
 
 ### 4.2 AI / Agent / RAG Modules
 
-- `Senparc.Xncf.AIKernel`
+- `Senparc.Xncf.AIKernel` — model/vector configuration and optional [local fine-tuning](../xncf/aikernel-local-fine-tuning.md) through a separately deployed worker.
 - `Senparc.Xncf.PromptRange`
 - `Senparc.Xncf.AgentsManager`
 - `Senparc.Xncf.KnowledgeBase`
@@ -78,6 +78,7 @@ For full versions, order, and scenario guidance:
 
 ### 4.4 Recent Module Entry Points
 
+- **AIKernel local fine-tuning**: administer datasets and bounded LoRA/QLoRA jobs, inspect persisted training events, and evaluate adapters before separately deploying an inference model. Training is disabled by default, requires an authenticated companion worker, and does not replace KnowledgeBase retrieval. See the [concepts, setup, and operator guide](../xncf/aikernel-local-fine-tuning.md).
 - **NeuCharWorkflow**: create, test, trigger, observe, and replay server-side workflows. The module supports manual, interval, and Webhook triggers; it can invoke enabled XNCF Functions, Agents/Agent groups/A2A objects, and built-in control nodes. Start with [NeuChar Workflow](../xncf/neuchar-workflow.md).
 - **Sandbox**: creates disposable Docker/Wasm experiment sessions. Its image, registry, and host preparation details are intentionally maintained in [Sandbox environment setup](../xncf/sandbox-environment.md).
 - **XncfBuilder**: supports both trusted direct scaffolding and the isolated

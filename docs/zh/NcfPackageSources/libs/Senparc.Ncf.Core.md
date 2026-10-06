@@ -54,9 +54,28 @@ services.AddSenparcEventBus(options =>
 ## 4. 多租户上下文
 
 相关目录：`MultiTenant`  
-关键类型：`RequestTenantInfo`、`TenantRule`
+关键类型：`RequestTenantInfo`、`TenantRule`、`IBackgroundTenantScopeFactory`、
+`BackgroundTenantScopeFactory`、`IBackgroundTenantProvider`
 
-用于将当前请求租户信息传递到 Service/Repository 层，并支持“忽略多租户”的局部策略接口。
+`RequestTenantInfo` 将当前租户信息传递到 Service/Repository 层，NCF 上下文统一
+应用租户隔离与软删除过滤器。实现 `IIgnoreMulitTenant` 的全局实体是框架明确声明的
+例外，不意味着普通业务代码可以自行关闭过滤器。
+
+宿主级后台任务没有 HTTP 租户识别链路，创建普通 DI 作用域也不会自动识别或遍历
+租户。新增的公共入口负责在解析业务 Service 前初始化独立的租户作用域：
+
+- `ForEachEnabledTenantAsync(action, cancellationToken)`：按租户顺序执行回调，
+  每次回调使用独立作用域，完成或失败后由工厂释放。
+- `TryCreateScopeAsync(tenantId, cancellationToken)`：创建指定启用租户的作用域；
+  未找到启用租户时返回 `null`，成功时由调用方释放。
+- 未启用多租户时只创建默认作用域，不依赖租户注册表。
+- 启用多租户但缺少 Provider，或 Provider 返回无效、重复的租户信息时抛出异常，
+  不回退到不受租户限制的查询。
+
+XncfBase 在框架启动时注册工厂；Tenant 模块通过类型化的
+`IBackgroundTenantProvider` 复用现有启用租户缓存。业务模块不需要反射读取缓存，
+也不需要重新实现多租户控制。详见
+[多租户配置与后台任务](../../start/config/mutiple-tenant.md)。
 
 ## 5. AppService 基础模型
 

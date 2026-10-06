@@ -116,6 +116,7 @@ export const sidebarEn: SidebarConfig = {
         '/NcfPackageSources/home/index.md',
         '/NcfPackageSources/home/project-relationships',
         '/NcfPackageSources/home/version-upgrade-notes',
+        '/NcfPackageSources/home/solution-project-map',
       ],
     },
     {
@@ -124,6 +125,8 @@ export const sidebarEn: SidebarConfig = {
         '/NcfPackageSources/home/capability-guide',
         '/NcfPackageSources/home/xncf-extension-modules',
         '/NcfPackageSources/xncf/module-documentation-map',
+        '/NcfPackageSources/xncf/senparc-web-admin',
+        '/NcfPackageSources/xncf/aikernel-local-fine-tuning',
         '/NcfPackageSources/xncf/xncfbuilder-isolated-development',
         '/NcfPackageSources/xncf/neuchar-workflow',
         '/NcfPackageSources/xncf/sandbox-environment',

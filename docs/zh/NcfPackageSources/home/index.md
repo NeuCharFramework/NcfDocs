@@ -21,6 +21,7 @@
 2. 理清仓库边界：[项目关系、同步与发布](./project-relationships.md)
 3. 再进入：[NCF 核心能力源码详解](./capability-guide.md)
 4. 补齐模块源码认知：[XNCF 扩展库说明（Senparc.Xncf.xxx）](./xncf-extension-modules.md)
+5. 使用[完整解决方案项目地图](./solution-project-map.md)，按项目定位 `NcfPackageSources_Include_NcfSimulatedSite.sln` 中的全部项目，包括 `Senparc.Web`、Admin 和全部 XNCF 模块。
 
 ## 你可以从这份文档得到什么
 
@@ -154,6 +155,7 @@ dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --lau
 - [Senparc.Ncf.DatabasePlant](../libs/Senparc.Ncf.DatabasePlant.md)
 - [Senparc.Ncf.Database](../libs/Senparc.Ncf.Database.md)
 - [IXncfRegister（关键接口）](../libs/Senparc.Ncf.AreaBase/IxncfRegister.md)
+- [完整解决方案项目地图](./solution-project-map.md)
 
 ## 8. 开源参与入口（Issue / PR / 讨论建议）
 

@@ -61,6 +61,29 @@ Default route pattern: `mcp-<module-name-lowercase>`
 - `Threads/ThreadInfo`, `XncfThreadBuilder`: module thread management
 - `VersionManager/*`: version utility helpers
 
+## 6. Background Tenant Scope Registration
+
+`StartNcfEngine(...)` registers scoped `RequestTenantInfo` and singleton
+`IBackgroundTenantScopeFactory -> BackgroundTenantScopeFactory`. The Tenant
+module separately registers scoped
+`IBackgroundTenantProvider -> BackgroundTenantProvider`, backed by the existing
+enabled-tenant cache.
+
+A module HostedService can inject `IBackgroundTenantScopeFactory` and resolve
+its Services from the supplied scope. Creating a normal DI scope does not
+complete tenant identification. Do not repeat cache reflection or tenant
+context setup inside the module.
+
+The shared entry point initializes background scopes; it does not automatically
+convert every existing background task to cross-tenant scheduling. Modules
+still own business-task startup, cancellation, and resource cleanup.
+WeixinClaw polling has adopted this entry point; audit other background tasks
+separately. Restart the host after upgrading to activate the new DI
+registrations.
+
+See [Multi-Tenant Configuration and Background Work](../../start/config/mutiple-tenant.md)
+for examples and behavioral constraints.
+
 ## Recommendations
 
 - Keep each module centered around `XncfRegisterBase` as the single registration root.
