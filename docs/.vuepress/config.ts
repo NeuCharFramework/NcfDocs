@@ -7,6 +7,7 @@ import { googleAnalyticsPlugin } from '@vuepress/plugin-google-analytics'
 import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
 import { shikiPlugin } from '@vuepress/plugin-shiki'
 import { defaultTheme } from '@vuepress/theme-default'
+import markdownItCjkFriendly from 'markdown-it-cjk-friendly'
 import { defineUserConfig } from 'vuepress'
 import { getDirname, path } from 'vuepress/utils'
 import {
@@ -122,6 +123,10 @@ export default defineUserConfig({
   }),
 
   // configure markdown
+  extendsMarkdown: (md) => {
+    md.use(markdownItCjkFriendly)
+  },
+
   markdown: {
     importCode: {
       handleImportPath: (importPath) => {

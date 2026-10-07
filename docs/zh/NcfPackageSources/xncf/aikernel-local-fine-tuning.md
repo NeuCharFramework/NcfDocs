@@ -4,6 +4,43 @@
 
 worker 位于 `NcfPackageSources` 的 `tools/AIKernelFineTuning`。NCF 与 worker 应部署匹配版本；能否训练以能力预检为准，不能仅凭下拉框中存在某选项判断。
 
+### 功能架构与边界
+
+功能验收应先验证后端闭环，再检查 UI 是否正确操作这些能力；能显示页面或绘制曲线不代表训练实现正确。
+
+| 层次              | 实际职责                                                                                    | 不承担的职责                                      |
+| ----------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| AIKernel 管理平面 | 数据库 Worker 配置、管理员授权、私有 API 路由、参数校验、操作审计和流式下载                 | 不在 Web 进程中训练，不把 Worker 当成模型推理端点 |
+| Python Worker     | 批准的离线模型预检、JSONL 与独立验证划分、持久化队列、训练子进程、资源/时长边界、事件与产物 | 不执行任意用户脚本，不自动恢复中断任务            |
+| PEFT / 原生 MLX   | 真实 LoRA/量化 LoRA 参数更新、验证 loss、checkpoint、adapter 导出                           | 不保证训练后任务质量或通用能力不回退              |
+| UI                | 操作入口、真实状态/错误/资源、完整历史分页、参数和流程提示                                  | 不伪造训练进度，不以“提交成功”代替训练或质量成功  |
+| 独立推理运行时    | 加载兼容基座、tokenizer 和 adapter，提供推理服务                                            | 不由训练 Worker 自动部署或注册                    |
+
+本版管理界面要求 **Worker 1.1 或更新版本**，使用目录分页与持久化 `storeId`。保留旧 `/jobs`、`/datasets` 数组接口用于兼容，它们仍只返回最近 100 条；完整浏览应使用 `/jobs/page`、`/datasets/page`，响应为 `items`、`total`、`offset`、`limit`，单页 1–200 条。分页不绕过任务和数据集保留上限。
+
+NCF 管理 API 的上传、提交和取消请求将 `workerAlias` 放在 **query**，JSON body 仅包含相应请求 DTO 的字段；不要把 Worker 密钥或端点交给浏览器。服务方法将 body DTO 放在第一个参数位置，以兼容动态 API 生成器的绑定规则。Worker 自身的私有 API 与这层 NCF API 是不同的接口。
+
+例如，已登录且有权限的 NCF 管理客户端提交任务：
+
+```text
+POST /api/Senparc.Xncf.AIKernel/AIFineTuningAppService/Xncf.AIKernel_AIFineTuningAppService.CreateJobAsync?workerAlias=cpu_lab
+Content-Type: application/json
+```
+
+```json
+{
+  "name": "Bounded smoke test",
+  "modelId": "approved-model",
+  "datasetId": "replace-with-uploaded-dataset-id",
+  "backend": "cpu",
+  "method": "lora",
+  "maxSteps": 10,
+  "maxSequenceLength": 128
+}
+```
+
+模型、数据集 ID 和序列上限需替换为所选 Worker 的真实值。保存 Worker 配置返回的是 **Worker DTO**，不是训练任务 DTO；成功保存后核对列表中的配置及连接状态。禁用配置仅阻断接入，不会终止已有训练。
+
 ## 1. 微调改变什么
 
 ### SFT、全量微调、LoRA 与 QLoRA
@@ -55,6 +92,8 @@ Prompt/completion 示例（两行）：
 
 两行只是校验最低要求，不代表训练数据足够或评估有效。正式训练前检查基座 tokenizer/chat template、答案格式、长度分布和截断行为。过小的最大序列长度可能把要学习的答案截掉。
 
+返回的 SHA-256 对应规范化后保存的 JSONL，不一定等于原文件字节的 hash。规范化不会额外追加末行换行，因此恰好 2 MiB 且合法的数据上传后仍可读取。
+
 ### 分开训练集、验证集和最终测试集
 
 1. **先**去重并按来源、用户、文档或时间划分数据，再生成样本。不同集合中的近似重复对话也会造成评估污染。
@@ -86,7 +125,7 @@ Prompt/completion 示例（两行）：
   "SenparcXncfAIKernel": {
     "FineTuning": {
       "Enabled": false,
-      "AllowedHosts": [ "127.0.0.1", "training-gateway.internal" ],
+      "AllowedHosts": ["127.0.0.1", "training-gateway.internal"],
       "WorkerApiKeys": {
         "cpu_lab": "",
         "cuda_prod": ""
@@ -106,6 +145,8 @@ export SenparcXncfAIKernel__FineTuning__Enabled=true
 ```
 
 环境变量设置在 NCF Host，不在浏览器。全局 `Enabled` 与 `AllowedHosts` 是强制安全门；已启用的数据库配置不能绕过它们。每个配置的请求超时（1–300 秒）在 UI 中设置；它是 HTTP 超时，**不是**训练时长上限。训练独立于 HTTP 请求和浏览器标签页持续运行。
+
+`Enabled=false` 阻断 NCF 对 Worker 的接入，并不会远程终止已运行的训练子进程；需要终止任务时，使用取消接口或按运维流程停止 Worker。不要把管理接入开关当作 GPU 进程的强杀开关。
 
 这些变量需在 NCF 启动前设置，修改后重启 NCF，再点击 **刷新 / 重连**。示例使用下划线别名，便于 shell `export`；如果使用带连字符的别名，请通过支持该变量名的服务环境配置或密钥提供程序设置，而不要照搬非法的 shell 赋值。
 
@@ -208,11 +249,15 @@ Worker 限制 `NCF_QUEUE_LIMIT`（默认 8）、`NCF_MAX_DURATION_MINUTES`（144
 1. 选择已配置的 Worker，确认 CPU/CUDA/MLX 中所需后端可用，并已准备批准的模型。
 2. 下载并上传适合 tokenizer 的样例，核对记录数 `4` 和 SHA-256；生产数据需另行清洗、划分。
 3. 输入任务名称，选择模型与训练集；验证集可空，Worker 将自动独立留出至少一条不同记录。
-4. 选择兼容后端及 `lora`，保留 `maxSteps=10`、`batchSize=1`、`gradientAccumulationSteps=1`、`maxSequenceLength=256`。这是有边界的流程验证，不保证模型能装入内存。
+4. 选择兼容后端及 `lora`，保留 `maxSteps=10`、`batchSize=1`、`gradientAccumulationSteps=1`。`maxSequenceLength` 默认 256，但不能超过模型上下文限制；测试用 `tiny-gpt2` 可设为 32。这是有边界的流程验证，不保证模型能装入内存。
 5. 展开 **高级参数** 阅读问号提示；表单展示单设备近似有效 batch。正数 `maxSteps` 覆盖 `epochs`；即使默认 `evalSteps=20`，最后一步仍执行验证。
 6. 提交后选择任务，核对真实终态、step、训练/验证 loss、日志和实际产物。`Succeeded` 不是质量验收通过。
 
 上传、提交、取消和读取文件期间禁止切换 Worker。普通切换会重置 Worker 专属的模型、训练/验证数据集、任务详情、曲线和事件 cursor；旧请求不会覆盖新 Worker 的视图。HTTP 请求使用所选数据库配置的超时，另留少量浏览器传输余量。修改当前 Worker 配置后会重新读取其目录及状态。
+
+任务列表按后端总数分页，每页 10 条，不再把最近 100 条当作全部历史。数据集初次读取 100 条，使用 **加载更早的数据集** 继续浏览；刷新时仍会从后端核对已选的历史训练/验证集。其他运维人员并发提交会改变排序，刷新可从最新目录重新浏览，分页不是冻结的事务快照。
+
+Worker 的 `storeId` 保存在 SQLite 中，正常重启不变；更换或重建存储会产生新身份。UI 检测到变化后清空旧任务、数据集和 cursor，并提示重新选择，避免把原存储的 ID 用于新存储。Worker 正在停止、不健康或缺少本版必需的协议能力时不能提交新任务。
 
 ### 常见问答
 
@@ -300,7 +345,11 @@ MLX 从未量化基座执行 QLoRA 时，使用 4-bit affine/group size 64；加
 
 发布前验证：Admin 授权与错误 key 拒绝；有效两行上传及非法/超大数据拒绝；批准的本地模型；真实短 LoRA 训练与真实 step/loss 事件；独立验证集评估；刷新恢复；取消与 checkpoint 行为；重启后的中断状态；单 worker 存储锁。仅验证当前宿主实际可用的后端。
 
-本次集成检查覆盖编译后的 NCF UI/类型化客户端、Worker API/生命周期回归及浏览器 UI 测试数据，包括精确 2 MiB 数据集持久化。未重新运行真实 CPU/CUDA/MLX 训练，不构成模型质量验证。部署前需在实际 Worker 上执行下方硬件冒烟测试：随机生成的小模型应完成 6 次优化器更新、独立评估、产物下载及运行/排队取消。这验证基础设施，**不代表模型质量或大模型容量已验证**。CUDA 硬件验证需在 NVIDIA Linux 宿主完成。
+2026-10-07 的功能检查实际运行了原生 CPU LoRA、原生 Apple Metal LoRA 与量化 LoRA：各完成 6 次优化器更新、独立验证、产物下载及运行/排队取消。进一步核对基座权重 hash、导出 B 矩阵确实更新、adapter 可在兼容运行时重载，并观察到推理 logits 相对基座改变。量化 MLX 重载使用导出的量化配置重建基座，不假定它与 CUDA NF4 通用。
+
+另外实际执行了命名 Worker 的 .NET 客户端训练/显式独立验证/下载/取消集成测试（不再跳过），以及 Worker 配置的 SQLite 读写回合。回归覆盖超过 100 条的目录分页、正常重启保留存储身份、存储更换后的缓存隔离、初始化取消不会伪装成功、鉴权、数据边界和事件 cursor。还实际生成了 NCF 动态 API Controller，验证 body DTO 与 query 别名的绑定，并覆盖新增/编辑配置返回 Worker DTO 的完整前端操作，避免“后端保存成功却被 UI 报成失败”。
+
+这些测试使用随机生成的小模型，**证明训练与导出/使用的基础设施闭环，不代表模型质量、大模型容量、正式容器部署或所有数据库提供者均已验收**。CUDA 仍需在 NVIDIA Linux 宿主验证，正式部署仍需执行本节及生产检查表。
 
 在 Worker 目录执行：
 
@@ -311,6 +360,17 @@ python3 -m venv .venv-test
 node --test tests/test_ui.cjs
 ```
 
-在具有 PyTorch 的环境运行 `python -m tests.make_tiny_model /absolute/path/to/test-models` 生成非生产模型，用测试 Worker 加载该目录，再执行 `python -m tests.smoke --backend cpu --model tiny-gpt2`。苹果原生可在独立环境安装 MLX 依赖及仅用于生成权重的 `torch==2.8.0` 后执行 `python -m tests.run_native_smoke --backend mlx`，自动清理临时 Worker/模型/数据。
+真实 CPU 与 .NET 管理客户端闭环可在 Worker 目录运行：
+
+```bash
+python3 -m venv .venv-cpu-smoke
+.venv-cpu-smoke/bin/python -m pip install -r requirements-cpu.txt
+.venv-cpu-smoke/bin/python -m tests.run_native_smoke --backend cpu \
+  --dotnet-project ../../src/Extensions/Senparc.Xncf.AIKernel.Tests/Senparc.Xncf.AIKernel.Tests.csproj
+```
+
+首次运行 .NET 项目应先按仓库常规流程恢复依赖。脚本生成随机权重，不下载模型或数据，启动临时鉴权 Worker，并在成功或失败后清理临时 Worker/模型/数据。输出中的 `adapterReloadVerified=true` 表示实际做过重载验证；只看到导出文件不够。
+
+苹果原生可在独立环境安装 `requirements-mlx.txt` 及仅用于生成权重的 `torch==2.8.0` 后执行 `python -m tests.run_native_smoke --backend mlx`，验证 LoRA 与量化 LoRA 及各自导出的重载。已有独立测试 Worker 可运行 `python -m tests.smoke --backend cpu --model tiny-gpt2 --models-root /absolute/path/to/test-models`；省略本地基座路径时不会做重载验证，输出会明确为 false。
 
 另见 [XNCF 扩展模块概览](../home/xncf-extension-modules.md)、[模块文档地图](./module-documentation-map.md)和 [Sandbox 环境指南](./sandbox-environment.md)。

@@ -45,3 +45,19 @@ success [15:10:56] Build c5b69b finished in 9376 ms!
 Open the displayed URL in a browser to view or debug the documentation locally:
 
 <img src="./images/get-docs/02.png" /><br>
+
+## Chinese Markdown Emphasis and Rendering Checks
+
+This site uses VuePress 2 and markdown-it. Standard Markdown delimiter rules can display literal stars when Chinese text directly follows parentheses, quotation marks or inline code inside emphasis, such as the Chinese SFT and Rank examples in the fine-tuning guide.
+
+The site enables `markdown-it-cjk-friendly` through VuePress's standard `extendsMarkdown` hook. No framework source is patched, and authors do not need to insert spaces or rewrite individual pages as HTML. Version `2.0.3` is pinned for compatibility with the current VuePress 2, markdown-it 14 and Node.js environment. The plugin extends CJK emphasis rules while preserving English emphasis, escaped stars, links and code blocks.
+
+After changing dependencies or rendering configuration, run from the documentation repository root:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm docs:test
+pnpm docs:build
+```
+
+Regression tests cover the reported Chinese examples and the entire English fine-tuning tutorial. Inspect the generated page for actual `<strong>` and nested `<code>` elements, not merely `**` in Markdown source. Redeploy the generated site for the new parsing rules to take effect online.

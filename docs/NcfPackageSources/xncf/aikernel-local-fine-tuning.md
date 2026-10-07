@@ -4,6 +4,43 @@ This guide covers the optional local training workflow in `Senparc.Xncf.AIKernel
 
 The worker is maintained under `tools/AIKernelFineTuning` in `NcfPackageSources`. Deploy a matching NCF/worker version; capability preflight, not the presence of a dropdown, determines which backend and method can run.
 
+### Functional Architecture and Boundaries
+
+Verify the backend workflow before judging how the UI exposes it. A visible page or loss chart does not prove that training is implemented correctly.
+
+| Layer                         | Actual responsibility                                                                                                                            | Not its responsibility                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| AIKernel administration plane | Database Worker profiles, Admin authorization, private API routing, request validation, audit and streamed downloads                             | Training inside the web process or treating a Worker as an inference endpoint |
+| Python Worker                 | Approved offline-model preflight, JSONL and held-out validation, durable queue, training children, resource/runtime bounds, events and artifacts | Arbitrary user scripts or automatic resume                                    |
+| PEFT / native MLX             | Real LoRA/quantized-LoRA updates, evaluation loss, checkpoints and adapter exports                                                               | Guaranteed task quality or absence of regressions                             |
+| UI                            | Operations, actual states/errors/resources, complete history paging, parameter and workflow guidance                                             | Invented progress or treating submission as training/quality success          |
+| Separate inference runtime    | Compatible base/tokenizer/adapter loading and inference serving                                                                                  | Automatic deployment or registration by the training Worker                   |
+
+This console requires **Worker 1.1 or newer**, with catalog paging and persistent `storeId`. Legacy `/jobs` and `/datasets` array APIs remain compatible and return only the latest 100 records. Complete browsing uses `/jobs/page` and `/datasets/page`, returning `items`, `total`, `offset` and `limit`, with 1–200 items per page. Paging does not bypass retention admission limits.
+
+For the NCF administration APIs, upload/create/cancel operations put `workerAlias` in the **query** and only the relevant request DTO fields in the JSON body. Never pass a Worker secret or endpoint to the browser. Service methods put the body DTO first to follow the dynamic API generator's binding rules. These NCF endpoints are distinct from the Worker's private API.
+
+For example, an authenticated, authorized NCF administration client submits:
+
+```text
+POST /api/Senparc.Xncf.AIKernel/AIFineTuningAppService/Xncf.AIKernel_AIFineTuningAppService.CreateJobAsync?workerAlias=cpu_lab
+Content-Type: application/json
+```
+
+```json
+{
+  "name": "Bounded smoke test",
+  "modelId": "approved-model",
+  "datasetId": "replace-with-uploaded-dataset-id",
+  "backend": "cpu",
+  "method": "lora",
+  "maxSteps": 10,
+  "maxSequenceLength": 128
+}
+```
+
+Replace IDs and the sequence cap with real values for the selected Worker. Saving a Worker returns a **Worker DTO**, not a training-job DTO: verify the saved profile and connection state. Disabling a profile blocks access but does not terminate existing training.
+
 ## 1. What Fine-Tuning Changes
 
 ### SFT, Full Fine-Tuning, LoRA, and QLoRA
@@ -55,6 +92,8 @@ Prompt/completion example (two rows):
 
 Two rows only satisfy validation; they are not evidence of sufficient training data or a useful evaluation set. Check the base tokenizer/chat template, response format, length distribution, and truncation before a meaningful run. A smaller maximum sequence length can discard the answer being taught.
 
+The returned SHA-256 hashes the normalized stored JSONL, not necessarily the original file bytes. Normalization does not append an extra final newline, so an otherwise valid upload of exactly 2 MiB remains readable after persistence.
+
 ### Separate Training, Validation, and Final Test Data
 
 1. Remove duplicates and split by source, user, document, or time **before** producing examples. Near-duplicate conversations in different splits also contaminate evaluation.
@@ -86,7 +125,7 @@ Keep the global kill switch, endpoint allowlist, and per-Worker secrets outside 
   "SenparcXncfAIKernel": {
     "FineTuning": {
       "Enabled": false,
-      "AllowedHosts": [ "127.0.0.1", "training-gateway.internal" ],
+      "AllowedHosts": ["127.0.0.1", "training-gateway.internal"],
       "WorkerApiKeys": {
         "cpu_lab": "",
         "cuda_prod": ""
@@ -106,6 +145,8 @@ export SenparcXncfAIKernel__FineTuning__Enabled=true
 ```
 
 Set these in the NCF host's environment, not the browser. The global `Enabled` value and `AllowedHosts` are mandatory security gates; an enabled database profile cannot bypass either. Set each profile's request timeout (1–300 seconds) in the UI; it is an HTTP timeout, **not** a training-duration limit. Jobs continue independently of an HTTP request or browser tab.
+
+`Enabled=false` blocks NCF access to the Worker; it does not remotely kill an already running training child. Use cancellation or the operator procedure for stopping the Worker when termination is required. Do not confuse the administration access switch with a GPU-process kill switch.
 
 Set environment variables before starting NCF; restart it after changes, then use **Refresh / reconnect**. Underscore aliases in these examples work with shell `export`. For an alias containing a hyphen, use a service environment configuration or secret provider that supports that name rather than an invalid shell assignment.
 
@@ -208,11 +249,15 @@ For a first smoke test:
 1. Select the configured Worker, verify the needed CPU/CUDA/MLX capability and provision an approved model.
 2. Download/upload an example suitable for that tokenizer; check the returned row count `4` and SHA-256. Clean and split production data separately.
 3. Name the job and select model/training data. Validation may be empty: the Worker independently holds out at least one distinct row.
-4. Select a compatible backend and `lora`, retaining `maxSteps=10`, `batchSize=1`, `gradientAccumulationSteps=1`, and `maxSequenceLength=256`. This bounded pipeline check does not guarantee the model fits in memory.
+4. Select a compatible backend and `lora`, retaining `maxSteps=10`, `batchSize=1` and `gradientAccumulationSteps=1`. `maxSequenceLength` defaults to 256 but must not exceed the model's context limit; use 32 for the `tiny-gpt2` fixture. This bounded pipeline check does not guarantee the model fits in memory.
 5. Expand **Advanced parameters** and read the question-mark tips; the form displays approximate single-device effective batch. Positive `maxSteps` overrides `epochs`; evaluation still runs at the final step even with the default `evalSteps=20`.
 6. Submit and inspect the actual terminal state, steps, training/validation loss, logs and existing artifacts. `Succeeded` is not a quality acceptance result.
 
 Worker selection is disabled during file reading, upload, submission and cancellation. Switching resets Worker-scoped model/training/validation selections, job detail, curves and event cursor; old responses cannot overwrite the new Worker's view. HTTP requests follow the database profile's timeout, with a small browser transport allowance. Editing the current Worker reloads its catalog and state.
+
+The job list pages against the backend total, ten records at a time, rather than treating the latest 100 as all history. Datasets initially load 100 records; use **Load older datasets** to continue. Refresh also verifies selected historical training/validation metadata with the backend. Concurrent submissions by other operators can shift ordering; refresh restarts browsing from the current catalog. Paging is not a frozen transactional snapshot.
+
+The Worker's `storeId` persists in SQLite across normal restarts. Replacing or rebuilding storage produces a new identity; the UI clears old jobs, datasets and cursors and asks operators to reselect, preventing reuse of old IDs against a new store. A stopping/unhealthy Worker, or one missing the required protocol capabilities, cannot accept submissions through the console.
 
 ### Frequently Asked Questions
 
@@ -300,7 +345,11 @@ MLX QLoRA from an unquantized base uses 4-bit affine quantization with group siz
 
 Before promoting a deployment, verify: Admin authorization and wrong-key rejection; a valid two-row upload and rejection of malformed/oversized data; an allowlisted local model; a real short LoRA run with actual step/loss events; held-out evaluation; refresh recovery; cancellation and checkpoint behavior; interrupted state after restart; and one-worker storage locking. Exercise only backends actually available on the host.
 
-This integration check covers the compiled NCF UI/typed client, Worker API/lifecycle regressions and browser UI fixtures, including exact 2 MiB dataset persistence. It does not rerun real CPU/CUDA/MLX training or establish model quality. Before deployment, run the following hardware-specific smoke tests against your actual Worker: randomly generated tiny fixtures should complete six optimizer updates, held-out evaluation, artifact download and running/queued cancellation. These verify infrastructure, **not useful model quality or large-model capacity**. CUDA hardware validation requires an NVIDIA Linux host.
+The 2026-10-07 functional check actually ran native CPU LoRA, native Apple Metal LoRA and quantized LoRA. Each completed six optimizer updates, held-out evaluation, artifact download and running/queued cancellation. It also checked base-weight hashes, genuinely updated exported B matrices, compatible adapter reload and changed inference logits relative to the base. Quantized MLX reload reconstructs the base from the exported quantization configuration; CUDA NF4 compatibility is not assumed.
+
+The named-Worker .NET client integration test actually executed training, explicit independent validation, downloads and cancellation instead of being skipped. SQLite Worker-profile round trips were also exercised. Regressions cover catalog records beyond 100, persistent store identity on restart, cache invalidation on store replacement, truthful initialization-cancellation metadata, authentication, data bounds and event cursors. NCF dynamic controllers were actually generated to verify body DTO/query alias binding, and complete frontend create/edit actions were checked against Worker DTOs, preventing a successful backend save from being reported as a UI failure.
+
+Random tiny models prove **the training/export/use infrastructure workflow, not model quality, large-model capacity, production container deployment or every database provider**. CUDA still requires an NVIDIA Linux host. Repeat these checks and the production checklist for the actual deployment.
 
 For reproducible infrastructure checks, from the worker directory:
 
@@ -311,6 +360,17 @@ python3 -m venv .venv-test
 node --test tests/test_ui.cjs
 ```
 
-Use `python -m tests.make_tiny_model /absolute/path/to/test-models` in an environment with PyTorch to generate a non-production fixture, start the test worker against it, then run `python -m tests.smoke --backend cpu --model tiny-gpt2`. Native Apple checks use `python -m tests.run_native_smoke --backend mlx` in a separate environment with MLX requirements and `torch==2.8.0` for fixture generation only; temporary native worker/model/data are cleaned automatically.
+For real CPU training and the .NET administration client, run from the Worker directory:
+
+```bash
+python3 -m venv .venv-cpu-smoke
+.venv-cpu-smoke/bin/python -m pip install -r requirements-cpu.txt
+.venv-cpu-smoke/bin/python -m tests.run_native_smoke --backend cpu \
+  --dotnet-project ../../src/Extensions/Senparc.Xncf.AIKernel.Tests/Senparc.Xncf.AIKernel.Tests.csproj
+```
+
+Restore the .NET project first using the repository's usual workflow on a fresh checkout. The script generates random weights without model/data downloads, starts a temporary authenticated Worker and cleans Worker/model/data on success or failure. `adapterReloadVerified=true` means reload was actually exercised; the presence of exported files is insufficient.
+
+Native Apple checks use `python -m tests.run_native_smoke --backend mlx` in a separate environment with `requirements-mlx.txt` and `torch==2.8.0` for fixture generation only, checking both LoRA and quantized-LoRA exports. Against an existing disposable Worker, use `python -m tests.smoke --backend cpu --model tiny-gpt2 --models-root /absolute/path/to/test-models`; omitting the local base path skips reload verification and explicitly reports false.
 
 See also the [XNCF extension overview](../home/xncf-extension-modules.md), [module documentation map](./module-documentation-map.md), and [Sandbox environment guide](./sandbox-environment.md).
