@@ -3,8 +3,35 @@
 > This page tracks important changes on the `NcfPackageSources` development
 > branch. The 2026-07 section retains the historical baseline checked on
 > 2026-07-27; the Repository/background tenant scope upgrade was added on
-> 2026-10-02. Project versions, Register versions, and published NuGet versions
-> can differ; verify each separately during an upgrade.
+> 2026-10-02 and the AIKernel local fine-tuning update on 2026-10-09. Project
+> versions, Register versions, and published NuGet versions can differ; verify
+> each separately during an upgrade.
+
+## AIKernel Local Fine-Tuning Upgrade (2026-10-09)
+
+The current source lists `Senparc.Xncf.AIKernel` project version `0.16.4` and
+the companion fine-tuning Worker version `1.1.0`. These are source versions,
+**not confirmation that either package has been publicly released**.
+
+- AIKernel adds an administrator-only local fine-tuning console backed by a
+  separate authenticated Python Worker. Training remains disabled by default.
+  Worker profiles are stored in the database; authentication keys belong in
+  secure host configuration, not in the database or browser.
+- The Worker supports CPU/CUDA training through PyTorch and PEFT, and native
+  Apple Silicon training through MLX. Available backends and methods are
+  determined by Worker capability preflight. Worker 1.1 adds complete catalog
+  paging and a persistent SQLite `storeId`; the legacy array APIs still return
+  only the latest 100 records.
+- Training exports adapters and checkpoints for separate evaluation and
+  inference deployment. It does not automatically resume interrupted jobs or
+  publish an inference model.
+- Upgrade existing AIKernel installations through module management to apply
+  the Worker-profile database migration. Deploy a matching Worker, configure
+  its key through a secret store/environment, and enable training only after
+  preflight and a real smoke test succeed.
+
+See the [AIKernel local fine-tuning guide](../xncf/aikernel-local-fine-tuning.md)
+for deployment requirements, validation steps, and operational limits.
 
 ## Repository and Background Tenant Scope Upgrade (2026-10-02)
 
