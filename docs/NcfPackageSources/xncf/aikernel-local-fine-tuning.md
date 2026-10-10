@@ -616,3 +616,62 @@ Restore the .NET project first using the repository's usual workflow on a fresh 
 Native Apple checks use `python -m tests.run_native_smoke --backend mlx` in a separate environment with `requirements-mlx.txt` and `torch==2.8.0` for fixture generation only, checking both LoRA and quantized-LoRA exports. Against an existing disposable Worker, use `python -m tests.smoke --backend cpu --model tiny-gpt2 --models-root /absolute/path/to/test-models`; omitting the local base path skips reload verification and explicitly reports false.
 
 See also the [XNCF extension overview](../home/xncf-extension-modules.md), [module documentation map](./module-documentation-map.md), and [Sandbox environment guide](./sandbox-environment.md).
+
+### Control-plane database, FileManager, and migration
+
+After the database migrations are enabled, AIKernel stores dataset metadata, training jobs, events, artifact metadata, and migration state in the NCF primary database. The Worker still keeps temporary execution files, model caches, and runtime state. Large JSONL files, `manifest.json`, `metrics.jsonl`, adapters, and export archives should not be stored in database columns. They should be imported through `Senparc.Xncf.FileManager.Abstractions` using the `FineTuning` resource kind. If FileManager is unavailable, the import fails explicitly instead of reporting a false success.
+
+The first upgrade includes `AddFineTuningControlPlane` migrations for every supported database provider. Back up the NCF database before applying migrations. Start legacy Worker migration from the administration UI: it is idempotent by `workerAlias + storeId + migrationKey`, keeps the original Worker SQLite, `datasets/`, and `jobs/` directories, and never deletes source files. Failed migrations can be retried. After migration, verify FileManager references and artifact SHA-256 values.
+
+After dataset or job creation, the NCF API mirrors the Worker result into the control-plane database. Job and event reads also perform incremental mirroring; events are deduplicated by `workerAlias + jobId + sequence`. A database write failure is returned as an error so the UI cannot report success without a control-plane record.
+
+When fine-tuning is enabled, NCF also runs a bounded background cycle that synchronizes recent jobs, events, and artifact metadata from enabled Workers with configured secrets. It does not execute commands or automatically download large artifacts; complete history and artifact files still require the idempotent migration action in the administration UI.
+
+The following bounded operations can be exposed through FunctionRender to Workflow, AgentsManager, or AdminChat:
+
+- `检查微调 Worker` / `Check fine-tuning Worker`: health, capabilities, and queue checks;
+- `创建微调数据集` / `Create fine-tuning dataset`: submit validated JSONL text;
+- `创建微调任务` / `Create fine-tuning job`: queue a job using configured Worker, model, and dataset;
+- `验证微调 Adapter` / `Validate fine-tuning adapter`: run offline validation against the same base model.
+
+Job cancellation, resource deletion, arbitrary Worker configuration, arbitrary command execution, and arbitrary model downloads are not exposed to agents by default. Production deployments should still enforce application permissions, tenant boundaries, resource budgets, and audit policies.
+
+### Pause, resume, and database records
+
+Database records preserve job state, events, checkpoint/artifact metadata, and migration progress. They do not automatically give the training process pause or resume semantics. The current Worker deliberately has no `pause` or `resume` API: after a restart, active jobs become `Interrupted`; cancellation saves a checkpoint at a safe boundary when possible, but the job is not resumable.
+
+The current system therefore supports recoverable inspection and migration, not recoverable training execution:
+
+- NCF can restore job history, events, and FileManager artifact references;
+- saved manifests, metrics, and checkpoints can be inspected again;
+- the UI cannot continue the previous optimizer state;
+- to continue work, create a new training job and prepare the data and parameters again according to the supported backend.
+
+Safe pause/resume would require a Worker protocol for safe pausing, checkpoint-version compatibility, optimizer/RNG restoration, resource locking, and base-model hash verification before recovery. Adding database fields alone would not be safe.
+
+### Secure model preparation
+
+Model preparation is disabled by default. Before enabling it, configure server-side provider, model, and pinned-revision allowlists together with a controlled directory:
+
+```json
+{
+  "SenparcXncfAIKernel": {
+    "ModelPreparation": {
+      "Enabled": true,
+      "ControlledModelRoot": "/absolute/path/to/approved-models",
+      "Providers": {
+        "modelscope": {
+          "BaseUrl": "https://your-approved-provider.example/"
+        }
+      },
+      "AllowedModels": {
+        "modelscope": {
+          "Qwen/Qwen2.5-0.5B-Instruct": ["pinned-revision"]
+        }
+      }
+    }
+  }
+}
+```
+
+The page submits only the provider, model, and revision. The server validates the provider host, model/revision allowlists, traversal, symlinks, file count, per-file size, and total size. Downloads use temporary files and atomic replacement; a failed or cancelled download cannot leave a usable partial model. Never put provider tokens in the browser or repository. The current provider contract requires a controlled public manifest/file endpoint; private token-backed sources need a separate server-side secret-provider integration.

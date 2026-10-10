@@ -621,3 +621,62 @@ python3 -m venv .venv-cpu-smoke
 苹果原生可在独立环境安装 `requirements-mlx.txt` 及仅用于生成权重的 `torch==2.8.0` 后执行 `python -m tests.run_native_smoke --backend mlx`，验证 LoRA 与量化 LoRA 及各自导出的重载。已有独立测试 Worker 可运行 `python -m tests.smoke --backend cpu --model tiny-gpt2 --models-root /absolute/path/to/test-models`；省略本地基座路径时不会做重载验证，输出会明确为 false。
 
 另见 [XNCF 扩展模块概览](../home/xncf-extension-modules.md)、[模块文档地图](./module-documentation-map.md)和 [Sandbox 环境指南](./sandbox-environment.md)。
+
+### 控制面数据库、FileManager 与自动迁移
+
+启用数据库迁移后，AIKernel 会把数据集、训练任务、事件、产物元数据和迁移状态写入 NCF 主数据库；Worker 仍保留执行所需的临时文件、模型缓存和运行时状态。大型 JSONL、`manifest.json`、`metrics.jsonl`、Adapter 和导出压缩包不应直接写入数据库，而应通过 `Senparc.Xncf.FileManager.Abstractions` 导入 FileManager 的 `FineTuning` 资源类别。FileManager 不可用时，导入会明确失败，不会伪造“已保存”状态。
+
+首次升级包含所有支持数据库的 `AddFineTuningControlPlane` migration。应用迁移前请备份 NCF 数据库。旧 Worker 数据迁移必须通过管理界面执行：它按 `workerAlias + storeId + migrationKey` 幂等记录，保留旧 Worker SQLite、`datasets/` 和 `jobs/` 原目录，不删除源文件；失败可以重试。迁移完成后仍应检查 FileManager 文件引用和产物 SHA-256。
+
+创建数据集和任务后，NCF API 会先从 Worker 取得结果，再镜像到控制面数据库；查询任务和事件时也会增量镜像，事件以 `workerAlias + jobId + sequence` 去重。数据库写入失败会返回错误，避免 UI 显示成功但控制面没有记录。
+
+启用微调功能后，NCF 还会以受控的后台周期任务同步已启用且已配置密钥的 Worker 的近期任务、事件和产物元数据。后台同步不会执行命令，也不会自动下载大型产物；完整历史和产物文件仍通过管理界面的幂等迁移操作导入。
+
+以下只读检查和受边界限制的操作可以通过 FunctionRender 供 Workflow、AgentsManager 或 AdminChat 调用：
+
+- `检查微调 Worker`：健康、能力和队列检查；
+- `创建微调数据集`：提交受校验的 JSONL 文本；
+- `创建微调任务`：使用已配置 Worker、模型和数据集排队训练；
+- `验证微调 Adapter`：执行限定为同一基座模型的离线验证。
+
+取消任务、删除资源、任意 Worker 配置、任意命令执行和任意模型下载不默认开放给 Agent。生产环境仍应在应用权限、租户边界、资源预算和审计策略上做额外限制。
+
+### 暂停、继续与数据库记录
+
+数据库记录保存的是任务状态、事件、checkpoint/产物元数据和迁移进度，并不会自动让训练进程具备暂停或继续能力。当前 Worker 明确不提供 `pause` 或 `resume` API：重启后运行中的任务会标记为 `Interrupted`，取消只会在安全边界尽量保存 checkpoint，不能把它当作可继续训练的任务。
+
+因此当前支持的是“可恢复的检查与迁移”，不是“可恢复的训练执行”：
+
+- 可以从 NCF 数据库恢复任务历史、事件和 FileManager 产物引用；
+- 可以重新打开已保存的 manifest、metrics 和 checkpoint 做检查；
+- 不能从 UI 继续上一次未完成的 optimizer 状态；
+- 需要继续训练时，应使用新的训练任务，并根据实际支持情况重新准备数据和参数。
+
+未来若要支持暂停/继续，需要 Worker 同时实现安全暂停协议、checkpoint 版本兼容、optimizer/RNG 恢复、资源锁和恢复前基座模型 hash 校验；仅增加数据库字段是不安全的。
+
+### 安全模型准备
+
+模型准备接口默认关闭。启用前必须在服务端配置 Provider、模型和固定 Revision 白名单，并指定受控目录：
+
+```json
+{
+  "SenparcXncfAIKernel": {
+    "ModelPreparation": {
+      "Enabled": true,
+      "ControlledModelRoot": "/absolute/path/to/approved-models",
+      "Providers": {
+        "modelscope": {
+          "BaseUrl": "https://your-approved-provider.example/"
+        }
+      },
+      "AllowedModels": {
+        "modelscope": {
+          "Qwen/Qwen2.5-0.5B-Instruct": ["pinned-revision"]
+        }
+      }
+    }
+  }
+}
+```
+
+页面只提交 Provider、模型和 Revision；服务端校验 Provider 主机、模型白名单、Revision、路径穿越、符号链接、文件数量、单文件大小和总大小。下载采用临时文件和原子替换，失败或取消不会留下可被 Worker 使用的半成品。不要把真实 Provider Token 写入浏览器或提交到仓库；当前 Provider 必须提供受控的公开 manifest/文件地址，带 Token 的私有源需要另行接入服务端密钥提供程序。
