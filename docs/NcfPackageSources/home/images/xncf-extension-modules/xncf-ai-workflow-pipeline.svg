@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+
+  <text x="20" y="34" font-size="17" font-weight="bold" fill="#111827">AI / Agent / Workflow Pipeline</text>
+
+  <g font-size="12.5" fill="#1f2937">
+    <rect x="20" y="70" width="170" height="180" rx="12" fill="#eef2ff" stroke="#4f46e5" stroke-width="1.5"/>
+    <text x="105" y="96" text-anchor="middle" font-size="14" font-weight="bold" fill="#3730a3">AIKernel 5.0.5</text>
+    <text x="34" y="122">- model set config</text>
+    <text x="34" y="142">- chat / embedding</text>
+    <text x="34" y="162">- vector model</text>
+    <text x="34" y="182">- Senparc.AI based</text>
+
+    <line x1="190" y1="160" x2="222" y2="160" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow3)"/>
+
+    <rect x="224" y="70" width="170" height="180" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+    <text x="309" y="96" text-anchor="middle" font-size="14" font-weight="bold" fill="#065f46">PromptRange</text>
+    <text x="309" y="116" text-anchor="middle" font-size="12" fill="#065f46">0.15.2 (order 5897)</text>
+    <text x="238" y="142">- prompt training ground</text>
+    <text x="238" y="162">- PromptCode assets</text>
+    <text x="238" y="182">- prompt iteration</text>
+
+    <line x1="394" y1="160" x2="426" y2="160" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow3)"/>
+
+    <rect x="428" y="70" width="170" height="180" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+    <text x="513" y="96" text-anchor="middle" font-size="14" font-weight="bold" fill="#065f46">KnowledgeBase</text>
+    <text x="513" y="116" text-anchor="middle" font-size="12" fill="#065f46">0.1.10</text>
+    <text x="442" y="142">- import / chunking</text>
+    <text x="442" y="162">- embedding</text>
+    <text x="442" y="182">- recall testing</text>
+
+    <line x1="598" y1="160" x2="630" y2="160" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow3)"/>
+
+    <rect x="632" y="70" width="328" height="180" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
+    <text x="796" y="96" text-anchor="middle" font-size="14" font-weight="bold" fill="#9a3412">AgentsManager 0.3.22</text>
+    <text x="646" y="122">- AgentTemplate from PromptCode</text>
+    <text x="646" y="142">- ChatGroup (context sharing) / ChatTask</text>
+    <text x="646" y="162">- Human-in-the-Loop approval (HITL)</text>
+    <text x="646" y="182">- A2A remote agents (join / publish)</text>
+    <text x="646" y="202">- AgentExecutionTask management</text>
+    <text x="646" y="222">- model request diagnostics</text>
+  </g>
+
+  <!-- down arrow to workflow -->
+  <line x1="796" y1="250" x2="796" y2="288" stroke="#6b7280" stroke-width="1.6" marker-end="url(#arrow3)"/>
+
+  <rect x="20" y="290" width="940" height="120" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="40" y="316" font-size="14.5" font-weight="bold" fill="#5b21b6">NeuCharWorkflow 0.1.0-preview1 (order 5890) — secure server-side orchestration</text>
+  <g font-size="12" fill="#374151">
+    <rect x="40" y="330" width="150" height="30" rx="8" fill="#ffffff" stroke="#7c3aed"/><text x="115" y="350" text-anchor="middle">visual designer</text>
+    <rect x="200" y="330" width="150" height="30" rx="8" fill="#ffffff" stroke="#7c3aed"/><text x="275" y="350" text-anchor="middle">parallel / loop / cond.</text>
+    <rect x="360" y="330" width="150" height="30" rx="8" fill="#ffffff" stroke="#7c3aed"/><text x="435" y="350" text-anchor="middle">function / agent node</text>
+    <rect x="520" y="330" width="150" height="30" rx="8" fill="#ffffff" stroke="#7c3aed"/><text x="595" y="350" text-anchor="middle">human-input pause</text>
+    <rect x="680" y="330" width="130" height="30" rx="8" fill="#ffffff" stroke="#7c3aed"/><text x="745" y="350" text-anchor="middle">replay + events</text>
+    <rect x="820" y="330" width="120" height="30" rx="8" fill="#ffffff" stroke="#7c3aed"/><text x="880" y="350" text-anchor="middle">Analytics (new)</text>
+    <text x="40" y="396">task management · webhook trigger · NeuBell notification · expression engine (non-ASCII safe) · AbortRun by execution log</text>
+  </g>
+</svg>
