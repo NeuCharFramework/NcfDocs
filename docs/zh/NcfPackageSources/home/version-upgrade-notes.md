@@ -1,9 +1,28 @@
 # 版本升级说明
 
 > 本页记录 `NcfPackageSources` 开发分支的重要升级项。2026-07 章节保留
-> 2026-07-27 核对的历史基线；2026-10-02 补充本轮 Repository 与后台租户
-> 作用域升级。项目版本、Register 版本和已发布 NuGet 版本可能不同，
-> 升级时应分别核对。
+> 2026-07-27 核对的历史基线；2026-10-02 补充 Repository 与后台租户作用域
+> 升级，2026-10-09 补充 AIKernel 本地微调更新。项目版本、Register 版本和
+> 已发布 NuGet 版本可能不同，升级时应分别核对。
+
+## AIKernel 本地微调升级（2026-10-09）
+
+当前源码中的 `Senparc.Xncf.AIKernel` 项目版本为 `0.16.4`，配套微调 Worker
+版本为 `1.1.0`。这些是源码版本，**不代表相应 NuGet 包已公开发布**。
+
+- AIKernel 新增仅限管理员访问的本地微调控制台，由独立且经过鉴权的 Python
+  Worker 执行训练。训练默认关闭。Worker 配置保存在数据库；鉴权密钥应放在
+  宿主安全配置中，不应保存在数据库或交给浏览器。
+- Worker 通过 PyTorch/PEFT 支持 CPU/CUDA 训练，通过 MLX 支持 Apple 芯片原生
+  训练。实际可用的后端和方法以 Worker 能力预检为准。Worker 1.1 新增完整目录
+  分页与 SQLite 持久化 `storeId`；旧数组接口仍只返回最近 100 条记录。
+- 训练导出 adapter 与 checkpoint，供后续独立评估和部署推理使用；不会自动
+  恢复中断任务或发布推理模型。
+- 已有 AIKernel 安装需通过模块管理升级，以应用 Worker 配置表迁移。部署匹配
+  版本的 Worker，通过密钥存储或环境变量配置密钥，并在预检和真实冒烟测试
+  成功后再启用训练。
+
+部署要求、验证步骤和运维限制见 [AIKernel 本地微调指南](../xncf/aikernel-local-fine-tuning.md)。
 
 ## Repository 与后台租户作用域升级（2026-10-02）
 
