@@ -630,6 +630,8 @@ python3 -m venv .venv-cpu-smoke
 
 创建数据集和任务后，NCF API 会先从 Worker 取得结果，再镜像到控制面数据库；查询任务和事件时也会增量镜像，事件以 `workerAlias + jobId + sequence` 去重。数据库写入失败会返回错误，避免 UI 显示成功但控制面没有记录。
 
+启用微调功能后，NCF 还会以受控的后台周期任务同步已启用且已配置密钥的 Worker 的近期任务、事件和产物元数据。后台同步不会执行命令，也不会自动下载大型产物；完整历史和产物文件仍通过管理界面的幂等迁移操作导入。
+
 以下只读检查和受边界限制的操作可以通过 FunctionRender 供 Workflow、AgentsManager 或 AdminChat 调用：
 
 - `检查微调 Worker`：健康、能力和队列检查；
@@ -651,3 +653,30 @@ python3 -m venv .venv-cpu-smoke
 - 需要继续训练时，应使用新的训练任务，并根据实际支持情况重新准备数据和参数。
 
 未来若要支持暂停/继续，需要 Worker 同时实现安全暂停协议、checkpoint 版本兼容、optimizer/RNG 恢复、资源锁和恢复前基座模型 hash 校验；仅增加数据库字段是不安全的。
+
+### 安全模型准备
+
+模型准备接口默认关闭。启用前必须在服务端配置 Provider、模型和固定 Revision 白名单，并指定受控目录：
+
+```json
+{
+  "SenparcXncfAIKernel": {
+    "ModelPreparation": {
+      "Enabled": true,
+      "ControlledModelRoot": "/absolute/path/to/approved-models",
+      "Providers": {
+        "modelscope": {
+          "BaseUrl": "https://your-approved-provider.example/"
+        }
+      },
+      "AllowedModels": {
+        "modelscope": {
+          "Qwen/Qwen2.5-0.5B-Instruct": ["pinned-revision"]
+        }
+      }
+    }
+  }
+}
+```
+
+页面只提交 Provider、模型和 Revision；服务端校验 Provider 主机、模型白名单、Revision、路径穿越、符号链接、文件数量、单文件大小和总大小。下载采用临时文件和原子替换，失败或取消不会留下可被 Worker 使用的半成品。不要把真实 Provider Token 写入浏览器或提交到仓库；当前 Provider 必须提供受控的公开 manifest/文件地址，带 Token 的私有源需要另行接入服务端密钥提供程序。

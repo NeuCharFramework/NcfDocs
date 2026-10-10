@@ -625,6 +625,8 @@ The first upgrade includes `AddFineTuningControlPlane` migrations for every supp
 
 After dataset or job creation, the NCF API mirrors the Worker result into the control-plane database. Job and event reads also perform incremental mirroring; events are deduplicated by `workerAlias + jobId + sequence`. A database write failure is returned as an error so the UI cannot report success without a control-plane record.
 
+When fine-tuning is enabled, NCF also runs a bounded background cycle that synchronizes recent jobs, events, and artifact metadata from enabled Workers with configured secrets. It does not execute commands or automatically download large artifacts; complete history and artifact files still require the idempotent migration action in the administration UI.
+
 The following bounded operations can be exposed through FunctionRender to Workflow, AgentsManager, or AdminChat:
 
 - `检查微调 Worker` / `Check fine-tuning Worker`: health, capabilities, and queue checks;
@@ -646,3 +648,30 @@ The current system therefore supports recoverable inspection and migration, not 
 - to continue work, create a new training job and prepare the data and parameters again according to the supported backend.
 
 Safe pause/resume would require a Worker protocol for safe pausing, checkpoint-version compatibility, optimizer/RNG restoration, resource locking, and base-model hash verification before recovery. Adding database fields alone would not be safe.
+
+### Secure model preparation
+
+Model preparation is disabled by default. Before enabling it, configure server-side provider, model, and pinned-revision allowlists together with a controlled directory:
+
+```json
+{
+  "SenparcXncfAIKernel": {
+    "ModelPreparation": {
+      "Enabled": true,
+      "ControlledModelRoot": "/absolute/path/to/approved-models",
+      "Providers": {
+        "modelscope": {
+          "BaseUrl": "https://your-approved-provider.example/"
+        }
+      },
+      "AllowedModels": {
+        "modelscope": {
+          "Qwen/Qwen2.5-0.5B-Instruct": ["pinned-revision"]
+        }
+      }
+    }
+  }
+}
+```
+
+The page submits only the provider, model, and revision. The server validates the provider host, model/revision allowlists, traversal, symlinks, file count, per-file size, and total size. Downloads use temporary files and atomic replacement; a failed or cancelled download cannot leave a usable partial model. Never put provider tokens in the browser or repository. The current provider contract requires a controlled public manifest/file endpoint; private token-backed sources need a separate server-side secret-provider integration.
