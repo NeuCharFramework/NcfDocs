@@ -226,7 +226,90 @@ Worker 限制 `NCF_QUEUE_LIMIT`（默认 8）、`NCF_MAX_DURATION_MINUTES`（144
 
 `NCF_TELEMETRY_SECONDS` 默认 2，`NCF_CANCEL_GRACE_SECONDS` 默认 30，`NCF_PREFLIGHT_SECONDS` 默认 120，`NCF_TORCH_THREADS` 默认 2。CPU/内存/PID 由容器/宿主控制；归档需额外空间，失败时原始已完成 checkpoint 仍留在磁盘。到达存储接收上限时，停止 Worker 后备份/归档并切换存储；不提供在线删除或自动发布。
 
-## 4. UI 操作流程
+## 4. 平台操作手册：DGX Spark 与 MacBook M2
+
+下面的步骤是“先验证 Worker，再操作网页”的推荐顺序。两台机器可以各注册为一个独立 Worker，但不能共享数据集 ID、任务 ID 或 `/data` 目录。本文当前环境已验证 CPU 和 Apple Metal 流程；没有 DGX Spark 实机，因此 DGX Spark 的 CUDA、驱动、ARM64 镜像和显存表现必须在现场完成预检。
+
+### 4.1 NVIDIA DGX Spark：CUDA Worker
+
+DGX Spark 是 NVIDIA GPU 平台，优先使用 `cuda` 后端；不要使用 Mac 的 `mlx` 配置，也不要把 CUDA QLoRA 的 bitsandbytes/NF4 参数复制到 MLX Worker。开始前由管理员确认：
+
+```bash
+uname -m
+nvidia-smi
+docker version
+docker compose version
+```
+
+还要确认 NVIDIA Container Toolkit 已安装，并验证容器能看见 GPU：
+
+```bash
+docker run --rm --gpus all \
+  nvidia/cuda:12.8.1-runtime-ubuntu24.04 nvidia-smi
+```
+
+上面的镜像和 CUDA 版本只是本仓库 CUDA Dockerfile 的兼容性基线，不是对每台 DGX Spark 固件、驱动或系统镜像的保证。DGX Spark 通常涉及 ARM64 主机；如果 `uname -m` 返回 `aarch64`，必须确认基础镜像、PyTorch CUDA wheel、bitsandbytes 以及全部传递依赖都有原生 ARM64 构建。**不要用 QEMU 模拟通过生产验收**；若仓库当前 Dockerfile 或依赖不能原生构建，应由管理员制作并扫描兼容的 ARM64 镜像，或在 DGX Spark 上使用经过批准的原生 Python 环境，再将相同 Worker API 接入 NCF。
+
+在 Worker 目录执行以下模板命令。路径、密钥和资源上限必须替换为现场值，密钥不要写入仓库：
+
+```bash
+cd NcfPackageSources/tools/AIKernelFineTuning
+export NCF_WORKER_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+export NCF_MODELS_DIR="/srv/aikernel/approved-models"
+docker compose --profile cuda build cuda
+docker compose --profile cuda up -d cuda gateway
+curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/health
+curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/capabilities
+docker compose --profile cuda logs --tail 100 cuda gateway
+```
+
+首次只放一个很小、已批准的本地模型，先在页面创建 1–10 步的 `cuda + lora` 冒烟任务。能力预检通过后，再逐步增加序列长度、有效 batch 和步数。若显存不足，按以下顺序回退：减小 `maxSequenceLength`、`batchSize` 和 `loraRank`，再考虑 `gradientAccumulationSteps`；不要直接删除 Worker 的内存/磁盘/PID 限制。需要 QLoRA 时，确认模型是 Worker 支持的量化格式，并在能力预检中看到 `qlora`，不要只看网页是否显示该选项。
+
+如果 NCF 运行在 DGX Spark 之外，不能填写 `127.0.0.1`；应使用仅对 NCF 可达的私网地址或 TLS 反向代理，例如 `https://fine-tuning-worker.internal:8091`。`AllowedHosts` 必须允许该主机，NCF 中的 API key 配置键必须与 Worker 别名完全一致。Worker API 不得暴露公网。
+
+### 4.2 MacBook M2：原生 MLX Worker
+
+MacBook M2 使用原生 macOS Worker 才能访问 Metal；Docker Desktop 的 Linux VM 不能把 Apple Metal GPU 提供给 MLX。建议使用专用 macOS 服务账户、单独的模型目录和数据目录：
+
+```bash
+cd NcfPackageSources/tools/AIKernelFineTuning
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-mlx.txt
+export NCF_WORKER_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+export NCF_MODELS_ROOT="$HOME/aikernel/approved-models"
+export NCF_DATA_ROOT="$HOME/aikernel/private-training-data"
+.venv/bin/python -m worker
+```
+
+另开终端检查 Worker：
+
+```bash
+curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/health
+curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/capabilities
+```
+
+在同一台 Mac 上，NCF Worker 端点填 `http://127.0.0.1:8091`。如果 NCF 在另一台机器，不能直接把 Worker 监听到公网；应使用受限内网/TLS 代理，并显式设置 `NCF_BIND_HOST`、防火墙和访问控制。M2 的统一内存同时被 macOS、模型权重、激活和优化器使用；正式训练前先以短序列、`batchSize=1`、小 `loraRank` 冒烟，再观察系统内存和 Worker 资源事件。
+
+未量化模型选择 `mlx + lora`；只有能力预检报告支持时才选择 `mlx + qlora`。MLX QLoRA 是原生 MLX 量化流程，不等同于 CUDA bitsandbytes；训练导出的 adapter 需要按 manifest 的量化配置重建基座后才能加载。
+
+### 4.3 在网页中完成一次训练
+
+无论使用哪台机器，都按下面顺序操作：
+
+1. 启动并检查 Worker 的 `/health`、`/capabilities`，确认模型目录和后端均可用。
+2. 在 NCF Admin 打开 **AIKernel → 本地微调**，点击 **添加 Worker**。填写唯一别名、显示名称、绝对 HTTP(S) 端点、超时（首次预检可设 180 秒）并启用；保存后确认状态为可用。API key 通过 NCF 服务端配置注入，不在浏览器表单或 URL 中填写。
+3. 选择刚添加的 Worker，等待模型、后端能力、数据集和任务历史加载完成。不要在上传、创建或取消请求期间切换 Worker。
+4. 在 **数据集** 中上传 UTF-8 JSONL。训练集和验证集分别上传并命名；优先使用独立验证集。核对记录数、SHA-256 和校验结果，失败时按行号修正，不要用 CSV 或 JSON 数组替代。
+5. 点击 **新建任务**，选择模型、训练集、可选验证集、后端和方法。第一次使用选短步数 `lora`；只有预检明确支持且内存预算足够时才选 `qlora`。确认 `maxSequenceLength` 不会截断答案。
+6. 提交后在任务详情查看真实状态、已完成 steps、训练/验证 loss、资源、事件日志和产物。浏览器关闭不会停止任务；刷新页面后从持久化 Worker 历史恢复。
+7. 取消只能停止任务，不是暂停或恢复。取消后等待终态，再下载 `training-export.zip`，同时保存 `manifest.json`、`metrics.jsonl` 和基座/数据 hash。
+8. 在独立推理运行时加载“相同基座 + adapter + tokenizer”进行回归测试，比较未微调基线和微调结果。确认格式、拒答边界、事实性和 RAG 行为后，才在 AIModel/推理服务中单独部署；训练 Worker 不会自动发布模型。
+
+## 5. UI 操作流程
 
 1. 安装/启用 AIKernel，独立部署并配置伴随 worker。在 NCF Admin 打开 **AIKernel → 本地微调**。
 2. 检查 worker 连接/版本、运行/排队数量及后端能力原因。先处理依赖、硬件或模型缺失，再提交任务。
@@ -241,6 +324,10 @@ Worker 限制 `NCF_QUEUE_LIMIT`（默认 8）、`NCF_MAX_DURATION_MINUTES`（144
 ### 页内教程、样例和首次任务
 
 页面默认展开 **从这里开始：微调操作教程**，按“准备 Worker → 独立数据集 → 有边界训练 → 监控恢复 → 评估发布”解释流程，同时提供完整中英文教程入口。**训练服务配置与故障排查** 展示当前混合配置字段；**常见问题与处理提示** 解释连接、数据、内存和中断错误。
+
+尚未添加配置或没有启用且密钥有效的 Worker 时，页面显示 **尚未配置可用 Worker** 及配置步骤，而不是连接故障。上传和训练按钮仍不可用；点击 **添加 Worker** 或编辑已有配置完成准备。实际 API 请求失败、鉴权失败或 Worker 无法连接仍会明确显示错误。
+
+如果页面直接显示 `AIKernel.FineTuning.*`，这是模块本地化脚本未加载，不代表这些文字是参数名。升级包含修复的 AIKernel 源码/模块后，重新构建并重启实际 NCF 宿主，再刷新页面；模块使用专属 `_AIKernelLocalizationScripts`，避免与宿主 Admin 的同名 partial 冲突。不要通过修改浏览器字典或替换训练字段来绕过问题。
 
 在 **数据集 → 数据样例与下载** 切换 `prompt / completion` 或 `messages`，查看并下载四行 JSONL。下载不会自动上传或提交任务；四条记录只证明格式，不代表数据充分或模型质量。没有 chat template 的模型使用 `prompt/completion`，不要把示例训练结果当作发布依据。
 
@@ -282,13 +369,13 @@ Worker 的 `storeId` 保存在 SQLite 中，正常重启不变；更换或重建
 | `warmupRatio`、`weightDecay`                            | 学习率预热比例与优化器正则化。预热缓和初期更新；具体后端支持需核对。                                         |
 | `loggingSteps`、`saveSteps`、`evalSteps`                | 按优化器步数设置日志、checkpoint 和验证间隔。频繁保存/评估消耗磁盘和时间；评估需要独立验证集。               |
 | `seed`                                                  | 可复现输入，不保证不同硬件/依赖版本下结果完全一致。                                                          |
-| `maxDurationMinutes`                                    | 任务 wall-time 预算，与 NCF HTTP 超时及宿主 CPU/内存限制分开。                                               |
+| `maxDurationMinutes`                                    | 任务 wall-time 预算，与 NCF HTTP 超时及宿主 CPU/内存限制分开。超时会请求 Worker 在安全边界保存 checkpoint，然后终止任务。 |
 
 **优化器**维护更新状态，即便使用 adapter 也可能占用较多内存。NCF 任务契约没有优化器选择器，不要编造 `optimizer` 请求字段；使用后端实际实现的优化器。优化器/调度器及后端限制以 worker 版本为准。
 
 训练 loss 衡量对训练样本的拟合，验证 loss 衡量相同 tokenization/loss 约定下对独立样本的拟合。训练 loss 下降但验证 loss 上升可能是**过拟合**：减少遍历次数/容量、提高数据多样性或加强正则化，再比较结果。不同模板、token mask、序列上限、数据集的 loss 不一定可直接比较。checkpoint 是恢复/评估资产，不是质量合格证明。
 
-## 5. 持久化任务与真实可观测性
+## 6. 持久化任务与真实可观测性
 
 worker 使用**有长度上限的持久化 SQLite 队列，同时只运行一个训练任务**。不能通过多个 worker 共用任务存储来扩容高资源训练。
 
@@ -301,7 +388,7 @@ worker 使用**有长度上限的持久化 SQLite 队列，同时只运行一个
 
 本流程不承诺集成 Prometheus 部署。生产环境应外接监控/告警，覆盖 worker 健康、队列深度、事件停滞、CPU/RSS、GPU 可用性/利用率、OOM、超时、磁盘容量和备份新鲜度。不要把原始 Prompt、数据集或密钥放入监控标签。
 
-## 6. 产物、推理注册与恢复
+## 7. 产物、推理注册与恢复
 
 ### Adapter 不是独立模型
 
@@ -341,7 +428,167 @@ MLX 从未量化基座执行 QLoRA 时，使用 4-bit affine/group size 64；加
 - 用独立存储、单个 worker 和兼容依赖/模型演练恢复。包括网络存储在内，不允许两个 worker 共用可写存储。
 - 同步轮换两端共享 key、保护备份并外接监控。预检和真实冒烟测试成功前保持功能关闭。
 
-## 7. 验收检查
+## 8. MacBook Apple Silicon 手把手验收
+
+下面是一条适合初学者的 macOS 原生 MLX 路径。它不会使用 Docker，也不会把 Apple Metal 暴露给 Linux 容器。
+
+### 8.1 准备 Worker 和模型目录
+
+```bash
+cd NcfPackageSources/tools/AIKernelFineTuning
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-mlx.txt
+
+mkdir -p "$HOME/AIModels"
+mkdir -p "$HOME/AIKernelFineTuningData"
+
+export NCF_WORKER_KEY="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+export NCF_MODELS_ROOT="$HOME/AIModels"
+export NCF_DATA_ROOT="$HOME/AIKernelFineTuningData"
+export NCF_BIND_HOST=127.0.0.1
+export NCF_WORKER_PORT=8091
+python -m worker
+```
+
+另开一个终端，用相同的密钥检查服务：
+
+```bash
+curl --fail \
+  -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/health
+```
+
+如果 `python` 在新终端中不存在，先激活 `.venv`；查看 JSON 不需要 MLX 时也可以使用 `python3`。Worker 的 `NCF_MODELS_ROOT` 必须是已经存在的目录，即使模型尚未复制完成也要先 `mkdir -p`。
+
+在 NCF 启动终端中配置同一个密钥。页面中的 Worker Alias 假设为 `mlx_lab`：
+
+```bash
+export SenparcXncfAIKernel__FineTuning__Enabled=true
+export SenparcXncfAIKernel__FineTuning__AllowedHosts__0=127.0.0.1
+export SenparcXncfAIKernel__FineTuning__WorkerApiKeys__mlx_lab="$NCF_WORKER_KEY"
+```
+
+修改环境变量后必须重启 NCF；Worker 端点填 `http://127.0.0.1:8091`。页面显示“缺少密钥”时，优先检查 Alias 是否完全匹配、NCF 是否在设置变量后重启，而不是重复生成 Worker 密钥。
+
+### 8.2 准备原版模型
+
+模型根目录下应有一个完整的模型目录，例如：
+
+```text
+$HOME/AIModels/Qwen2.5-0.5B-Instruct/
+├── config.json
+├── tokenizer_config.json
+├── tokenizer.json
+├── model.safetensors
+└── 其他 tokenizer / 模型文件
+```
+
+模型下载属于供应链操作，应先审核许可证、固定 revision、验证 hash，再复制到 Worker 的只读模型根目录。macOS 的 Homebrew Python 受 PEP 668 保护时，不要向系统 Python 直接 `pip install`，使用独立下载环境：
+
+```bash
+python3 -m venv "$HOME/model-download-env"
+source "$HOME/model-download-env/bin/activate"
+python -m pip install modelscope
+modelscope download \
+  --model Qwen/Qwen2.5-0.5B-Instruct \
+  --local_dir "$HOME/AIModels/Qwen2.5-0.5B-Instruct"
+```
+
+ModelScope、Hugging Face CLI 和镜像都可能受网络、许可证和版本影响；下载后的文件仍必须通过 Worker 预检。不要让训练任务在运行时自动联网下载模型，也不要把 provider token 放进模型目录。
+
+### 8.3 从 10 步冒烟到 500 步训练
+
+第一次使用默认的 10 步，确认 Worker、模型、数据集、Adapter 导出闭环；确认成功后再增加到 200 或 500 步。对于小红书风格这类任务，建议保留独立测试问题，不要只看训练 loss。
+
+一次成功的 MLX QLoRA manifest 可能包含：
+
+```json
+{
+  "status": "succeeded",
+  "baseModelId": "Qwen2.5-0.5B-Instruct",
+  "backend": "mlx",
+  "method": "qlora",
+  "trainingRows": 800,
+  "evaluationRows": 200,
+  "completedSteps": 500
+}
+```
+
+`succeeded` 只表示训练进程完成，不表示模型质量已经通过。必须同时检查 `baseModelSha256`、数据集 hash、`evalLoss`、实际完成步数和导出文件。
+
+### 8.4 下载、检查并运行 Adapter
+
+从页面下载 `training-export.zip`、`manifest.json` 和 `metrics.jsonl`，解压后检查：
+
+```bash
+mkdir -p "$HOME/AIKernelArtifacts/m2-lora/extracted"
+unzip -o "$HOME/Downloads/training-export.zip" \
+  -d "$HOME/AIKernelArtifacts/m2-lora/extracted"
+
+python3 -m json.tool \
+  "$HOME/AIKernelArtifacts/m2-lora/extracted/manifest.json"
+find "$HOME/AIKernelArtifacts/m2-lora/extracted" -maxdepth 3 -type f
+```
+
+MLX 产物通常包含 `adapter/adapters.safetensors`、Adapter 配置和 tokenizer。使用训练时完全相同的基础模型：
+
+```bash
+export BASE_MODEL="$HOME/AIModels/Qwen2.5-0.5B-Instruct"
+export ADAPTER_PATH="$HOME/AIKernelArtifacts/m2-lora/extracted/adapter"
+
+shasum -a 256 "$BASE_MODEL/model.safetensors"
+python -m mlx_lm.generate \
+  --model "$BASE_MODEL" \
+  --adapter-path "$ADAPTER_PATH" \
+  --prompt "请用小红书风格介绍一款适合通勤的保温杯。" \
+  --max-tokens 200
+```
+
+如果数据使用 `messages`，使用 tokenizer 的 chat template 生成 prompt；不要把 MLX QLoRA Adapter 直接交给 PyTorch PEFT、CUDA bitsandbytes 或 Ollama。Ollama 通常需要先将 Adapter 与相同基座 fuse，再转换成兼容的 GGUF；是否能转换取决于模型架构和工具版本。
+
+### 8.5 超时任务与部分产物
+
+如果页面显示 `Failed`，但仍然列出了 `manifest.json`、`metrics.jsonl` 或 `training-export.zip`，这通常表示 Worker 在超时或中断前已经完成了至少一个 checkpoint，并在子进程退出后归档了现有输出。它不是矛盾状态：
+
+- `Failed` 表示本次任务没有完成请求的全部训练步数，不代表训练成功；
+- `completedSteps` 只能说明最后一个已记录的训练步；
+- 产物可以用于检查 manifest、指标和 Adapter 文件是否完整；
+- 不能把这种产物直接注册或部署为完成训练的模型；
+- 当前页面也不会对失败/中断任务开放自动验证。
+
+本例在 500 步任务中完成了 360 步，且运行时间约 60 分钟，因此首先应将 `maxDurationMinutes` 调高到预计时长以上，并保留至少 10–20 分钟余量。例如本次速度约为 360 步 / 60 分钟，500 步理论上约需 84 分钟，下一次可以设置 120 分钟；实际时间仍会受评估频率、保存频率、首次模型加载和磁盘速度影响。不要仅因为训练 loss 或 eval loss 看起来较低就接受部分产物。
+
+### 8.6 训练后的自动快速验证
+
+训练 Worker 已验证 Adapter 导出和兼容重载。现在在成功任务详情中可以直接使用“训练后快速验证”，页面不会把任意推理命令当作安全脚本执行。可复现的验证至少需要固定：
+
+1. 训练任务对应的基础模型目录；
+2. `training-export.zip` 中的 Adapter 和 tokenizer；
+3. manifest 中的 backend、method、量化配置和 base hash；
+4. 有限数量的测试 prompt；
+5. 最大 token 数、超时和输出大小；
+6. 与训练 Worker 相同的离线依赖环境。
+
+页面验证已实现为 Worker 内的受限任务：只接受已成功任务绑定的同一基础模型、导出 Adapter 和每行一个的测试提示，最多 8 条，输出上限为 16–256 tokens。Worker 在后台运行并持久化每条结果，页面会轮询显示进度、Prompt 和回复；它不接受 shell 命令、Python 文件、网络 URL、用户路径或用户指定的可执行程序。该功能首期仅支持原生 MLX 任务；CPU/CUDA 任务仍使用上面的手动验证方式。
+
+### 8.6 模型下载自动化的边界
+
+“输入模型名后自动下载”可以实现，但不应直接让浏览器传入任意仓库并由 Web 进程执行下载。安全实现应具备：
+
+- NCF 管理员授权和审核状态；
+- 只允许已配置的 provider（例如 ModelScope 或受控 Hugging Face endpoint）；
+- 只允许批准的模型 ID、revision 和文件白名单；
+- 用户可配置的模型根目录，允许使用 Worker 的 `NCF_MODELS_ROOT`，或显式批准的 `App_Data` 子目录；
+- 临时下载目录、断点续传、磁盘空间检查、SHA-256/文件完整性检查；
+- 下载完成后重新执行 Worker 预检；
+- 不把 provider token 暴露给浏览器、日志或模型目录；
+- 下载过程作为 Worker 后台任务，带进度、取消、错误和审计事件；
+- 默认离线训练，下载任务完成后不保留外网访问能力。
+
+在没有完成 provider 白名单、许可证确认、hash 验证和 App_Data 路径隔离前，不建议把通用 `modelscope download` 或 `huggingface-cli` 做成页面上的任意命令执行按钮。
+
+## 9. 验收检查
 
 发布前验证：Admin 授权与错误 key 拒绝；有效两行上传及非法/超大数据拒绝；批准的本地模型；真实短 LoRA 训练与真实 step/loss 事件；独立验证集评估；刷新恢复；取消与 checkpoint 行为；重启后的中断状态；单 worker 存储锁。仅验证当前宿主实际可用的后端。
 

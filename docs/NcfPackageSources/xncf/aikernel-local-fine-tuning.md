@@ -226,7 +226,85 @@ The worker enforces `NCF_QUEUE_LIMIT` (8), `NCF_MAX_DURATION_MINUTES` (1440), `N
 
 `NCF_TELEMETRY_SECONDS` defaults to 2, `NCF_CANCEL_GRACE_SECONDS` to 30, `NCF_PREFLIGHT_SECONDS` to 120, and `NCF_TORCH_THREADS` to 2. CPU/RAM/PID limits are container/host controls. Archive creation needs additional free space; raw completed checkpoints remain if archiving fails. Back up/rotate a stopped store when retention admission caps are reached; no online-delete or auto-promotion API is provided.
 
-## 4. UI Workflow
+## 4. Platform Runbook: DGX Spark and MacBook M2
+
+Use the following order: validate the Worker first, then operate the web page. The two machines may be registered as separate Workers, but must not share dataset IDs, job IDs, or a `/data` directory. CPU and Apple Metal flows have been exercised in this environment; no DGX Spark hardware was available, so DGX Spark CUDA, driver, ARM64 image and memory behavior require on-site validation.
+
+### 4.1 NVIDIA DGX Spark: CUDA Worker
+
+On DGX Spark, prefer the `cuda` backend. Do not use the Mac `mlx` configuration, and do not copy CUDA QLoRA bitsandbytes/NF4 settings into an MLX Worker. Before deployment, check:
+
+```bash
+uname -m
+nvidia-smi
+docker version
+docker compose version
+docker run --rm --gpus all \
+  nvidia/cuda:12.8.1-runtime-ubuntu24.04 nvidia-smi
+```
+
+The image and CUDA version above are the repository Dockerfile baseline, not a guarantee for every DGX Spark firmware, driver or OS image. DGX Spark commonly uses an ARM64 host; when `uname -m` reports `aarch64`, verify native ARM64 builds for the base image, PyTorch CUDA wheel, bitsandbytes and all transitive dependencies. **Do not pass production acceptance with QEMU emulation.** If the repository Dockerfile or dependencies do not build natively, use an approved, scanned ARM64 image or a native Python environment on DGX Spark, while keeping the same Worker API contract.
+
+From the Worker directory, use this template after replacing paths and policies:
+
+```bash
+cd NcfPackageSources/tools/AIKernelFineTuning
+export NCF_WORKER_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+export NCF_MODELS_DIR="/srv/aikernel/approved-models"
+docker compose --profile cuda build cuda
+docker compose --profile cuda up -d cuda gateway
+curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/health
+curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/capabilities
+docker compose --profile cuda logs --tail 100 cuda gateway
+```
+
+Start with one small approved local model and a 1–10 step `cuda + lora` smoke job. Increase sequence length, effective batch size and steps gradually after preflight passes. If memory is insufficient, first reduce `maxSequenceLength`, `batchSize` and `loraRank`, then consider `gradientAccumulationSteps`; do not simply remove Worker memory, disk or PID limits. Choose QLoRA only when preflight reports it and the model is in a supported quantized format.
+
+If NCF runs outside DGX Spark, do not configure `127.0.0.1`; use a private address or TLS reverse proxy reachable only by NCF. `AllowedHosts` must allow the host and the NCF API-key configuration name must exactly match the Worker alias. Never expose the Worker API publicly.
+
+### 4.2 MacBook M2: Native MLX Worker
+
+Use a native macOS Worker to access Metal. Docker Desktop's Linux VM cannot provide Apple Metal to an MLX Worker. Use a dedicated macOS service account and separate model/data directories:
+
+```bash
+cd NcfPackageSources/tools/AIKernelFineTuning
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-mlx.txt
+export NCF_WORKER_KEY="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
+export NCF_MODELS_ROOT="$HOME/aikernel/approved-models"
+export NCF_DATA_ROOT="$HOME/aikernel/private-training-data"
+.venv/bin/python -m worker
+```
+
+In another terminal:
+
+```bash
+curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/health
+curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/capabilities
+```
+
+On the same Mac, configure `http://127.0.0.1:8091` in NCF. If NCF runs elsewhere, use a restricted private-network/TLS proxy rather than exposing the Worker publicly. macOS, model weights, activations and optimizer state share unified memory; start with a short sequence, `batchSize=1` and a small `loraRank`, then inspect memory and Worker resource events.
+
+Use `mlx + lora` for unquantized models. Use `mlx + qlora` only when preflight reports support. MLX QLoRA is a native MLX quantization path, not CUDA bitsandbytes; loading its adapter requires recreating the quantization described by the manifest.
+
+### 4.3 One complete web workflow
+
+Regardless of platform:
+
+1. Check `/health` and `/capabilities`; confirm the model directory and requested backend are available.
+2. In NCF Admin, open **AIKernel → Local Fine-Tuning**, choose **Add Worker**, and enter a unique alias, display name, absolute HTTP(S) endpoint, timeout (180 seconds is a practical first preflight value), and enabled status. Inject the API key on the NCF server; never put it in the browser form or URL.
+3. Select the Worker and wait for models, capabilities, datasets and job history to load. Do not switch Workers during upload, create or cancel requests.
+4. Under **Datasets**, upload UTF-8 JSONL training data and a separately named validation set. Verify row count, SHA-256 and validation results; fix reported line numbers instead of using CSV or a JSON array.
+5. Under **New Job**, select model, datasets, backend and method. Start with short-step `lora`; choose `qlora` only when preflight and memory allow it. Ensure `maxSequenceLength` does not truncate the answer.
+6. Watch true status, completed steps, train/validation loss, resources, events and artifacts. Closing the browser does not stop a job; refresh restores persisted Worker history.
+7. Cancellation stops a job; it is not pause/resume. Wait for a terminal state, then download `training-export.zip` and retain `manifest.json`, `metrics.jsonl`, and base/data hashes.
+8. Evaluate the same base + adapter + tokenizer in a separate inference runtime. Compare against the untuned baseline, including format, refusal boundaries, factuality and RAG behavior, before registering or deploying it. The training Worker never auto-publishes a model.
+
+## 5. UI Workflow
 
 1. Install/enable AIKernel and deploy/configure the companion worker separately. Open **AIKernel → Local Fine-Tuning** from NCF Admin.
 2. Check worker connection/version, active/queued counts, and backend capability reasons. Resolve unavailable dependencies, hardware, or missing models before submission.
@@ -241,6 +319,10 @@ The worker enforces `NCF_QUEUE_LIMIT` (8), `NCF_MAX_DURATION_MINUTES` (1440), `N
 ### In-Page Tutorial, Examples, and the First Job
 
 The page opens **Start here: fine-tuning tutorial** by default, covering “Worker → independent data → bounded training → monitoring/recovery → evaluation/deployment”, with links to both complete language guides. **Worker setup and troubleshooting** shows current hybrid-configuration fields; **Common problems and next actions** explains connection, data, memory and interruption errors.
+
+With no profile, or no enabled Worker with a valid configured secret, the page shows **Worker setup required** and setup instructions rather than a connection failure. Upload and training remain disabled; use **Add worker** or edit an existing profile to prepare it. Actual API, authorization and connectivity failures remain explicit errors.
+
+Literal `AIKernel.FineTuning.*` labels indicate missing module localization scripts, not parameter names. Update the AIKernel module/source containing the fix, rebuild and restart the actual NCF host, then refresh. The module uses the dedicated `_AIKernelLocalizationScripts` partial to avoid collisions with the Admin host's generic partial. Do not work around this by replacing training fields or editing the browser dictionary.
 
 Under **Datasets → Dataset examples and download**, switch between `prompt / completion` and `messages`, inspect and download four-row JSONL. Downloading does not upload data or submit a job. These examples demonstrate format only, not sufficient data or model quality. Use `prompt/completion` for a tokenizer without a chat template; do not promote a model based on the examples.
 
@@ -282,13 +364,13 @@ The job contract exposes the following controls; the selected backend may reject
 | `warmupRatio`, `weightDecay`                            | LR warmup fraction and optimizer regularization. Warmup reduces abrupt initial updates; backend support must be checked.                                                                   |
 | `loggingSteps`, `saveSteps`, `evalSteps`                | Logging, checkpoint, and validation cadence in optimizer steps. Frequent checkpoints/evaluation cost disk/time; evaluation requires held-out data.                                         |
 | `seed`                                                  | Reproducibility input, not a promise of identical results across hardware/dependency versions.                                                                                             |
-| `maxDurationMinutes`                                    | Job wall-time budget; separate from NCF HTTP timeout and host CPU/memory limits.                                                                                                           |
+| `maxDurationMinutes`                                    | Job wall-time budget; separate from NCF HTTP timeout and host CPU/memory limits. On timeout the Worker requests a checkpoint at a safe boundary, then terminates the job. |
 
 **Optimizer** state tracks updates and can consume significant memory even with adapters. There is no optimizer selector in the NCF job contract; use the backend's implemented optimizer, rather than inventing an `optimizer` request field. Optimizer choice/scheduler and backend-specific limitations belong to the worker version.
 
 Training loss measures fit to the examples. Evaluation loss measures fit to held-out examples under the same tokenization/loss convention. A falling training loss with rising validation loss suggests **overfitting**; reduce passes/capacity, improve data diversity, or regularize, then compare again. Losses from different templates, token masking, sequence caps, or datasets may not be directly comparable. A checkpoint is a recovery/evaluation artifact, not proof of model quality.
 
-## 5. Durable Jobs and Honest Observability
+## 6. Durable Jobs and Honest Observability
 
 The worker uses a **bounded durable SQLite queue with one active training job**. Resource-intensive training must not be scaled by starting multiple workers on the same job store.
 
@@ -301,7 +383,7 @@ The worker uses a **bounded durable SQLite queue with one active training job**.
 
 There is no integrated Prometheus deployment promised by this workflow. For production, add external monitoring/alerts for worker health, queue depth, stale events, CPU/RSS, GPU availability/utilization, OOMs, runtime overruns, disk capacity, and backup freshness. Do not expose raw prompts, datasets, or secrets as monitoring labels.
 
-## 6. Artifacts, Inference Registration, and Recovery
+## 7. Artifacts, Inference Registration, and Recovery
 
 ### Adapter Is Not a Standalone Model
 
@@ -341,7 +423,167 @@ MLX QLoRA from an unquantized base uses 4-bit affine quantization with group siz
 - Test restoration to a separate store with exactly one worker and compatible dependencies/models. Never have two workers share one writable store, including on network storage.
 - Rotate the shared key in both services, protect backups, and monitor externally. Keep the feature disabled until preflight and a real smoke test succeed.
 
-## 7. Acceptance Checks
+## 8. Hands-on Apple Silicon acceptance
+
+The following is a beginner-friendly native MLX path for macOS. It does not use Docker and does not try to expose Apple Metal to a Linux container.
+
+### 8.1 Prepare the Worker and model directories
+
+```bash
+cd NcfPackageSources/tools/AIKernelFineTuning
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-mlx.txt
+
+mkdir -p "$HOME/AIModels"
+mkdir -p "$HOME/AIKernelFineTuningData"
+
+export NCF_WORKER_KEY="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+export NCF_MODELS_ROOT="$HOME/AIModels"
+export NCF_DATA_ROOT="$HOME/AIKernelFineTuningData"
+export NCF_BIND_HOST=127.0.0.1
+export NCF_WORKER_PORT=8091
+python -m worker
+```
+
+In another terminal, check the service with the same secret:
+
+```bash
+curl --fail \
+  -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
+  http://127.0.0.1:8091/health
+```
+
+If `python` is missing in the new terminal, activate `.venv` first; `python3` is sufficient for viewing JSON without MLX. `NCF_MODELS_ROOT` must already exist even when the model has not been copied yet.
+
+In the NCF startup terminal, configure the same secret. The example Worker alias is `mlx_lab`:
+
+```bash
+export SenparcXncfAIKernel__FineTuning__Enabled=true
+export SenparcXncfAIKernel__FineTuning__AllowedHosts__0=127.0.0.1
+export SenparcXncfAIKernel__FineTuning__WorkerApiKeys__mlx_lab="$NCF_WORKER_KEY"
+```
+
+Restart NCF after changing environment variables and set the page endpoint to `http://127.0.0.1:8091`. If the page says the secret is missing, first check the exact alias, the NCF process environment and whether NCF was restarted; do not repeatedly generate a different Worker secret.
+
+### 8.2 Provision the original model
+
+The model root should contain a complete model directory, for example:
+
+```text
+$HOME/AIModels/Qwen2.5-0.5B-Instruct/
+├── config.json
+├── tokenizer_config.json
+├── tokenizer.json
+├── model.safetensors
+└── other tokenizer / model files
+```
+
+Model downloads are supply-chain operations: review the license, pin a revision, verify hashes, then copy the result into the Worker's read-only model root. When Homebrew Python enforces PEP 668, do not install into the system Python; use an isolated download environment:
+
+```bash
+python3 -m venv "$HOME/model-download-env"
+source "$HOME/model-download-env/bin/activate"
+python -m pip install modelscope
+modelscope download \
+  --model Qwen/Qwen2.5-0.5B-Instruct \
+  --local_dir "$HOME/AIModels/Qwen2.5-0.5B-Instruct"
+```
+
+ModelScope, the Hugging Face CLI and mirrors can differ by network, license and revision. The completed directory must still pass Worker preflight. Do not let a training job download models at runtime and do not copy provider tokens into the model directory.
+
+### 8.3 From a 10-step smoke test to 500 steps
+
+Use the default 10 steps first to prove the Worker, model, dataset and Adapter export loop. After it succeeds, increase to 200 or 500 steps. For a Xiaohongshu-style task, keep held-out test prompts instead of judging only by training loss.
+
+A successful MLX QLoRA manifest may contain:
+
+```json
+{
+  "status": "succeeded",
+  "baseModelId": "Qwen2.5-0.5B-Instruct",
+  "backend": "mlx",
+  "method": "qlora",
+  "trainingRows": 800,
+  "evaluationRows": 200,
+  "completedSteps": 500
+}
+```
+
+`succeeded` means the training process completed; it does not mean model quality passed. Also check `baseModelSha256`, the dataset hash, `evalLoss`, completed steps and the exported files.
+
+### 8.4 Download, inspect and run the Adapter
+
+Download `training-export.zip`, `manifest.json` and `metrics.jsonl` from the page:
+
+```bash
+mkdir -p "$HOME/AIKernelArtifacts/m2-lora/extracted"
+unzip -o "$HOME/Downloads/training-export.zip" \
+  -d "$HOME/AIKernelArtifacts/m2-lora/extracted"
+
+python3 -m json.tool \
+  "$HOME/AIKernelArtifacts/m2-lora/extracted/manifest.json"
+find "$HOME/AIKernelArtifacts/m2-lora/extracted" -maxdepth 3 -type f
+```
+
+An MLX export normally contains `adapter/adapters.safetensors`, Adapter configuration and a tokenizer. Use exactly the same base model:
+
+```bash
+export BASE_MODEL="$HOME/AIModels/Qwen2.5-0.5B-Instruct"
+export ADAPTER_PATH="$HOME/AIKernelArtifacts/m2-lora/extracted/adapter"
+
+shasum -a 256 "$BASE_MODEL/model.safetensors"
+python -m mlx_lm.generate \
+  --model "$BASE_MODEL" \
+  --adapter-path "$ADAPTER_PATH" \
+  --prompt "Write a Xiaohongshu-style post about a commuter thermos." \
+  --max-tokens 200
+```
+
+For `messages` data, use the tokenizer chat template to build the prompt. Do not pass an MLX QLoRA Adapter directly to PyTorch PEFT, CUDA bitsandbytes or Ollama. Ollama usually requires fusing the Adapter into the same base and converting the result to compatible GGUF; conversion depends on the model architecture and tool version.
+
+### 8.5 Timed-out jobs and partial artifacts
+
+If the page shows `Failed` but still lists `manifest.json`, `metrics.jsonl` or `training-export.zip`, the Worker usually reached at least one checkpoint before timeout or interruption and archived the output that existed when the child exited. This is not contradictory:
+
+- `Failed` means the requested training run did not complete all requested steps;
+- `completedSteps` is only the last recorded optimizer step;
+- artifacts can be inspected for manifest, metrics and Adapter integrity;
+- they must not be registered or deployed as a completed training model;
+- the page intentionally does not offer automated validation for failed or interrupted jobs.
+
+This run completed 360 of 500 steps in about 60 minutes. First increase `maxDurationMinutes` above the estimated wall time with a 10–20 minute reserve. At roughly 360 steps per 60 minutes, 500 steps would theoretically take about 84 minutes, so 120 minutes is a reasonable next setting; actual time depends on evaluation cadence, checkpoint cadence, first model loading and disk speed. Do not accept partial artifacts solely because training or evaluation loss appears low.
+
+### 8.6 Automated quick validation after training
+
+The Worker already verifies Adapter export and compatible reload. A successful job now exposes **Post-training quick validation** in the detail panel; the page still never treats arbitrary inference commands as scripts. A reproducible validation needs:
+
+1. The base-model directory used by the job;
+2. The Adapter and tokenizer from `training-export.zip`;
+3. The backend, method, quantization configuration and base hash from the manifest;
+4. A bounded set of test prompts;
+5. Maximum tokens, timeout and output limits;
+6. The same offline dependencies as the training Worker.
+
+The page starts a restricted Worker-side task: it accepts only the same base model bound to the successful job, its exported Adapter, and one prompt per line (at most 8 cases, with a 16–256 token output limit). Results are persisted and polled into the page with progress, prompts and responses. Shell commands, Python files, network URLs, user paths and user-selected executables are rejected. The first release supports native MLX jobs; use the explicit `mlx_lm.generate` commands above for CPU/CUDA jobs.
+
+### 8.6 Boundaries for model-download automation
+
+“Enter a model name and download it” is implementable, but the browser must not send an arbitrary repository to a Web process that executes the download. A safe implementation needs:
+
+- NCF administrator authorization and review state;
+- an allowlisted provider such as ModelScope or a controlled Hugging Face endpoint;
+- approved model IDs, revisions and file patterns only;
+- a configurable model root: the Worker `NCF_MODELS_ROOT` or an explicitly approved `App_Data` subdirectory;
+- a temporary download directory, resumable downloads and disk-space checks;
+- SHA-256/file-integrity verification followed by Worker preflight;
+- no provider token in the browser, logs or model directory;
+- a background Worker task with progress, cancellation, errors and audit events;
+- offline training after the download task completes.
+
+Until provider allowlists, license review, hash validation and App_Data path isolation are implemented, do not turn a generic `modelscope download` or `huggingface-cli` command into an arbitrary command button.
+
+## 9. Acceptance Checks
 
 Before promoting a deployment, verify: Admin authorization and wrong-key rejection; a valid two-row upload and rejection of malformed/oversized data; an allowlisted local model; a real short LoRA run with actual step/loss events; held-out evaluation; refresh recovery; cancellation and checkpoint behavior; interrupted state after restart; and one-worker storage locking. Exercise only backends actually available on the host.
 
