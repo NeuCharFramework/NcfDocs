@@ -42,12 +42,13 @@ This is the core engineering value of NCF modularity: **capabilities are split i
 
 ### 4.1 System Baseline Modules
 
-- `Senparc.Xncf.SystemCore`
-- `Senparc.Xncf.SystemManager`
-- `Senparc.Xncf.SystemPermission`
-- `Senparc.Xncf.XncfModuleManager`
-- `Senparc.Xncf.Menu`
-- `Senparc.Xncf.Tenant`
+- `Senparc.Xncf.SystemCore` (v0.1.1): system core services
+- `Senparc.Xncf.SystemManager` (v1.1.3): system administration
+- `Senparc.Xncf.SystemPermission` (v0.2.0): permission / role management
+- `Senparc.Xncf.XncfModuleManager` (v0.1.2): XNCF module management core
+- `Senparc.Xncf.Menu` (v0.1): menu management
+- `Senparc.Xncf.Tenant` (v0.1): multi-tenancy
+- `Senparc.Xncf.AreasBase` (v0.1): area base module
 
 ### 4.2 AI / Agent / RAG Modules
 
@@ -71,6 +72,14 @@ This is the core engineering value of NCF modularity: **capabilities are split i
 - `Senparc.Xncf.ChangeNamespace`
 - `Senparc.Xncf.WeixinManager`
 - `Senparc.Xncf.Dapr` (microservice integration; project version `0.11.0-preview2`)
+- `Senparc.Xncf.Accounts`
+- `Senparc.Xncf.Installer`
+
+Contract packages include `AIKernel.Abstractions`, `AgentsManager.Abstractions`,
+`MCP.Abstractions`, `PromptRange.Abstractions`, `NeuCharWorkflow.Abstractions`,
+and `Sandbox.Abstractions`; these provide shared contracts rather than standalone
+modules. `EmailExtension`, `OfficeExtension`, `SmsExtension`, and `ReloadPage`
+are source-only unpublished extensions.
 
 For full versions, order, and scenario guidance:
 

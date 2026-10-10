@@ -35,12 +35,13 @@
 
 ### 3.1 系统基础模块
 
-- `Senparc.Xncf.SystemCore`
-- `Senparc.Xncf.SystemManager`
-- `Senparc.Xncf.SystemPermission`
-- `Senparc.Xncf.XncfModuleManager`
-- `Senparc.Xncf.Menu`
-- `Senparc.Xncf.Tenant`
+- `Senparc.Xncf.SystemCore`（v0.1.1）：系统核心服务
+- `Senparc.Xncf.SystemManager`（v1.1.3）：系统管理
+- `Senparc.Xncf.SystemPermission`（v0.2.0）：权限 / 角色管理
+- `Senparc.Xncf.XncfModuleManager`（v0.1.2）：XNCF 模块管理核心
+- `Senparc.Xncf.Menu`（v0.1）：菜单管理
+- `Senparc.Xncf.Tenant`（v0.1）：多租户
+- `Senparc.Xncf.AreasBase`（v0.1）：Area 基础模块
 
 ### 3.2 AI / Agent / RAG 模块
 
@@ -64,6 +65,13 @@
 - `Senparc.Xncf.ChangeNamespace`
 - `Senparc.Xncf.WeixinManager`
 - `Senparc.Xncf.Dapr`（微服务接入；项目版本 `0.11.0-preview2`）
+- `Senparc.Xncf.Accounts`
+- `Senparc.Xncf.Installer`
+
+契约包包括 `AIKernel.Abstractions`、`AgentsManager.Abstractions`、
+`MCP.Abstractions`、`PromptRange.Abstractions`、`NeuCharWorkflow.Abstractions`
+和 `Sandbox.Abstractions`，提供共享契约而非独立模块。`EmailExtension`、
+`OfficeExtension`、`SmsExtension` 与 `ReloadPage` 仅在源码仓库提供，尚未发布。
 
 完整模块版本、排序、场景说明请看：
 
