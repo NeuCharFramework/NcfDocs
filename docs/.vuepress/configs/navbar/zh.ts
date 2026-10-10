@@ -21,6 +21,10 @@ export const navbarZh: NavbarConfig = [
         ],
       },
       {
+        text: 'AIKernel 本地微调',
+        link: '/zh/NcfPackageSources/xncf/aikernel-local-fine-tuning',
+      },
+      {
         text: '帮助',
         children: [
           {

@@ -23,4 +23,4 @@ NeuCharFramework 为开发者提供了`前后端一体（Razor Page）`以及`�
 
 前后端分离方案使用 `Vue` + `ElementUI` 技术栈。
 
-详细介绍：生态系统 > [前后端分离板](/Front/home/)
+详细介绍：生态系统 > [前后端分离板](/zh/Front/home/)

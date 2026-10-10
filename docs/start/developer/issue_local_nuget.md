@@ -17,7 +17,7 @@
 ```xml
     <Project Sdk="Microsoft.NET.Sdk">
       <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Version>1.0</Version>
         <AssemblyName>Senparc.Xncf.Application</AssemblyName>
         <RootNamespace>Senparc.Xncf.Application</RootNamespace>

@@ -30,7 +30,7 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——Sandbox v0.3.3：Jupyt
 
 持久化：`SandboxSession.Alias` / `SandboxSession.ExtraPorts` 两个新的可空列随六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL）的迁移加入。两个字段均不随容器销毁清除、运行时永不自动清空，仅手动重命名/清除会变更。单元测试同步扩展（端口映射解析、Notebook 构建、配额策略、别名规范化；共 52 个用例通过）。
 
-完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
 
 ## 2026-09-18更新
@@ -43,7 +43,7 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——Function 全局 Provit
 
 3、访问控制管理页：NeuCharPivot 菜单下新增页面（`/Admin/NeuCharPivot/Access`，仅超级管理员），为每个 Function 完整展示决策上下文——模块标识/版本/可用状态、代码基线、当前数据库策略与最终生效策略（含来源：数据库或代码）——以及模块已清除的孤儿策略。支持单条编辑（策略模式、用户/角色/权限选择器、备注）与对选中行的批量操作：批量应用 开放 / 受限 / 禁用 / 继承，或批量清除。数据库迁移已同步六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL）；单元测试同步扩展（覆盖语义、受限主体匹配、孤儿保留、绑定规范化）。
 
-完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
 
 ## 2026-09-14更新
@@ -56,7 +56,7 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——NeuBell WebHook v3：�
 
 3、请求日志新增记录实际请求方式与渲染后的真实地址/报文；管理页设置表格与请求日志新增「方式」列，设置表单新增请求方式选择、请求体模板编辑器与内置占位符说明。同时修复一个隐性缺陷：变更通知成功后日志曾被错误地标记为“请求未完成”。数据库迁移已同步六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL），单元测试同步扩展（渲染器行为、GET 语义、模板地址、渲染后二次校验、日志状态）。
 
-完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
 ## 2026-09-13更新
 
@@ -66,7 +66,7 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——NeuCharWorkflow（v0.4
 
 2、Chat 消息持久化：聊天历史落库到新表 `NEUCHAR_WORKFLOW_NeuCharWorkflowChatMessage`（每会话保留最近 200 条；数据库只保存参与者标识的 SHA256 摘要，原始访客令牌不落库）。主机重启后打开页面自动从数据库恢复历史（类似 n8n 的按数据库重建方式）；历史保留 30 天，宿主服务每日清理过期数据；会话重置时内存与数据库一并清空；工作流删除时其全部聊天历史随之删除。消息内容上限 8000 字符。数据库迁移已同步 Sqlite / SqlServer / MySql / PostgreSQL / Oracle / Dm 六个提供方（Oracle 的 Chat 内容列使用 NCLOB；回放 JSON 列沿用原迁移保持 CLOB，避免收缩列类型）。
 
-完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
 ## 2026-09-11更新
 
@@ -76,7 +76,7 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——NeuBell WebHook v2：�
 
 2、WebHook 请求日志：每一次出站 WebHook 请求（`item-created` / `items-changed` / `test`）的完整请求报文与结果均记录到新表 `ADMIN_NeuBellWebHookLog`（状态 sending → success/failed、HTTP 状态码、耗时毫秒、触发管理员 Id）。NeuBell 管理页新增「请求日志」列表：查看报文（JSON 美化展示）、按条删除、批量清空（保留最近 50 条）。日志写入失败仅记警告，绝不影响通知本身。数据库迁移已同步 Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL 六个提供方。
 
-完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
 ## 2026-09-06更新
 
@@ -94,7 +94,7 @@ NcfPackageSources（Developer-MAF-V3 分支）——后台体验、AIKernel 可�
 
 6、站点防护：Senparc.Web 新增 `CloudflareProtect` SystemConfig 配置节（默认关闭）。开启后，自用户打开网站（首个请求）起立即生效固定窗口限流与安全响应头。
 
-完整模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
 
 ## 2026-08-30更新
@@ -115,7 +115,7 @@ NcfPackageSources（Developer-MAF-V3 分支）各 XNCF 模块功能文档同步�
 
 5、其他：`SystemManager` 1.1.3、`XncfBuilder` 0.10.3（Preview Host 进程级模块预览）、`FileManager` 0.6.0；PromptRange 新增 API 文档 XML（ApiDocXML）。
 
-详细模块清单见 [NCF 核心能力详解](../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+详细模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
 
 ## 2026-08-29更新
@@ -130,7 +130,7 @@ NcfPackageSources（Developer-MAF-V3 分支）发布更新，主要内容：
 
 4、版本更新：XncfBuilder 模板 `1.1.7`、Senparc.Ncf.Database `0.21.8-preview8`；下载页支持选择下载源（自动 / 本地 / GitHub）并展示 MD5 指纹；NCF Desktop 更新至 `0.10.1-build10066`。
 
-详细升级说明见 [NcfPackageSources 版本升级说明](../NcfPackageSources/home/version-upgrade-notes.md)。
+详细升级说明见 [NcfPackageSources 版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
 
 ## 2025-05-04更新

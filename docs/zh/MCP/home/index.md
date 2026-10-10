@@ -1,33 +1,54 @@
-# MCP (Model Context Protocol) 模块
+# MCP（Model Context Protocol）模块
 
-MCP (Model Context Protocol) 模块是 NCF 框架中用于与大型模型AI进行交互的功能模块。它提供了一套标准的协议，用于在NCF应用程序中集成和使用各种AI模型，实现AI功能的快速开发与部署。
+> 内容于 2026-07-27 按 `NcfPackageSources` 开发分支核对。
+> 当前源码包版本：`Senparc.Xncf.MCP` `0.4.0-preview3`
 
-## 什么是MCP?
+NCF 将 MCP Server 作为 XNCF 模块能力统一注册。模块开启
+`EnableMcpServer` 后，框架会扫描模块程序集中的 MCP Tool，注册 HTTP
+transport，并为每个模块映射独立路由。
 
-Model Context Protocol(MCP) 是一种用于模型上下文交互的协议，它允许在不同的模型和平台之间进行无缝通信。在NCF框架中，MCP模块作为一个中间层，负责处理应用程序与AI模型之间的通信，使开发者可以更轻松地使用AI能力。
+## 当前工作方式
 
-MCP提供以下核心功能：
+1. 模块的 `Register` 返回 `EnableMcpServer => true`。
+2. 工具类使用 `[McpServerToolType]`，工具方法使用 `[McpServerTool]`。
+3. `XncfRegisterBase.AddMcpServer()` 使用 `WithHttpTransport()` 注册服务。
+4. `XncfRegisterBase.UseMcpServer()` 映射模块路由。
 
-1. 标准化的通信接口 - 通过统一的协议与不同AI模型交互
-2. 函数调用能力 - 支持模型通过函数调用与外部系统和服务交互
-3. 上下文管理 - 维护模型与用户之间的对话上下文
-4. 多模型支持 - 支持集成多种AI模型和服务
+路由规则为：
 
-## 为什么使用MCP?
+```text
+/mcp-<完整模块名，将点替换为短横线并转小写>/sse
+```
 
-MCP模块为开发者提供了以下优势：
+例如 `Senparc.Xncf.MCP` 的本地 HTTP 地址为：
 
-- **标准化** - 统一的接口简化了与不同AI模型的集成
-- **易于使用** - 简单的API使开发者能够快速实现AI功能
-- **可扩展性** - 支持添加自定义函数和服务
-- **灵活性** - 可以根据需求切换不同的AI模型
-- **性能优化** - 针对AI请求进行了性能优化
+```text
+http://localhost:5000/mcp-senparc-xncf-mcp/sse
+```
 
-## 入门指南
+旧文档中的 `/sse/sse` 不再是当前 XNCF 自动注册机制的默认地址。
 
-要开始使用MCP模块，可以参考以下文档：
+## MCP Manager 与模块 MCP Server
 
-- [安装与配置](../installation.md) - 如何安装和设置MCP模块
-- [基本使用](../basic-usage.md) - MCP的基本使用方法
-- [高级特性](../advanced-features.md) - MCP的高级功能与特性
-- [API参考](../api-reference.md) - MCP的API文档
+- `Senparc.Xncf.MCP` 提供 MCP 示例工具、端点管理和调用入口。
+- 任何 XNCF 模块都可以独立开启 MCP Server，不需要把工具集中到 MCP
+  Manager。
+- 已注册服务会写入 `XncfRegisterManager.McpServerInfoCollection`，供后台
+  功能选择和组装完整端点。
+
+## 安全边界
+
+::: danger 不要直接公开当前默认端点
+当前自动执行的 `MapMcp(routePattern)` 路径没有启用
+`McpAccessToken` 查询参数校验。配置文件中存在 `McpAccessToken` 属性，不等于
+MCP 路由已经使用它进行授权。部署到生产环境前，必须在反向代理、网络边界或
+应用授权层增加认证、授权、限流和审计。
+:::
+
+## 继续阅读
+
+- [安装与配置](../installation.md)
+- [基本使用](../basic-usage.md)
+- [高级特性与生产安全](../advanced-features.md)
+- [API 参考](../api-reference.md)
+- [常见问题](../faq.md)

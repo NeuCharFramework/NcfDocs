@@ -61,6 +61,23 @@
 - `Threads/ThreadInfo`、`XncfThreadBuilder`：模块线程管理
 - `VersionManager/*`：版本比对与信息管理辅助
 
+## 6. 后台租户作用域注册
+
+`StartNcfEngine(...)` 注册 scoped 的 `RequestTenantInfo` 和 singleton 的
+`IBackgroundTenantScopeFactory -> BackgroundTenantScopeFactory`。
+Tenant 模块另行注册 scoped 的 `IBackgroundTenantProvider -> BackgroundTenantProvider`，
+通过现有启用租户缓存提供租户信息。
+
+业务模块的 HostedService 可直接注入 `IBackgroundTenantScopeFactory`，
+从工厂提供的作用域解析 Service。不要把创建普通 DI 作用域等同于已经完成租户
+识别，也不要在模块里重复反射缓存或设置租户上下文。
+
+共享入口提供的是后台作用域初始化，不会自动把所有已有后台任务转换成跨租户
+调度。模块仍负责业务任务的启动、取消与资源释放。WeixinClaw 后台轮询已接入该入口；
+其他后台任务需要分别核对。升级后应重启宿主使新增 DI 注册生效。
+
+示例与行为约束见 [多租户配置与后台任务](../../start/config/mutiple-tenant.md)。
+
 ## 开发建议
 
 - 新模块以 `XncfRegisterBase` 为唯一注册入口，避免分散式启动代码。

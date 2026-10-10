@@ -1,7 +1,9 @@
-# NCF 核心能力详解（面向实战）
+# NCF 核心能力源码详解（面向实战）
 
-> 适用范围：`NcfPackageSources` 当前版本。  
-> 基线提交：`f668bf650`（2026-08-29，Developer-MAF-V3）。
+> 本页是面向 `NcfPackageSources` 开发者的源码剖析，不是使用 Template 开发
+> 业务模块的前置教程。普通二次开发请先看
+> [XNCF 二次开发接口与边界](/zh/start/xncf-develop/contracts-and-interfaces.html)。
+> 涉及版本的行为请以实际检出的源码提交为准。
 
 ## 1. 核心能力总览
 
@@ -27,6 +29,8 @@
 - **AdminChat 按账号隔离**（Senparc.Areas.Admin）：AI 助手会话/消息的列表、详情、发送、归档、删除、反馈与 Harness Trajectory 全部接口均按登录管理员做归属校验，跨账号访问一律返回“会话不存在或无权限”。超级管理员（`administrator` 角色）在 AdminChat 页面可打开「用量统计」面板：各账号会话数（总数/活跃/归档/删除）、消息数与最后活跃时间——仅数量统计，不展示任何会话或消息内容；多租户开启时统计同样受租户过滤器约束。
 - **CloudflareProtect 站点防护**（Senparc.Web）：新增 `CloudflareProtect` SystemConfig 配置节（默认关闭），开启后自首个请求起立即生效固定窗口限流与安全响应头。
 - MCP 相关能力已下沉到 `IXncfRegister`/`XncfRegisterBase` 统一协议，可按模块开关。
+- 模拟站点已迁移到 .NET 10，并提供中文、英文、日文、法文、西班牙文和俄文界面资源。
+- 安装器默认勾选六个基础模块，并在真正安装前显示确认清单。
 
 ### 1.1 XNCF 的单粒度模块定义（框架意义）
 
@@ -44,47 +48,53 @@
 
 ### 2.1 系统核心模块（59xx）
 
-| 模块 | 版本 | XncfOrder | 作用 |
-|---|---|---:|---|
-| Senparc.Xncf.Menu | 0.1 | 5940 | 系统菜单管理 |
-| Senparc.Xncf.XncfModuleManager | 0.1.2 | 5950 | 模块状态治理、安装开放、Function 状态检查 |
-| Senparc.Xncf.AreasBase | 0.1 | 5955 | Area 基础能力 |
-| Senparc.Xncf.SystemPermission | 0.2.0 | 5960 | 权限管理 |
-| Senparc.Xncf.SystemManager | 1.1.3 | 5970 | 系统管理与核心配置 |
-| Senparc.Xncf.SystemCore | 0.1.1 | 5980 | 系统核心数据结构 |
-| Senparc.Xncf.Tenant | 0.1 | 5990 | 多租户能力 |
+| 模块                           | 版本  | XncfOrder | 作用                                      |
+| ------------------------------ | ----- | --------: | ----------------------------------------- |
+| Senparc.Xncf.Menu              | 0.1   |      5940 | 系统菜单管理                              |
+| Senparc.Xncf.XncfModuleManager | 0.1.2 |      5950 | 模块状态治理、安装开放、Function 状态检查 |
+| Senparc.Xncf.AreasBase         | 0.1   |      5955 | Area 基础能力                             |
+| Senparc.Xncf.SystemPermission  | 0.2.0 |      5960 | 权限管理                                  |
+| Senparc.Xncf.SystemManager     | 1.1.2 |      5970 | 系统管理与核心配置                        |
+| Senparc.Xncf.SystemCore        | 0.1.1 |      5980 | 系统核心数据结构                          |
+| Senparc.Xncf.Tenant            | 0.1   |      5990 | 多租户能力                                |
 
 ### 2.2 AI / RAG / Agents 相关模块
 
-| 模块 | 版本 | XncfOrder | MCP | 说明 |
-|---|---|---:|---|---|
-| Senparc.Xncf.AIKernel | 5.0.5 | - | 否 | AI 模型/向量模型配置与运行基础 |
-| Senparc.Xncf.PromptRange | 0.15.2 | 5897 | 否 | 提示词靶场、PromptCode 体系 |
-| Senparc.Xncf.AgentsManager | 0.3.22 | - | 否 | 智能体模板、群聊任务、HITL 审批、A2A 远程智能体、AgentExecutionTask 管理 |
-| Senparc.Xncf.NeuCharWorkflow | 0.1.0-preview1 | 5890 | 否 | 服务端工作流编排：设计器、回放、Webhook 触发、并行/人工输入节点、NeuBell、Analytics |
-| Senparc.Xncf.KnowledgeBase | 0.1.10 | - | 否 | 知识库管理、导入、向量化、召回测试 |
-| Senparc.Xncf.AIAgentsHub | 0.1.0 | - | 否 | Agent Hub 示例模块（多数据库 Context、Function 端点、本地化资源） |
-| Senparc.Xncf.MCP | 0.1.0 | - | 是 | MCP 端点与调用管理 |
-| Senparc.Xncf.Sandbox | 0.3.3 | - | 否 | 独立沙箱编排：Docker/Wasm 隔离实验环境、配额（每用户 10 / 全局 50）/TTL、JupyterLab 外部控制（命令 + 标准输入、Python/C# Notebook 创建）、附加端口映射、会话别名、工作区文件管理 |
-| *Abstractions 契约包* | - | - | 否 | `AIKernel.Abstractions`、`AgentsManager.Abstractions`、`MCP.Abstractions`、`PromptRange.Abstractions`、`NeuCharWorkflow.Abstractions`、`Sandbox.Abstractions`：跨模块契约与集成事件抽象（不含 Register） |
+| 模块                         | 版本              | XncfOrder | MCP | 说明                                                                                                   |
+| ---------------------------- | ----------------- | --------: | --- | ------------------------------------------------------------------------------------------------------ |
+| Senparc.Xncf.AIKernel        | 5.0.5             |         - | 否  | AI 模型/向量模型配置与运行基础                                                                         |
+| Senparc.Xncf.PromptRange     | 0.15.2            |      5897 | 否  | 提示词靶场、PromptCode 体系                                                                            |
+| Senparc.Xncf.AgentsManager   | 0.3.22            |         - | 否  | 智能体模板、群聊任务、HIL 与 Workflow 集成；见 [集成说明](../xncf/agents-manager-human-in-the-loop.md) |
+| Senparc.Xncf.KnowledgeBase   | 0.1.10            |         - | 否  | 知识库管理、导入、向量化、召回测试                                                                     |
+| Senparc.Xncf.AIAgentsHub     | 0.1.0             |         - | 否  | Agent Hub（早期）                                                                                      |
+| Senparc.Xncf.NeuCharWorkflow | 0.1.0-preview1    |      5890 | 否  | 服务端可视化工作流、人工输入节点和 HIL 桥接；见 [操作说明](../xncf/neuchar-workflow.md)                |
+| Senparc.Xncf.MCP             | 0.1.0（Register） |         - | 是  | NuGet 包为 `0.4.0-preview3`；自动映射 MCP 端点                                                         |
 
 ### 2.3 开发与运维模块
 
-| 模块 | 版本 | XncfOrder | MCP | 说明 |
-|---|---|---:|---|---|
-| Senparc.Xncf.XncfBuilder | 0.10.3 | 5896 | 否 | 模块脚手架、迁移命令、AI 辅助代码生成、Preview Host（进程级模块预览） |
-| Senparc.Xncf.DatabaseToolkit | 0.7.1 | - | 否 | 数据库更新、备份、结构查询、Agent 集成查询 |
-| Senparc.Xncf.Swagger | 0.7.1 | 0 | 否 | 接口文档 |
-| Senparc.Xncf.Terminal | 0.1.6 | - | 否 | 服务器终端命令执行（高权限） |
-| Senparc.Xncf.FileManager | 0.6.0 | - | 否 | 文件管理 |
-| Senparc.Xncf.FirmwareUpdate | 0.1.0 | - | 否 | NCF Host / NCF Desktop 双安装包镜像（GitHub Release -> `wwwroot/NcfPackages/host` 与 `/desktop`），独立下载清单 + latest-release.json |
-| Senparc.Xncf.Dapr | 0.0.1 | - | 否 | Dapr 客户端抽象：服务调用（GET/POST/PUT/PATCH/DELETE）、Pub/Sub、状态管理、健康检查 |
-| Senparc.Xncf.DesktopBridge | 0.2.1-preview2 | - | 否 | 桌面伴侣应用 HTTP/SSE 桥接：能力发现、活动快照、授权同步流、一次性 PKCE 交接 |
-| Senparc.Xncf.ChangeNamespace | 0.3.9 | - | 否 | 全局命名空间替换（高风险） |
-| Senparc.Xncf.DynamicData | 0.1.0 | - | 否 | 动态数据基础模块（创建和管理动态数据，另有 ForNcf 变体） |
-| Senparc.Xncf.SenMapic | 0.1.3 | - | 否 | SenMapic 爬虫模块 |
-| Senparc.Xncf.Application | 0.0.5 | - | 否 | 外部程序调用模块 |
-| Senparc.Xncf.WeixinManager | 0.21.1 | 5880 | 是 | 微信管理与对应 MCP 能力 |
+| 模块                         | 版本                    | XncfOrder | MCP | 说明                                                                                                                       |
+| ---------------------------- | ----------------------- | --------: | --- | -------------------------------------------------------------------------------------------------------------------------- |
+| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5（项目） |      5896 | 是  | 模板包 `0.13.0`；直接脚手架及隔离 AI 开发 / Sandbox 预览 / 人工合入（[说明](../xncf/xncfbuilder-isolated-development.md)） |
+| Senparc.Xncf.Sandbox         | 0.1.0-preview1          |         - | 否  | 可销毁 Docker/Wasm 实验环境；见 [环境准备](../xncf/sandbox-environment.md)                                                 |
+| Senparc.Xncf.DesktopBridge   | 0.2.1-preview2          |         - | 否  | 受保护的 HTTP/SSE 桌面桥接、设备配对与活动通知                                                                             |
+| Senparc.Xncf.DatabaseToolkit | 0.7.1                   |         - | 否  | 数据库更新、备份、结构查询、Agent 集成查询                                                                                 |
+| Senparc.Xncf.Swagger         | 0.7.1                   |         0 | 否  | 接口文档                                                                                                                   |
+| Senparc.Xncf.Terminal        | 0.1.6                   |         - | 否  | 服务器终端命令执行（高权限）                                                                                               |
+| Senparc.Xncf.FileManager     | 0.2.5                   |         - | 否  | 文件管理                                                                                                                   |
+| Senparc.Xncf.FirmwareUpdate  | 0.1.0                   |         - | 否  | 同步 NCF 安装包并维护 latest-release.json                                                                                  |
+| Senparc.Xncf.ChangeNamespace | 0.3.9                   |         - | 否  | 全局命名空间替换（高风险）                                                                                                 |
+| Senparc.Xncf.DynamicData     | 0.1.0                   |         - | 否  | 动态数据基础模块（早期）                                                                                                   |
+| Senparc.Xncf.SenMapic        | 0.1.3                   |         - | 否  | 爬虫示例模块                                                                                                               |
+| Senparc.Xncf.Application     | 0.0.5                   |         - | 否  | 外部程序调用模块                                                                                                           |
+| Senparc.Xncf.WeixinManager   | 0.21.1                  |      5880 | 是  | 微信管理与对应 MCP 能力                                                                                                    |
+| Senparc.Xncf.Accounts        | -                       |         - | 否  | 账号管理模块                                                                                                               |
+| Senparc.Xncf.Installer       | -                       |         - | 否  | NCF 安装器                                                                                                                 |
+
+`AIKernel.Abstractions`、`AgentsManager.Abstractions`、`MCP.Abstractions`、
+`PromptRange.Abstractions`、`NeuCharWorkflow.Abstractions` 和
+`Sandbox.Abstractions` 等契约包提供跨模块契约及集成事件类型，不含模块
+`Register`。`EmailExtension`、`OfficeExtension`、`SmsExtension` 与
+`ReloadPage` 为仅在源码仓库提供的未发布扩展。
 
 ## 3. 关键机制详解（直接对应源码）
 
@@ -136,8 +146,13 @@ services.AddSenparcEventBus(options =>
 - 注册层：`AddMcpServer(IServiceCollection, IXncfRegister)`
 - 启用层：`UseMcpServer(IApplicationBuilder, IRegisterService)`
 - 路由规则：`mcp-<module-name-lowercase>`（由 `XncfRegisterBase` 自动生成）
+- SSE 地址在上述路由后追加 `/sse`；例如 MCP 模块为 `/mcp-senparc-xncf-mcp/sse`
 
 可在 `XncfRegisterManager.McpServerInfoCollection` 获取已登记 MCP 服务清单。
+
+::: warning 安全边界
+当前源码虽然有 `McpAccessToken` 配置项，但自动映射路径尚未启用查询参数令牌校验。对外暴露前必须在反向代理、网关或应用层补充鉴权、限流和审计。
+:::
 
 ### 3.4 API 鉴权强化（AgentsManager / PromptRange）
 
@@ -163,16 +178,36 @@ services.AddSenparcEventBus(options =>
 
 ## 4. 按场景落地（推荐路径）
 
-### 4.1 场景 A：搭建 AI + Prompt + Agent + KnowledgeBase 闭环
+### 4.1 场景 A：设计和运行 NeuChar Workflow
 
-1. 安装并开放基础模块：`AIKernel`、`PromptRange`、`AgentsManager`、`KnowledgeBase`。  
-2. 在 `AIKernel` 中配置可用模型（Chat/Embedding/向量库）。  
-3. 在 `PromptRange` 中沉淀 PromptCode 资产。  
-4. 在 `AgentsManager` 中通过 PromptCode 生成 AgentTemplate，组装 ChatGroup/Task。  
-5. 在 `KnowledgeBase` 导入文件并执行向量化，然后通过 RecallTest 验证召回质量。  
+1. 在 XncfModuleManager 中安装并启用 `Senparc.Xncf.NeuCharWorkflow`；安装会执行该模块自己的数据库迁移。
+2. 打开“NeuChar 工作流”，新建工作流、选择一个触发方式，并将全部运行节点连到该触发器。
+3. 配置已启用 XNCF 的 Function、Agent / A2A 对象或系统节点；执行状态与只读回看统一从任务列表进入。
+4. 仅当画布与引用模块均通过校验后，才启用定时或 Webhook 工作流。
+
+节点、触发器、操作步骤和受限 `{{= ... }}` 语言请看 [NeuChar Workflow](../xncf/neuchar-workflow.md)。
+
+### 4.2 场景 B：搭建 AI + Prompt + Agent + KnowledgeBase 闭环
+
+1. 安装并开放基础模块：`AIKernel`、`PromptRange`、`AgentsManager`、`KnowledgeBase`。
+2. 在 `AIKernel` 中配置可用模型（Chat/Embedding/向量库）。
+3. 在 `PromptRange` 中沉淀 PromptCode 资产。
+4. 在 `AgentsManager` 中通过 PromptCode 生成 AgentTemplate，组装 ChatGroup/Task。
+5. 在 `KnowledgeBase` 导入文件并执行向量化，然后通过 RecallTest 验证召回质量。
 6. 将召回结果与 Agent 工作流串接，形成可迭代链路。
 
-### 4.2 场景 B：模块治理（安装、开放、排障）
+需要额外适配行为或输出格式时，可参见 [AIKernel 本地微调](../xncf/aikernel-local-fine-tuning.md)。训练在独立鉴权的 worker 中执行，不在 NCF Web 进程内运行。经过评估的 adapter 或合并模型仍需单独部署、注册为推理模型；微调不能替代第 5、6 步，也不能提供实时且带访问控制的知识。
+
+### 4.2.1 场景 B1：Agent/Group HIL 接入 Workflow
+
+1. 确认 `AgentsManager` 和 `NeuCharWorkflow` 均已安装并启用。
+2. 在 Workflow 中搜索并添加 Agent、Agent 组或 A2A 对象，完成 Prompt 和连线配置。
+3. 运行进入 `humanTurn` 或 `toolApproval` 后，在 Workflow 运行面板或 AgentsManager 页面处理 HIL。
+4. 若是纯 Workflow 的审批或补充信息，使用“等待人工输入”系统节点；需要外部程序代为提交时，按节点文档配置恢复密钥和 WebAPI。
+
+HIL 请求当前依赖 Host 进程内的等待句柄。应用重启或多实例路由可能使已有等待无法继续；生产环境需要额外设计持久化 checkpoint、共享协调和审计策略。详见 [AgentsManager HIL 与 Workflow 集成](../xncf/agents-manager-human-in-the-loop.md)。
+
+### 4.3 场景 C：模块治理（安装、开放、排障）
 
 建议优先使用 `XncfModuleManager`：
 
@@ -182,13 +217,13 @@ services.AddSenparcEventBus(options =>
 
 这是排查“模块在、菜单在、但功能不可用”的第一入口。
 
-### 4.3 场景 C：数据库维护与发布安全
+### 4.4 场景 D：数据库维护与发布安全
 
 - 研发阶段：可结合 `DatabaseToolkit` + `DatabasePlant` 提高多数据库维护效率。
 - 发布阶段：建议避免把 `DatabasePlant` 带入生产运行包。
 - 涉及结构变更时：优先用模块自身 DbContext 迁移，避免跨模块上下文污染。
 
-### 4.4 场景 D：桌面安装包镜像
+### 4.5 场景 E：桌面安装包镜像
 
 `FirmwareUpdate` 适合做“发布兜底链路”：
 
@@ -198,6 +233,12 @@ services.AddSenparcEventBus(options =>
 - 自动更新 `latest-release.json`
 
 适用于官方发布镜像、离线兜底下载等场景。
+
+### 4.6 场景 F：本地化与首次安装
+
+- 站点与安装器支持 `zh-CN`、`en`、`ja`、`fr`、`es`、`ru`。
+- Function 参数说明可通过 `[LocalizedDescription]` 关联资源键。
+- 首次安装默认选择管理员、PromptRange、XncfBuilder、MCP、AIKernel、AgentsManager 六个模块；用户确认清单后才会写入安装状态。
 
 ## 5. 高风险模块清单（上线前必审）
 

@@ -39,11 +39,13 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
     {
-      text: '模块化开发',
+      text: 'Template 二次开发',
       children: [
         '/zh/start/xncf-develop/thought',
         '/zh/start/xncf-develop/about-xncf',
+        '/zh/start/xncf-develop/contracts-and-interfaces',
         '/zh/start/xncf-develop/create-xncf',
+        '/zh/start/xncf-develop/isolated-xncf-development',
         '/zh/start/xncf-develop/about-custom-xncf',
         '/zh/start/xncf-develop/dev-xncf',
         '/zh/start/xncf-develop/update-xncf',
@@ -111,20 +113,30 @@ export const sidebarZh: SidebarConfig = {
   ],
   '/zh/NcfPackageSources/': [
     {
-      text: '新手入口与能力说明',
+      text: '源码开发入口',
       children: [
         '/zh/NcfPackageSources/home/beginner-quickstart',
         '/zh/NcfPackageSources/home/index.md',
-        '/zh/NcfPackageSources/home/capability-guide',
+        '/zh/NcfPackageSources/home/project-relationships',
         '/zh/NcfPackageSources/home/version-upgrade-notes',
+        '/zh/NcfPackageSources/home/solution-project-map',
       ],
     },
     {
-      text: 'XNCF 扩展库',
-      children: ['/zh/NcfPackageSources/home/xncf-extension-modules'],
+      text: 'XNCF 源码剖析',
+      children: [
+        '/zh/NcfPackageSources/home/capability-guide',
+        '/zh/NcfPackageSources/home/xncf-extension-modules',
+        '/zh/NcfPackageSources/xncf/module-documentation-map',
+        '/zh/NcfPackageSources/xncf/senparc-web-admin',
+        '/zh/NcfPackageSources/xncf/aikernel-local-fine-tuning',
+        '/zh/NcfPackageSources/xncf/xncfbuilder-isolated-development',
+        '/zh/NcfPackageSources/xncf/neuchar-workflow',
+        '/zh/NcfPackageSources/xncf/sandbox-environment',
+      ],
     },
     {
-      text: 'NCF 基础库',
+      text: 'NCF 基础库源码剖析',
       children: [
         '/zh/NcfPackageSources/libs/Senparc.Ncf.Core',
         '/zh/NcfPackageSources/libs/Senparc.Ncf.Database',
@@ -140,7 +152,7 @@ export const sidebarZh: SidebarConfig = {
       ],
     },
     {
-      text: '核心接口',
+      text: '核心接口源码剖析',
       children: [
         '/zh/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IxncfRegister',
       ],

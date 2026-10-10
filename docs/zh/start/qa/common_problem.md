@@ -18,7 +18,7 @@
 
 ![Image text](./images/common_problem/mysql_engine_error.png)
 
-解决方案请参考：[如何切换Mysql](/start/database/appoint_database.html)
+解决方案请参考：[如何切换Mysql](/zh/start/database/appoint_database.html)
 
 ## 如何修改默认数据库连接字符串
 
@@ -101,7 +101,7 @@ dotnet tool update --global dotnet-ef --version 3.0.0-preview7.19362.6
 
 原因及解决方案：
 
-1.  代码不是最新的：请[拉取最新的代码](/start/start-develop/get-ncf-template)。
+1.  代码不是最新的：请[拉取最新的代码](/zh/start/start-develop/get-ncf-template)。
 
 2.  本地未安装XNCF命令：
 
@@ -111,21 +111,15 @@ dotnet tool update --global dotnet-ef --version 3.0.0-preview7.19362.6
 dotnet new install Senparc.Xncf.XncfBuilder.Template
 ```
 
-注：.NET 7 runtime 之前的 CLI 命令需要使用 `--install`：
-
-```
-dotnet new --install Senparc.Xncf.XncfBuilder.Template
-```
-
 执行完成后会看到以下内容
 
 ![Image text](./images/common_problem/generator_xncf_cli.png)
 
-在根据[XncfBuilder模块](/start/xncf-develop/create-xncf.html)去生成模块，以下图片中选本地已安装即可
+在根据[XncfBuilder模块](/zh/start/xncf-develop/create-xncf.html)去生成模块，以下图片中选本地已安装即可
 
 ![Image text](./images/common_problem/xncf_builder_template_new.png)
 
-3. .NET 7 的 CLI 有一个生成模板的 bug，请等待官方修复，或使用 .NET 6.0 的 CLI。
+3. 如果模板生成失败，请先确认正在使用 .NET 10 SDK、模板包安装成功，并检查 `dotnet new list` 中的模板短名称。
 
 ## NeuChar Sample的地址
 

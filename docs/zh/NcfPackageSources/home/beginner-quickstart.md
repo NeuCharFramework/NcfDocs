@@ -1,7 +1,8 @@
 # NcfPackageSources 新手快速上手（60 分钟）
 
 > 适用范围：`NcfPackageSources` 当前版本  
-> 文档基线：`NcfPackageSources` `HEAD = 631f16b4`（2026-06-17）
+> 本页用于源码仓库上手，不是 Template 二次开发的前置步骤。内容于
+> 2026-07-27 按开发分支核对。
 
 ## 1. 这篇文档帮你完成什么
 
@@ -15,14 +16,14 @@
 
 ## 2. 你现在应该具备的条件（检查清单）
 
-| 项目 | 要求 | 如何检查 |
-|---|---|---|
-| 操作系统 | Windows / macOS / Linux 任一 | - |
-| .NET SDK | 建议 8.0（与仓库当前版本一致） | `dotnet --version` |
-| Git | 可正常克隆仓库 | `git --version` |
-| 可用浏览器 | Chrome / Edge / Safari 任一 | - |
-| 本机端口 | `5001`（HTTPS）未被占用 | 启动日志是否出现 `Now listening on` |
-| 数据库 | 首次建议默认 SQLite | 无需额外安装 |
+| 项目       | 要求                                   | 如何检查                            |
+| ---------- | -------------------------------------- | ----------------------------------- |
+| 操作系统   | Windows / macOS / Linux 任一           | -                                   |
+| .NET SDK   | 10.0（与当前模拟站点和 XNCF 模板一致） | `dotnet --version`                  |
+| Git        | 可正常克隆仓库                         | `git --version`                     |
+| 可用浏览器 | Chrome / Edge / Safari 任一            | -                                   |
+| 本机端口   | `5000`（HTTP）未被占用                 | 启动日志是否出现 `Now listening on` |
+| 数据库     | 首次建议默认 SQLite                    | 无需额外安装                        |
 
 如果你还没准备好环境，可先看：
 
@@ -39,7 +40,7 @@ git rev-parse --short HEAD
 
 预期结果：
 
-- 提交号输出一串短 SHA（例如 `631f16b4`）。
+- 提交号输出一串短 SHA，并把它记录到问题或验证报告中。
 
 ## 4. 10-20 分钟：还原并编译
 
@@ -56,15 +57,19 @@ dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
 ## 5. 20-30 分钟：启动模拟站点
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
+dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 预期结果：
 
 - 日志中出现 `Now listening on`。
-- 通常包含 `https://localhost:5001`。
+- 使用上述命令时应包含 `http://localhost:5000`。
 
-随后浏览器访问：`https://localhost:5001`
+随后浏览器访问：`http://localhost:5000`
+
+如需使用本机 HTTPS 配置，可改用 `--launch-profile https`，地址为
+`https://localhost:5111`。`https://localhost:5001` 是 Docker profile 中的
+HTTPS 端口，不是普通 `dotnet run` 的默认地址。
 
 首次启动会进入安装流程，这是正常现象。
 
@@ -83,16 +88,19 @@ dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
 
 ## 7. 40-50 分钟：启用最小 AI / RAG 模块组合
 
-进入“模块管理”，优先安装并启用以下模块：
+首次安装默认已经勾选 `AIKernel`、`PromptRange`、`AgentsManager`、`MCP`（以及管理员、XncfBuilder）。先在确认清单中核对并完成安装；如果前面取消过安装，再到“模块管理”补装并启用。
+
+完成 RAG 闭环还需要额外安装：
+
+- `Senparc.Xncf.KnowledgeBase`
+
+本节会使用的模块组合为：
 
 - `Senparc.Xncf.AIKernel`
 - `Senparc.Xncf.PromptRange`
 - `Senparc.Xncf.AgentsManager`
-- `Senparc.Xncf.KnowledgeBase`
-
-可选：
-
-- `Senparc.Xncf.MCP`（如果你要验证 MCP 路由）
+- `Senparc.Xncf.KnowledgeBase`（非默认项）
+- `Senparc.Xncf.MCP`（仅在需要验证 MCP 路由时使用）
 
 参考文档：[模块管理](/zh/start/start-develop/admin-module-manage.html)
 
@@ -119,18 +127,18 @@ dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
 
 ## 9. 常见问题排查矩阵（先看这里）
 
-| 现象 | 常见原因 | 修复动作 |
-|---|---|---|
-| `dotnet` 命令不可用 | SDK 未安装或 PATH 未生效 | 安装/修复 .NET SDK 后重开终端，执行 `dotnet --info` |
-| `restore` 失败（超时/源不可达） | 网络或 NuGet 源异常 | 检查网络后重试 `dotnet restore`，必要时更换 NuGet 源 |
-| `build` 失败（SDK 不匹配） | 本机 SDK 版本过旧 | 升级到 .NET 8 SDK，再执行 `dotnet build` |
-| 启动后端口占用 | `5001` 已被其他进程使用 | 修改 `tools/NcfSimulatedSite/Senparc.Web/Properties/launchSettings.json` 端口 |
-| 一直停在安装页 | 初装未完成或数据库初始化失败 | 重做安装步骤并检查启动日志异常 |
-| 模块安装后菜单不出现 | 模块未启用或权限不足 | 在模块管理确认状态，检查管理员账号权限 |
-| Function 数量为 0 | 未使用 `[FunctionRender]` 或扫描未命中 | 检查 AppService 方法标注并重启应用 |
-| MCP 路由 404 | 模块未开启 `EnableMcpServer` 或未注册 | 检查模块 Register 配置与启动注册逻辑 |
-| AppService 返回 401/403 | 鉴权策略未满足 | 检查登录状态、AdminOnly 策略与 Bearer/Cookie 鉴权 |
-| KnowledgeBase 向量化失败 | 未配置可用向量模型 | 回到 AIKernel 补齐 Embedding 配置 |
+| 现象                            | 常见原因                               | 修复动作                                                                                    |
+| ------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `dotnet` 命令不可用             | SDK 未安装或 PATH 未生效               | 安装/修复 .NET SDK 后重开终端，执行 `dotnet --info`                                         |
+| `restore` 失败（超时/源不可达） | 网络或 NuGet 源异常                    | 检查网络后重试 `dotnet restore`，必要时更换 NuGet 源                                        |
+| `build` 失败（SDK 不匹配）      | 本机 SDK 版本过旧                      | 升级到 .NET 10 SDK，再执行 `dotnet build`                                                   |
+| 启动后端口占用                  | `5000` 或 `5111` 已被其他进程使用      | 修改 `tools/NcfSimulatedSite/Senparc.Web/Properties/launchSettings.json` 端口或显式指定 URL |
+| 一直停在安装页                  | 初装未完成或数据库初始化失败           | 重做安装步骤并检查启动日志异常                                                              |
+| 模块安装后菜单不出现            | 模块未启用或权限不足                   | 在模块管理确认状态，检查管理员账号权限                                                      |
+| Function 数量为 0               | 未使用 `[FunctionRender]` 或扫描未命中 | 检查 AppService 方法标注并重启应用                                                          |
+| MCP 路由 404                    | 模块未开启 `EnableMcpServer` 或未注册  | 检查模块 Register 配置与启动注册逻辑                                                        |
+| AppService 返回 401/403         | 鉴权策略未满足                         | 检查登录状态、AdminOnly 策略与 Bearer/Cookie 鉴权                                           |
+| KnowledgeBase 向量化失败        | 未配置可用向量模型                     | 回到 AIKernel 补齐 Embedding 配置                                                           |
 
 ## 10. 新手排障优先级（按这个顺序查）
 
@@ -158,7 +166,7 @@ dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
 
 - 初学者：
   [NcfPackageSources 总览](/zh/NcfPackageSources/home/index.html) ->
-  [NCF 核心能力详解](/zh/NcfPackageSources/home/capability-guide.html) ->
+  [NCF 核心能力源码详解](/zh/NcfPackageSources/home/capability-guide.html) ->
   [NCF 常见问题](/zh/start/qa/common_problem.html)
 
 - 模块开发者：
@@ -167,7 +175,7 @@ dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
   [核心接口 IXncfRegister](/zh/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IxncfRegister.html)
 
 - AI 应用开发者：
-  [NCF 核心能力详解](/zh/NcfPackageSources/home/capability-guide.html) ->
+  [NCF 核心能力源码详解](/zh/NcfPackageSources/home/capability-guide.html) ->
   [MCP 模块文档](/zh/MCP/home/index.html) ->
   `AIKernel / PromptRange / AgentsManager / KnowledgeBase` 对应模块页
 

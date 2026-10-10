@@ -54,9 +54,37 @@ Provides permission requirements, filters, handlers, and reusable authorization 
 ## 4. Multi-Tenant Context
 
 Related folder: `MultiTenant`  
-Key types: `RequestTenantInfo`, `TenantRule`
+Key types: `RequestTenantInfo`, `TenantRule`, `IBackgroundTenantScopeFactory`,
+`BackgroundTenantScopeFactory`, `IBackgroundTenantProvider`
 
-Delivers tenant context propagation into Service/Repository layers and supports explicit tenant-ignore contracts when needed.
+`RequestTenantInfo` propagates the current tenant into Service/Repository
+layers. The NCF context centrally applies tenant isolation and soft-delete
+filters. Global entities implementing `IIgnoreMulitTenant` are explicitly
+declared framework exceptions, not a reason for ordinary business code to
+disable filters.
+
+Host-wide background tasks do not pass through HTTP tenant identification, and
+creating a normal DI scope neither identifies nor enumerates tenants. The new
+public entry point initializes independent tenant scopes before resolving
+business Services:
+
+- `ForEachEnabledTenantAsync(action, cancellationToken)` executes callbacks in
+  tenant order. Each callback receives an independent scope that the factory
+  disposes after completion or failure.
+- `TryCreateScopeAsync(tenantId, cancellationToken)` creates a scope for a
+  specified enabled tenant. It returns `null` when no enabled tenant matches;
+  successful scopes are disposed by the caller.
+- Single-tenant mode creates only the default scope and does not depend on the
+  tenant registry.
+- Multi-tenant mode throws if the Provider is missing or returns invalid or
+  duplicate tenant information; it never falls back to tenant-unrestricted
+  queries.
+
+XncfBase registers the factory during framework startup. The Tenant module's
+typed `IBackgroundTenantProvider` reuses the existing enabled-tenant cache.
+Business modules do not need cache reflection or their own multi-tenant
+control implementation. See
+[Multi-Tenant Configuration and Background Work](../../start/config/mutiple-tenant.md).
 
 ## 5. AppService Contracts and Helpers
 

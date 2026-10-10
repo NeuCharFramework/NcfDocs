@@ -4,17 +4,17 @@
 
 Reference values for the available `AiPlatform` property:
 
-| AiPlatform Type | Description |
-| --------------- | ----------- |
-| UnSet | Not set |
-| None | Explicitly empty |
-| Other | Other platform |
-| NeuCharAI | Senparc `NeuChar` platform `AI` |
-| OpenAI | OpenAI |
-| AzureOpenAI | Azure OpenAI (AOAI) |
-| HuggingFace | HuggingFace |
-| FastAPI | FastAPI |
-| Ollama | Ollama |
+| AiPlatform Type | Description                     |
+| --------------- | ------------------------------- |
+| UnSet           | Not set                         |
+| None            | Explicitly empty                |
+| Other           | Other platform                  |
+| NeuCharAI       | Senparc `NeuChar` platform `AI` |
+| OpenAI          | OpenAI                          |
+| AzureOpenAI     | Azure OpenAI (AOAI)             |
+| HuggingFace     | HuggingFace                     |
+| FastAPI         | FastAPI                         |
+| Ollama          | Ollama                          |
 
 ## Azure OpenAI Configuration
 

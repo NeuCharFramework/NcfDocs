@@ -64,7 +64,7 @@ app.UseNcf<MySqlDatabaseConfiguration>();
 
 <div style="color:red">【注意事项】：由于 EFCore 基础库支持的原因，Mysql 的引擎必须为 InnoDB ,如果设置的为 Mylsam，则在运行时会报错，报错信息如下</div><br/>
 
-> 异常处理：[修改 Mysql 的配置后，启动报错](/start/qa/common_problem.html)
+> 异常处理：[修改 Mysql 的配置后，启动报错](/zh/start/qa/common_problem.html)
 
 ## 如何快速切换 SqlServer
 

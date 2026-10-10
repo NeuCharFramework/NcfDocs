@@ -1,6 +1,6 @@
 # DynamicWebApiEngine
 
-WebApiEngine is an engine that can be used for dynamic WebApi generation, based on .NET Core (including .NET 5, .NET 6), to solve the dynamic generation and management of WebApi in scenarios such as front-end and back-end separation, microservices, and asynchronous Web requests, and is fully compatible with Swagger.
+WebApiEngine is Senparc.CO2NET's dynamic Web API engine for frontend/backend separation, microservices, and asynchronous web-request scenarios, with Swagger integration. The current NCF development baseline targets .NET 10; use the API exposed by the installed `Senparc.CO2NET.WebApi` package as the authority.
 
 ## Open Source Address
 
@@ -35,7 +35,9 @@ After the project is created, it already includes an interface for simulating we
 
 Original project
 
-> Tip: You can develop using NET Core 3.1 or .NET 5, .NET 6, the code has no difference.
+::: warning Example version
+Screenshots and some `Startup` patterns on this page come from earlier ASP.NET Core templates. Use .NET 10 for a new project and adapt startup code using the installed package's XML documentation, IntelliSense, and compiler feedback.
+:::
 
 After running, Swagger is already loaded by default:
 

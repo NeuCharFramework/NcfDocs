@@ -1,6 +1,7 @@
 # XNCF 扩展库说明（Senparc.Xncf.Xxxx）
 
-> 适用范围：`NcfPackageSources` 当前版本。  
+> 本页从 `NcfPackageSources` 源码角度解释官方扩展模块，内容于 2026-08-13
+> 按开发分支核对。Template 业务开发者无需把官方模块源码作为前置知识。
 > 本页用于介绍 NCF 中的**XNCF 扩展模块（Senparc.Xncf.Xxxx）**。
 
 ## 1. NCF 作为“模块化框架”的定义
@@ -44,40 +45,45 @@
 
 ### 3.2 AI / Agent / RAG 模块
 
-- `Senparc.Xncf.AIKernel`（v5.0.5）：AI 模型/向量模型配置与运行基础；Token 用量监测（实时聚合 + 按运行异步进度）
-- `Senparc.Xncf.PromptRange`（v0.15.2）：提示词靶场、PromptCode 资产体系
-- `Senparc.Xncf.AgentsManager`（v0.3.22）：智能体模板、群聊/任务编排、HITL 人工审批、A2A 远程智能体、AgentExecutionTask 管理
-- `Senparc.Xncf.NeuCharWorkflow`（v0.1.0-preview1）：服务端工作流编排（可视化设计器、版本管理与自动保存、运行回放、Webhook 触发、并行节点、Human Input 节点、NeuBell 通知、Analytics 分析）
-- `Senparc.Xncf.KnowledgeBase`（v0.1.10）：知识库管理、导入、向量化、召回测试
-- `Senparc.Xncf.AIAgentsHub`（v0.1.0）：Agent Hub 示例模块（多数据库 Context、Function 端点、本地化资源）
-- `Senparc.Xncf.MCP`（v0.1.0）：MCP 端点与调用管理（`EnableMcpServer`）
-- `Senparc.Xncf.Sandbox`（v0.3.3）：独立沙箱编排（Docker/Wasm 隔离实验环境、配额（每用户 10 / 全局 50）/TTL、JupyterLab 外部控制——命令 + 标准输入与 Python/C# Notebook 创建、可选附加端口映射、会话别名、工作区文件管理）
-- 契约包：`AIKernel.Abstractions`、`AgentsManager.Abstractions`、`MCP.Abstractions`、`PromptRange.Abstractions`、`NeuCharWorkflow.Abstractions`、`Sandbox.Abstractions`
+- `Senparc.Xncf.AIKernel`：模型/向量配置，以及通过独立部署 worker 提供的可选[本地微调](../xncf/aikernel-local-fine-tuning.md)。
+- `Senparc.Xncf.PromptRange`
+- `Senparc.Xncf.AgentsManager`
+- `Senparc.Xncf.KnowledgeBase`
+- `Senparc.Xncf.MCP`
+- `Senparc.Xncf.AIAgentsHub`
+- `Senparc.Xncf.NeuCharWorkflow`：以 Function、系统节点和受控 Agent 组合服务端可视化工作流，参见 [NeuChar Workflow](../xncf/neuchar-workflow.md)。
 
 ### 3.3 开发与运维模块
 
-- `Senparc.Xncf.XncfBuilder`（v0.10.3）：模块脚手架、迁移命令、AI 辅助代码生成、Preview Host（进程级模块预览）
-- `Senparc.Xncf.DatabaseToolkit`（v0.7.1）：数据库更新、备份、结构查询、Agent 集成查询
-- `Senparc.Xncf.FileManager`（v0.6.0）：文件管理
-- `Senparc.Xncf.Terminal`（v0.1.6）：服务器终端命令执行（高权限）
-- `Senparc.Xncf.FirmwareUpdate`（v0.1.0）：NCF Host / NCF Desktop 双安装包镜像（GitHub Release -> `wwwroot/NcfPackages/host` 与 `/desktop`，独立下载清单 + MD5 指纹）
-- `Senparc.Xncf.Dapr`（v0.0.1）：Dapr 客户端抽象（服务调用、Pub/Sub、状态管理、健康检查）
-- `Senparc.Xncf.DesktopBridge`（v0.2.1-preview2）：桌面伴侣应用 HTTP/SSE 桥接（能力发现、活动快照、授权同步流、一次性 PKCE 交接）
-- `Senparc.Xncf.ChangeNamespace`（v0.3.9）：全局命名空间替换（高风险）
-- `Senparc.Xncf.DynamicData`（v0.1.0）：动态数据基础模块（含 ForNcf 变体）
-- `Senparc.Xncf.SenMapic`（v0.1.3）：SenMapic 爬虫模块
-- `Senparc.Xncf.Application`（v0.0.5）：外部程序调用模块
-- `Senparc.Xncf.WeixinManager`（v0.21.1）：微信管理后台与对应 MCP 能力
-- `Senparc.Xncf.Swagger`（v0.7.1）：接口说明文档
-- `Senparc.Xncf.Accounts`（v0.1）：用户（账号）管理
-- `Senparc.Xncf.Installer`（v0.3）：NCF 安装器
-- 未发布（Unpublished）：`EmailExtension`、`OfficeExtension`、`SmsExtension`、`ReloadPage`（仅源码仓库提供，不随 NuGet 发布）
+- `Senparc.Xncf.XncfBuilder`
+- `Senparc.Xncf.Sandbox`（独立沙箱编排：Docker/Wasm；环境准备见 [Sandbox 环境准备指南](../xncf/sandbox-environment.md)）
+- `Senparc.Xncf.DesktopBridge`（为桌面伴侣程序提供受保护的 HTTP/SSE 桥接、设备配对与活动通知）
+- `Senparc.Xncf.DatabaseToolkit`
+- `Senparc.Xncf.FileManager`
+- `Senparc.Xncf.Terminal`
+- `Senparc.Xncf.FirmwareUpdate`
+- `Senparc.Xncf.ChangeNamespace`
+- `Senparc.Xncf.WeixinManager`
+- `Senparc.Xncf.Dapr`（微服务接入；项目版本 `0.11.0-preview2`）
+- `Senparc.Xncf.Accounts`
+- `Senparc.Xncf.Installer`
 
-> 模块版本与说明同步自 `NcfPackageSources` 各模块 `Register.cs`（`Name` / `Version` / `MenuName`）。
+契约包包括 `AIKernel.Abstractions`、`AgentsManager.Abstractions`、
+`MCP.Abstractions`、`PromptRange.Abstractions`、`NeuCharWorkflow.Abstractions`
+和 `Sandbox.Abstractions`，提供共享契约而非独立模块。`EmailExtension`、
+`OfficeExtension`、`SmsExtension` 与 `ReloadPage` 仅在源码仓库提供，尚未发布。
 
 完整模块版本、排序、场景说明请看：
 
-- [NCF 核心能力详解](./capability-guide.md)
+- [NCF 核心能力源码详解](./capability-guide.md)
+
+### 3.4 近期模块入口
+
+- **AIKernel 本地微调**：管理数据集和有资源边界的 LoRA/QLoRA 任务，查看持久化训练事件，评估 adapter 后再独立部署推理模型。训练默认关闭，需要经过鉴权的伴随 worker，不能替代 KnowledgeBase 检索。参见[概念、部署与操作指南](../xncf/aikernel-local-fine-tuning.md)。
+- **NeuCharWorkflow**：用于创建、测试、触发、观察和回看服务端工作流。支持手动、定时和 Webhook 触发，可调用已启用 XNCF 的 Function、Agent / Agent 组 / A2A 对象及内置控制节点。请从 [NeuChar Workflow](../xncf/neuchar-workflow.md) 开始。
+- **Sandbox**：用于创建可销毁的 Docker/Wasm 实验会话；镜像、私有仓库和主机环境准备以 [Sandbox 环境准备](../xncf/sandbox-environment.md) 为准。
+- **XncfBuilder**：同时支持受信任的直接脚手架和隔离开发流程：源码快照、受限 AI 编辑、Sandbox 预览、人工评审和受保护合入。Template/应用使用者请先看[使用说明](/zh/start/xncf-develop/isolated-xncf-development.html)，源码贡献者继续看[源码剖析](../xncf/xncfbuilder-isolated-development.md)。
+- **DesktopBridge**：通过受保护的 HTTP/SSE 桥接、设备配对和活动通知连接 NCF Host 与已授权的桌面伴侣程序。桥接令牌只是应用层密钥，不能替代 TLS、网络访问控制或 Admin 授权。
 
 ## 4. 开发者约定：如何把 XNCF 当作“单粒度模块”来设计
 
@@ -88,6 +94,8 @@
 3. 优先通过 `[FunctionRender]` 声明可执行能力，保持“代码即声明”。
 4. 有对外工具需求时，再显式开启 `EnableMcpServer` 并补齐安全策略。
 5. 高风险模块必须最小权限运行，并保留审计记录。
+6. Function 的实现和 DTO 优先放入 `Application/AppServices`、`Application/DTOs`，与当前 XncfBuilder 模板保持一致。
+7. 面向多语言的菜单、描述和参数使用资源文件与 `[LocalizedDescription]`，不要在代码中固定单一语言。
 
 ## 5. 你应该从哪里继续阅读
 
@@ -95,7 +103,10 @@
   [NcfPackageSources 源码指南](./index.md)
 
 - 版本能力清单与机制：
-  [NCF 核心能力详解](./capability-guide.md)
+  [NCF 核心能力源码详解](./capability-guide.md)
 
 - XNCF 开发原理与 Register 细节：
   [Xncf 的构成](/zh/start/xncf-develop/about-xncf.html)
+
+- 文档覆盖度与两条阅读路径：
+  [XNCF 模块文档地图](../xncf/module-documentation-map.md)

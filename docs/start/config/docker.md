@@ -2,6 +2,10 @@
 
 Docker is an open-source application container engine that allows developers to package their applications and dependencies into a portable image, which can then be published to any popular Linux or Windows operating system machine, and can also achieve virtualization. Containers are completely sandboxed and have no interfaces with each other.
 
+::: warning Runtime version
+The current NCF development baseline is `net10.0`. Both `sdk` and `aspnet` Docker images must use the matching `10.0` major version. Check and update base images before copying a Dockerfile from an older branch.
+:::
+
 ## Docker Configuration
 
 ```
@@ -84,42 +88,42 @@ When Docker support is added, a Dockerfile will be generated in the project
 ```
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
--- Use dotnet6.0 sdk for compilation
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
--- Set working directory to app
+# Use dotnet10.0 sdk for compilation
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+# Set working directory to app
 WORKDIR /app
--- Expose port 80
+# Expose port 80
 EXPOSE 80
--- Expose port 443
+# Expose port 443
 EXPOSE 443
 
--- Use dotnet6.0 sdk for compilation
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
--- Compile the project to src
+# Use dotnet10.0 sdk for compilation
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+# Compile the project to src
 WORKDIR /src
--- Copy Senparc.Web.csproj project to Senparc.Web directory
+# Copy Senparc.Web.csproj project to Senparc.Web directory
 COPY ["Senparc.Web/Senparc.Web.csproj", "Senparc.Web/"]
--- Execute dotnet restore command to restore packages
+# Execute dotnet restore command to restore packages
 RUN dotnet restore "Senparc.Web/Senparc.Web.csproj"
--- Copy all files
+# Copy all files
 COPY . .
--- Set working directory to /src/Senparc.Web
+# Set working directory to /src/Senparc.Web
 WORKDIR "/src/Senparc.Web"
--- Execute dotnet build command, build Release environment to app/build directory
+# Execute dotnet build command, build Release environment to app/build directory
 RUN dotnet build "Senparc.Web.csproj" -c Release -o /app/build
 
--- Rename build to publish directory
+# Rename build to publish directory
 FROM build AS publish
--- Execute dotnet publish command, publish Release environment to app/publish directory
+# Execute dotnet publish command, publish Release environment to app/publish directory
 RUN dotnet publish "Senparc.Web.csproj" -c Release -o /app/publish
 
--- Finally
+# Finally
 FROM base AS final
--- Set working directory to app
+# Set working directory to app
 WORKDIR /app
--- Copy files from publish directory to app/publish
+# Copy files from publish directory to app/publish
 COPY --from=publish /app/publish .
--- Enter the project and execute dotnet Senparc.Web.dll
+# Enter the project and execute dotnet Senparc.Web.dll
 ENTRYPOINT ["dotnet", "Senparc.Web.dll"]
 
 ```
@@ -210,42 +214,42 @@ When Docker support is added, a Dockerfile will be generated in the project
 ```
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
--- Use dotnet6.0 sdk for compilation
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
--- Set working directory to app
+# Use dotnet10.0 sdk for compilation
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+# Set working directory to app
 WORKDIR /app
--- Expose port 80
+# Expose port 80
 EXPOSE 80
--- Expose port 443
+# Expose port 443
 EXPOSE 443
 
--- Use dotnet6.0 sdk for compilation
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
--- Compile the project to src
+# Use dotnet10.0 sdk for compilation
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+# Compile the project to src
 WORKDIR /src
--- Copy Senparc.Web.csproj project to Senparc.Web directory
+# Copy Senparc.Web.csproj project to Senparc.Web directory
 COPY ["Senparc.Web/Senparc.Web.csproj", "Senparc.Web/"]
--- Execute dotnet restore command to restore packages
+# Execute dotnet restore command to restore packages
 RUN dotnet restore "Senparc.Web/Senparc.Web.csproj"
--- Copy all files
+# Copy all files
 COPY . .
--- Set working directory to /src/Senparc.Web
+# Set working directory to /src/Senparc.Web
 WORKDIR "/src/Senparc.Web"
--- Execute dotnet build command, build Release environment to app/build directory
+# Execute dotnet build command, build Release environment to app/build directory
 RUN dotnet build "Senparc.Web.csproj" -c Release -o /app/build
 
--- Rename build to publish directory
+# Rename build to publish directory
 FROM build AS publish
--- Execute dotnet publish command, publish Release environment to app/publish directory
+# Execute dotnet publish command, publish Release environment to app/publish directory
 RUN dotnet publish "Senparc.Web.csproj" -c Release -o /app/publish
 
--- Finally
+# Finally
 FROM base AS final
--- Set working directory to app
+# Set working directory to app
 WORKDIR /app
--- Copy files from publish directory to app/publish
+# Copy files from publish directory to app/publish
 COPY --from=publish /app/publish .
--- Enter the project and execute dotnet Senparc.Web.dll
+# Enter the project and execute dotnet Senparc.Web.dll
 ENTRYPOINT ["dotnet", "Senparc.Web.dll"]
 
 ```

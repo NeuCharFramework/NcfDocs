@@ -22,7 +22,7 @@ It's like an airplane parked on the helipad, having access to all ground resourc
 
 So, why must we use `DatabasePlant` to complete the migration?
 
-First, when performing a series of EF Core migrations, the target project must have a clear runtime version, such as .NET Core 3.1 or .NET 6.0, etc. Most XNCF modules, to achieve better compatibility and flexibility, generally only choose standard library names and versions like .NET Standard 2.1. If you forcibly use .NET Standard for migration operations, errors will occur:
+First, EF Core migrations require a startup project with an explicit target runtime; the current NCF baseline is `net10.0`. Some reusable modules do not act as startup projects, so `Senparc.Web.DatabasePlant` should provide runtime and design-time services instead of running migrations directly from the module project:
 
 <img src="./images/database_plant-runtime-error.png" />
 

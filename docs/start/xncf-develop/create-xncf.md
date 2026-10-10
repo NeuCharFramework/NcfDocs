@@ -10,6 +10,13 @@ There are two ways to create an Xncf module:
 
 The following introduces the method of creating the basic code of the Xncf module using the "0 code" creation method.
 
+::: warning Choose the right creation path
+This page describes direct generation into a trusted solution. It changes the
+target solution and is therefore not the path for AI-generated or experimental
+code. For an isolated snapshot, Sandbox preview, diff review, and explicit
+human merge, use [Safely Create, Test, and Merge an XNCF Module](./isolated-xncf-development.md).
+:::
+
 ## Install Senparc.Xncf.XncfBuilder
 
 Run the NCF project, go to the [Module Management] menu, find the `XNCF Module Generator` (Senparc.Xncf.XncfBuilder) in the "Newly Discovered Modules" list, and click the [Install] button:
@@ -54,7 +61,7 @@ First, check if the Xncf Module template is installed locally
 If not, you need to execute the following command to install it
 
 ```
-dotnet new --install Senparc.Xncf.XncfBuilder.Template
+dotnet new install Senparc.Xncf.XncfBuilder.Template
 ```
 
 After installation, execute `dotnet new` again to display the content as follows
@@ -62,6 +69,11 @@ After installation, execute `dotnet new` again to display the content as follows
 <img src="./images/create-xncf/installed-template.png" />
 
 > Nuget address: [https://www.nuget.org/packages/Senparc.Xncf.XncfBuilder.Template](https://www.nuget.org/packages/Senparc.Xncf.XncfBuilder.Template)
+
+> The current source template package version is `0.13.0`; use the
+> version actually published by your NuGet source. Generated Function code now
+> lives under `Application/AppServices` and `Application/DTOs`, not the old
+> `OHS/Local/AppService` and `OHS/Local/PL` directories.
 
 ## Generate Xncf
 
@@ -133,8 +145,7 @@ Open the default page of the module settings (i.e., the [Settings/Execute] menu)
 > Tip: This function will automatically perform addition, subtraction, multiplication, division, and square calculations based on the parameters entered by the user.
 > Click the [Execute] button on the right side of "My Function" to pop up the visual operation interface of this function, which defines all the variables required for this function. These variables can be freely set through code. The example includes name, number 1, number 2, operator, and the option to calculate the square.
 > <img src="./images/create-xncf/15.png" />
-> Fill in the information and set the options. The following configuration will perform the calculation of `(2 &#215; 3)&#178;`
-> <img src="./images/create-xncf/16.png" />
+> Fill in the information and set the options. The following configuration will perform the calculation of `(2 &#215; 3)&#178;` > <img src="./images/create-xncf/16.png" />
 > After clicking [Execute], the calculation result is output:
 > <img src="./images/create-xncf/17.png" />
 > On the result page, we can also see a "Download Log" link. This log will only be temporarily stored in the server cache for 5 minutes. Download and open it to see that the log records the complete calculation process:

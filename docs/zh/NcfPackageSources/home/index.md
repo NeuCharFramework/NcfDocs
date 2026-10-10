@@ -1,13 +1,27 @@
 # NcfPackageSources 源码指南
 
-> 本页面面向“要读源码、改源码、扩模块、做开源协作”的开发者。  
-> 文档基线：`NcfPackageSources` 当前版本代码，`HEAD = 9eb195ad1`（2026-08-28，Developer-MAF-V3）。
+> 本区只面向“读取或修改 `NcfPackageSources` 源码、调试框架内部机制、参与
+> 官方仓库协作”的开发者。内容于 2026-07-27 按开发分支核对；涉及版本时请以
+> 实际检出的提交为准。
 
-## 新手先看（建议 3 步）
+## 先选择阅读路径
+
+| 你正在做什么                                      | 应阅读的文档                                                                                          |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 只使用 NCF Template 开发站点或 XNCF 模块          | [Template 二次开发](/zh/start/xncf-develop/contracts-and-interfaces.html)，不需要继续阅读本区源码剖析 |
+| 使用 `NcfPackageSources` 运行、调试或修改框架源码 | 本区“源码开发入口”和“源码剖析”                                                                        |
+| 维护模板母版、同步 NCF 仓库或准备官方包           | [项目关系、同步与发布](./project-relationships.md)                                                    |
+
+本区出现接口完整签名、扫描流程和基础库实现，是为了支持源码开发，不代表
+普通 Template 使用者必须掌握这些内容。
+
+## 源码开发先看（建议 4 步）
 
 1. 先完成：[新手快速上手（60 分钟）](./beginner-quickstart.md)
-2. 再进入：[NCF 核心能力详解](./capability-guide.md)
-3. 补齐模块化认知：[XNCF 扩展库说明（Senparc.Xncf.xxx）](./xncf-extension-modules.md)
+2. 理清仓库边界：[项目关系、同步与发布](./project-relationships.md)
+3. 再进入：[NCF 核心能力源码详解](./capability-guide.md)
+4. 补齐模块源码认知：[XNCF 扩展库说明（Senparc.Xncf.xxx）](./xncf-extension-modules.md)
+5. 使用[完整解决方案项目地图](./solution-project-map.md)，按项目定位 `NcfPackageSources_Include_NcfSimulatedSite.sln` 中的全部项目，包括 `Senparc.Web`、Admin 和全部 XNCF 模块。
 
 ## 你可以从这份文档得到什么
 
@@ -20,9 +34,13 @@
 
 `NcfPackageSources` 不是业务站点模板本身，而是 **NCF 官方核心包源码仓库**。它主要承担三层职责：
 
-- `src/Basic`：基础运行时能力（Core、XncfBase、Repository、Service、Database* 等）。
+- `src/Basic`：基础运行时能力（Core、XncfBase、Repository、Service、Database\* 等）。
 - `src/Extensions`：可安装扩展模块（系统模块、AI 模块、开发工具模块、运维模块等）。
 - `tools/NcfSimulatedSite`：用于集成联调和模块验证的模拟站点（含 `Senparc.Web`、后台 Area、Installer 等）。
+
+它与 `NeuCharFramework/NCF`、XncfBuilder 模板打包项目之间不是三份独立维护的
+业务代码。权威源、同步方向和发布边界见
+[项目关系、同步与发布](./project-relationships.md)。
 
 ## 2. 最常用的源码工作流
 
@@ -32,14 +50,13 @@
 git clone https://github.com/NeuCharFramework/NcfPackageSources.git
 cd NcfPackageSources
 
-dotnet restore src/NcfPackageSources_Include_NcfSimulatedSite.sln
 dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
 ```
 
 ### 2.2 本地运行（模拟站点）
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
+dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 ### 2.3 代码验证建议
@@ -91,14 +108,17 @@ dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
 - **提示词工程层**：`Senparc.Xncf.PromptRange`
 - **智能体编排层**：`Senparc.Xncf.AgentsManager`
 - **知识库/RAG 基础层**：`Senparc.Xncf.KnowledgeBase`
+- **服务端可视化编排**：`Senparc.Xncf.NeuCharWorkflow` —— [操作与表达式说明](../xncf/neuchar-workflow.md)
 - **模块生成与模块清单治理**：`Senparc.Xncf.XncfBuilder`
 - **MCP 管理与接入**：`Senparc.Xncf.MCP`
 - **数据库运维工具**：`Senparc.Xncf.DatabaseToolkit`
 - **安装包镜像/发布保障**：`Senparc.Xncf.FirmwareUpdate`
 
+本基线同时包含 .NET 10 运行时升级、六语言本地化、安装器默认模块确认、桌面端动态更新源，以及新版 `Application/AppServices` XNCF 模板结构。
+
 详细模块清单、版本、排序和实战路径请看：
 
-- [NCF 核心能力详解](./capability-guide.md)
+- [NCF 核心能力源码详解](./capability-guide.md)
 
 ## 5. XNCF 扩展库入口（单粒度模块）
 
@@ -135,6 +155,7 @@ dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
 - [Senparc.Ncf.DatabasePlant](../libs/Senparc.Ncf.DatabasePlant.md)
 - [Senparc.Ncf.Database](../libs/Senparc.Ncf.Database.md)
 - [IXncfRegister（关键接口）](../libs/Senparc.Ncf.AreaBase/IxncfRegister.md)
+- [完整解决方案项目地图](./solution-project-map.md)
 
 ## 8. 开源参与入口（Issue / PR / 讨论建议）
 
@@ -170,5 +191,5 @@ dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
 
 如果你要直接开始改源码，下一步建议阅读：
 
-- [NCF 核心能力详解](./capability-guide.md)
+- [NCF 核心能力源码详解](./capability-guide.md)
 - [版本升级说明](./version-upgrade-notes.md)

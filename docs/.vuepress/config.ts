@@ -7,6 +7,7 @@ import { googleAnalyticsPlugin } from '@vuepress/plugin-google-analytics'
 import { registerComponentsPlugin } from '@vuepress/plugin-register-components'
 import { shikiPlugin } from '@vuepress/plugin-shiki'
 import { defaultTheme } from '@vuepress/theme-default'
+import markdownItCjkFriendly from 'markdown-it-cjk-friendly'
 import { defineUserConfig } from 'vuepress'
 import { getDirname, path } from 'vuepress/utils'
 import {
@@ -122,6 +123,10 @@ export default defineUserConfig({
   }),
 
   // configure markdown
+  extendsMarkdown: (md) => {
+    md.use(markdownItCjkFriendly)
+  },
+
   markdown: {
     importCode: {
       handleImportPath: (importPath) => {
@@ -195,17 +200,28 @@ export default defineUserConfig({
       },
       maxResultsPerGroup: 10,
     }),
-    googleAnalyticsPlugin({
-      // we have multiple deployments, which would use different id
-      id: process.env.DOCS_GA_ID ?? '',
-    }),
+    // We have multiple deployments with different IDs. Do not register the
+    // plugin when an ID is absent, otherwise VuePress emits a build warning.
+    process.env.DOCS_GA_ID
+      ? googleAnalyticsPlugin({ id: process.env.DOCS_GA_ID })
+      : [],
     registerComponentsPlugin({
       componentsDir: path.resolve(__dirname, './components'),
     }),
     // only enable shiki plugin in production mode
     isProd
       ? shikiPlugin({
-          langs: ['bash', 'diff', 'json', 'md', 'ts', 'vue'],
+          langs: [
+            'bash',
+            'csharp',
+            'diff',
+            'json',
+            'md',
+            'razor',
+            'ts',
+            'vue',
+            'xml',
+          ],
           theme: 'dark-plus',
         })
       : [],

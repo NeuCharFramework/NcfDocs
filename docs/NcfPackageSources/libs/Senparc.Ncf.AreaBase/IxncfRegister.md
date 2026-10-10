@@ -1,6 +1,10 @@
 # IXncfRegister Interface (Current)
 
-> Baseline: `src/Basic/Senparc.Ncf.XncfBase/Interfaces/IXncfRegister.cs` (current version)
+> This page walks through
+> `src/Basic/Senparc.Ncf.XncfBase/Interfaces/IXncfRegister.cs` and belongs to
+> source analysis. When developing from a Template, start with
+> [XNCF Extension Contracts and Boundaries](/start/xncf-develop/contracts-and-interfaces.html);
+> the complete internal collaboration is not a prerequisite.
 
 ## 1. Contract Responsibility
 

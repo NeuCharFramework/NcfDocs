@@ -30,7 +30,7 @@ NcfPackageSources (Developer-MAF-V3-Spark branch) — Sandbox v0.3.3: external J
 
 Persistence: two new nullable columns `SandboxSession.Alias` / `SandboxSession.ExtraPorts` are added by migrations for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL). Both fields survive container destroy and are never cleared by the runtime — only manual rename/clear changes them. Unit tests extended (port-mapping parsing, notebook builder, quota policy, alias normalization; 52 passing).
 
-For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
 
 ## 2026-09-18 update
@@ -43,7 +43,7 @@ NcfPackageSources (Developer-MAF-V3-Spark branch) — Function global Provit acc
 
 3. Access Control management page: a new page under the NeuCharPivot menu (`/Admin/NeuCharPivot/Access`, super admin only) shows the full decision context for every Function — module identity/version/availability, code baseline, current DB policy, and the resulting effective policy (with source: DB or code) — plus orphan policies whose module was cleared. Supports single-row editing (policy mode, user/role/permission pickers, remark) and batch operations across selected rows: apply Open / Restricted / Deny / Inherit, or clear. Migrations synced for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL); unit tests extended for override semantics, restricted subject matching, orphan retention, and binding normalization.
 
-For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
 
 ## 2026-09-14 update
@@ -56,7 +56,7 @@ NcfPackageSources (Developer-MAF-V3-Spark branch) — NeuBell WebHook v3: reques
 
 3. Request log now records the HTTP method and the actually-rendered URL/body of each request; the management page and request log gain a "method" column, and the settings form gains a method selector, a body-template editor, and a built-in placeholder reference. A previously latent bug is also fixed: successful change notifications were incorrectly finalized as "请求未完成" (incomplete) in the log. Migrations synced for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL); unit tests extended (renderer behavior, GET semantics, templated URLs, re-validation, log status).
 
-For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
 ## 2026-09-13 update
 
@@ -66,7 +66,7 @@ NcfPackageSources (Developer-MAF-V3-Spark branch) — NeuCharWorkflow (v0.4.0): 
 
 2. Chat message persistence: chat history is now stored in a new `NEUCHAR_WORKFLOW_NeuCharWorkflowChatMessage` table (latest 200 messages per session; only the SHA256 digest of the participant key is stored, raw guest tokens never reach the database). After a host restart, opening the page restores the history from the database (n8n-style rebuild-on-load); history is retained for 30 days and expired rows are cleaned daily by a hosted service; resetting a session clears memory and database together; deleting a workflow deletes all of its chat history. Message content is capped at 8000 characters. Migrations synced for all six providers (Sqlite / SqlServer / MySql / PostgreSQL / Oracle / Dm; the Oracle chat content column uses NCLOB, and the replay JSON columns remain CLOB per the original migration to avoid shrinking column types).
 
-For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
 ## 2026-09-11 update
 
@@ -76,7 +76,7 @@ NcfPackageSources (Developer-MAF-V3-Spark branch) — NeuBell WebHook v2: per-ca
 
 2. WebHook request log: every outbound WebHook request (`item-created` / `items-changed` / `test`) now records its full payload and result in a new `ADMIN_NeuBellWebHookLog` table (status sending → success/failed, HTTP status code, elapsed milliseconds, admin user id). The NeuBell management page adds a "请求日志" (request log) list with payload inspection (pretty-printed JSON), per-row delete and bulk clear (keeps the latest 50). Logging failures only warn — they never block or fail a notification. Migrations synced for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL).
 
-For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
 ## 2026-09-06 update
 
@@ -94,7 +94,7 @@ NcfPackageSources (Developer-MAF-V3 branch) — Admin experience, AIKernel obser
 
 6. Site protection: new `CloudflareProtect` SystemConfig section in Senparc.Web (off by default). When enabled, protection (fixed-window rate limiting + security headers) activates immediately from the first request of a site visit.
 
-For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
 
 ## 2026-08-30 update
@@ -115,7 +115,7 @@ Documentation sync for all XNCF module capabilities in NcfPackageSources (Develo
 
 5. Others: `SystemManager` 1.1.3, `XncfBuilder` 0.10.3 (Preview Host process-level module preview), `FileManager` 0.6.0; PromptRange adds API documentation XML (ApiDocXML).
 
-For the full module inventory see [NCF Capability Deep Dive](../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md).
+For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
 
 ## 2026-08-29 Update
@@ -130,7 +130,7 @@ NcfPackageSources (Developer-MAF-V3 branch) released. Highlights:
 
 4. Version bumps: XncfBuilder template `1.1.7`, Senparc.Ncf.Database `0.21.8-preview8`; the download page supports source selection (auto / local / GitHub) and shows MD5 fingerprints; NCF Desktop updated to `0.10.1-build10066`.
 
-See [NcfPackageSources Version Upgrade Notes](../NcfPackageSources/home/version-upgrade-notes.md) for full upgrade details.
+See [NcfPackageSources Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md) for full upgrade details.
 
 
 ## 2023-04-21 Update

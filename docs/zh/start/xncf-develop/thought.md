@@ -20,7 +20,7 @@ NCF 采用模块化的思想构建，在系统底层的支持库基础之上，�
 
 NCF 的模块内部代号：`Xncf`，其中 `X` 即 Extension（可扩展）、Unknown（未知）之意，`ncf` 即表明此模块根植于 NCF 大框架。
 
-更多模块命名规则请参考：[Xncf 的命名规则](/start/xncf-develop/about-xncf.html#xncf-的命名规则)。
+更多模块命名规则请参考：[Xncf 的命名规则](/zh/start/xncf-develop/about-xncf.html#xncf-的命名规则)。
 
 ## Q&A：是否可以不使用模块化开发？
 

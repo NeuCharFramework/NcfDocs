@@ -15,11 +15,11 @@ Dm（达梦）
 
 ## 默认数据库配置
 
-NCF 第一次拉取后默认配置为 Sqlite，[配置方法](/start/database/setting.html)
+NCF 第一次拉取后默认配置为 Sqlite，[配置方法](/zh/start/database/setting.html)
 
 ## 如何切换指定数据库
 
-[切换指定数据库](/start/database/appoint_database.html)
+[切换指定数据库](/zh/start/database/appoint_database.html)
 
 ## 数据库连接字符串大全
 

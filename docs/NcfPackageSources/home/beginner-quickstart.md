@@ -1,7 +1,8 @@
 # NcfPackageSources Beginner Quickstart (60 Minutes)
 
 > Scope: current `NcfPackageSources` version  
-> Documentation baseline: `NcfPackageSources` `HEAD = 631f16b4` (2026-06-17)
+> This is a source-repository quickstart, not a prerequisite for Template-based
+> development. It was checked against the development line on 2026-07-27.
 
 ## 1. What You Will Finish With This Guide
 
@@ -15,14 +16,14 @@ If this is your first time touching NCF source code, this guide gets you from ze
 
 ## 2. Prerequisites Checklist
 
-| Item | Requirement | How to Verify |
-|---|---|---|
-| OS | Windows / macOS / Linux | - |
-| .NET SDK | Recommended 8.0 (aligned with the current version) | `dotnet --version` |
-| Git | Able to clone repositories | `git --version` |
-| Browser | Chrome / Edge / Safari | - |
-| Local port | `5001` (HTTPS) is available | Check `Now listening on` in startup logs |
-| Database | Start with default SQLite | No extra install needed |
+| Item       | Requirement                                                      | How to Verify                            |
+| ---------- | ---------------------------------------------------------------- | ---------------------------------------- |
+| OS         | Windows / macOS / Linux                                          | -                                        |
+| .NET SDK   | 10.0 (aligned with the current simulated site and XNCF template) | `dotnet --version`                       |
+| Git        | Able to clone repositories                                       | `git --version`                          |
+| Browser    | Chrome / Edge / Safari                                           | -                                        |
+| Local port | `5000` (HTTP) is available                                       | Check `Now listening on` in startup logs |
+| Database   | Start with default SQLite                                        | No extra install needed                  |
 
 If your environment is not ready yet:
 
@@ -39,7 +40,7 @@ git rev-parse --short HEAD
 
 Expected result:
 
-- A short SHA is printed (for example `631f16b4`).
+- A short SHA is printed. Record it in issue reports and validation notes.
 
 ## 4. Minute 10-20: Restore and Build
 
@@ -56,15 +57,19 @@ Expected result:
 ## 5. Minute 20-30: Run the Simulated Host Site
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj
+dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 Expected result:
 
 - Logs include `Now listening on`.
-- Usually includes `https://localhost:5001`.
+- With the command above, it should include `http://localhost:5000`.
 
-Then open: `https://localhost:5001`
+Then open: `http://localhost:5000`
+
+For the local HTTPS profile, use `--launch-profile https` and open
+`https://localhost:5111`. `https://localhost:5001` belongs to the Docker
+profile and is not the normal `dotnet run` default.
 
 On first run, seeing the installer is expected.
 
@@ -83,16 +88,19 @@ Expected result:
 
 ## 7. Minute 40-50: Enable Minimum AI / RAG Module Set
 
-In Module Management, install and enable these modules first:
+First-time installation already preselects `AIKernel`, `PromptRange`, `AgentsManager`, and `MCP` (together with Administrator and XncfBuilder). Verify the confirmation list and complete installation. If you cancelled earlier, install and enable them from Module Management.
+
+The RAG loop additionally requires:
+
+- `Senparc.Xncf.KnowledgeBase`
+
+This section uses the following module combination:
 
 - `Senparc.Xncf.AIKernel`
 - `Senparc.Xncf.PromptRange`
 - `Senparc.Xncf.AgentsManager`
-- `Senparc.Xncf.KnowledgeBase`
-
-Optional:
-
-- `Senparc.Xncf.MCP` (if you also want to validate MCP routing)
+- `Senparc.Xncf.KnowledgeBase` (not selected by default)
+- `Senparc.Xncf.MCP` (only when validating MCP routing)
 
 Reference: [Module Management](/start/start-develop/admin-module-manage.html)
 
@@ -119,18 +127,18 @@ Expected result:
 
 ## 9. Troubleshooting Matrix (Check This First)
 
-| Symptom | Common Cause | Fix |
-|---|---|---|
-| `dotnet` command not found | SDK missing or PATH not refreshed | Install/repair .NET SDK, reopen terminal, run `dotnet --info` |
-| `restore` fails (timeout/source unavailable) | Network or NuGet feed issue | Verify network, retry `dotnet restore`, switch NuGet source if needed |
-| `build` fails (SDK mismatch) | Local SDK is too old | Upgrade to .NET 8 SDK, rerun `dotnet build` |
-| Startup port conflict | `5001` already used | Change port in `tools/NcfSimulatedSite/Senparc.Web/Properties/launchSettings.json` |
-| Installer page keeps showing | Initial install not finished or DB init failed | Redo installer flow and inspect startup logs |
-| Module menu not visible after install | Module not enabled or insufficient permission | Recheck module state and admin role permissions |
-| Function count is 0 | Missing `[FunctionRender]` or scan miss | Check AppService annotations and restart app |
-| MCP route returns 404 | `EnableMcpServer` disabled or not registered | Check module Register config and startup registration path |
-| AppService returns 401/403 | Auth policy not satisfied | Check login state, AdminOnly policy, Bearer/Cookie auth context |
-| KnowledgeBase embedding fails | Embedding model not configured | Configure embedding model in AIKernel first |
+| Symptom                                      | Common Cause                                   | Fix                                                                                                                   |
+| -------------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `dotnet` command not found                   | SDK missing or PATH not refreshed              | Install/repair .NET SDK, reopen terminal, run `dotnet --info`                                                         |
+| `restore` fails (timeout/source unavailable) | Network or NuGet feed issue                    | Verify network, retry `dotnet restore`, switch NuGet source if needed                                                 |
+| `build` fails (SDK mismatch)                 | Local SDK is too old                           | Upgrade to .NET 10 SDK, rerun `dotnet build`                                                                          |
+| Startup port conflict                        | `5000` or `5111` already used                  | Change the profile in `tools/NcfSimulatedSite/Senparc.Web/Properties/launchSettings.json` or specify a URL explicitly |
+| Installer page keeps showing                 | Initial install not finished or DB init failed | Redo installer flow and inspect startup logs                                                                          |
+| Module menu not visible after install        | Module not enabled or insufficient permission  | Recheck module state and admin role permissions                                                                       |
+| Function count is 0                          | Missing `[FunctionRender]` or scan miss        | Check AppService annotations and restart app                                                                          |
+| MCP route returns 404                        | `EnableMcpServer` disabled or not registered   | Check module Register config and startup registration path                                                            |
+| AppService returns 401/403                   | Auth policy not satisfied                      | Check login state, AdminOnly policy, Bearer/Cookie auth context                                                       |
+| KnowledgeBase embedding fails                | Embedding model not configured                 | Configure embedding model in AIKernel first                                                                           |
 
 ## 10. Troubleshooting Priority (Use This Order)
 
@@ -158,7 +166,7 @@ Following this order avoids getting lost in low-value log details.
 
 - Beginner:
   [NcfPackageSources Overview](/NcfPackageSources/home/index.html) ->
-  [NCF Capability Deep Dive](/NcfPackageSources/home/capability-guide.html) ->
+  [NCF Capability Source Deep Dive](/NcfPackageSources/home/capability-guide.html) ->
   [NCF FAQ](/start/qa/common_problem.html)
 
 - Module developer:
@@ -167,8 +175,8 @@ Following this order avoids getting lost in low-value log details.
   [Core Interface IXncfRegister](/NcfPackageSources/libs/Senparc.Ncf.AreaBase/IxncfRegister.html)
 
 - AI application developer:
-  [NCF Capability Deep Dive](/NcfPackageSources/home/capability-guide.html) ->
-  [MCP Module Docs (currently under zh docs)](/zh/MCP/home/index.html) ->
+  [NCF Capability Source Deep Dive](/NcfPackageSources/home/capability-guide.html) ->
+  [MCP Module Docs](/MCP/home/index.html) ->
   module pages for `AIKernel / PromptRange / AgentsManager / KnowledgeBase`
 
 - Operations / release engineer:

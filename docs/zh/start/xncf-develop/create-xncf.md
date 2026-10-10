@@ -4,11 +4,15 @@
 
 创建 Xncf 模块有自动和手动两种方式：
 
-1.  手动方式即按照 [Xncf 的构成](/start/xncf-develop/about-xncf.html) 中的要求，创建 `Register` 类，并实现一系列的接口。
-    > 手动创建方式可参考[这里](/start/developer/xncf_module.html)。
+1.  手动方式即按照 [XNCF 的构成](/zh/start/xncf-develop/about-xncf.html) 中的要求，创建 `Register` 类，并实现需要的能力。
+    > 手动创建方式可参考[当前最小模块教程](/zh/start/developer/xncf_module.html)。
 2.  【推荐】使用 UI 可视化配置的方式自动创建模块。值得一提的是：这个用于创建 Xncf 模块的功能，也是由一个名为 Senparc.Xncf.XncfBuilder 的 Xncf 模块提供的。
 
 以下使用“0 代码”创建的方式，对使用可视化自动创建 Xncf 模块基础代码的方式进行介绍。
+
+::: warning 请先选择正确的创建路径
+本文描述的是直接生成到受信任解决方案中的方式，它会修改目标解决方案，因此不适合 AI 生成代码或实验性代码。需要隔离快照、Sandbox 预览、差异评审和显式人工合入时，请使用[安全地创建、测试并合入 XNCF 模块](./isolated-xncf-development.md)。
+:::
 
 ## 安装 Senparc.Xncf.XncfBuilder
 
@@ -54,7 +58,7 @@
 如果没有，就需要执行下面的命令来进行安装
 
 ```
-dotnet new --install Senparc.Xncf.XncfBuilder.Template
+dotnet new install Senparc.Xncf.XncfBuilder.Template
 ```
 
 安装完成后,再次执行`dotnet new`显示内容如下
@@ -62,6 +66,10 @@ dotnet new --install Senparc.Xncf.XncfBuilder.Template
 <img src="./images/create-xncf/installed-template.png" />
 
 > Nuget 地址：[https://www.nuget.org/packages/Senparc.Xncf.XncfBuilder.Template](https://www.nuget.org/packages/Senparc.Xncf.XncfBuilder.Template)
+
+> 当前源码模板包版本为 `0.13.0`，以 NuGet 源实际发布版本为准。
+> 生成后的 Function 代码位于 `Application/AppServices` 和
+> `Application/DTOs`，不再位于旧版 `OHS/Local/AppService`、`OHS/Local/PL`。
 
 ## 生成 Xncf
 

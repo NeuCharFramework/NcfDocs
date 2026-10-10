@@ -6,6 +6,7 @@
   "scripts": {
     "docs:build": "vuepress build docs --clean-cache --clean-temp",
     "docs:build-webpack": "DOCS_BUNDLER=webpack pnpm docs:build",
+    "docs:test": "node --test tests/markdown.test.mjs",
     "docs:clean": "rimraf docs/.vuepress/.temp docs/.vuepress/.cache docs/.vuepress/dist",
     "docs:dev": "vuepress dev docs --clean-cache --clean-temp",
     "docs:dev-webpack": "DOCS_BUNDLER=webpack pnpm docs:dev",
@@ -36,6 +37,7 @@
     "@vuepress/plugin-shiki": "2.0.0-rc.40",
     "@vuepress/theme-default": "2.0.0-rc.40",
     "http-server": "^14.1.1",
+    "markdown-it-cjk-friendly": "2.0.3",
     "sass-loader": "^15.0.0",
     "vue": "^3.4.34",
     "vuepress": "2.0.0-rc.14"
@@ -43,10 +45,11 @@
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
-    "@vuepress/plugin-docsearch": "2.0.0-rc.67",
+    "@vuepress/plugin-docsearch": "2.0.0-rc.40",
     "eslint": "^8.57.0",
     "eslint-config-vuepress": "^4.10.1",
     "eslint-config-vuepress-typescript": "^4.10.1",
+    "husky": "^9.1.7",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.3",
     "prettier-config-vuepress": "^4.4.0",
@@ -56,6 +59,11 @@
     "typescript": "^5.5.4"
   },
   "packageManager": "pnpm@9.5.0",
+  "pnpm": {
+    "overrides": {
+      "vue": "3.4.34"
+    }
+  },
   "engines": {
     "node": ">=18.19.0"
   }

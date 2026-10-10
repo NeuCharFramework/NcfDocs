@@ -109,12 +109,6 @@ Open the command line tool and execute the following command:
 dotnet new install Senparc.Xncf.XncfBuilder.Template
 ```
 
-Note: CLI commands before .NET 7 runtime need to use `--install`:
-
-```
-dotnet new --install Senparc.Xncf.XncfBuilder.Template
-```
-
 After execution, you will see the following content
 
 ![Image text](./images/common_problem/generator_xncf_cli.png)
@@ -123,7 +117,7 @@ Generate the module according to the [XncfBuilder module](/start/xncf-develop/cr
 
 ![Image text](./images/common_problem/xncf_builder_template_new.png)
 
-3. The CLI of .NET 7 has a bug in generating templates. Please wait for the official fix or use the CLI of .NET 6.0.
+3. If generation fails, confirm that the .NET 10 SDK is active, the template package is installed, and the expected short name appears in `dotnet new list`.
 
 ## NeuChar Sample Address
 

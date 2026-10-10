@@ -1,128 +1,100 @@
 # MCP Installation and Configuration
 
-This guide explains how to install and configure the MCP module in an NCF project so you can quickly integrate AI capabilities.
+> Applies to .NET 10 and was checked against the `NcfPackageSources`
+> development line on 2026-07-27.
 
-## Prerequisites
+## 1. Choose an installation method
 
-Before installing MCP, make sure:
+### NCF installer or module manager
 
-1. You have .NET SDK 8.0 or later installed
-2. You already have (or can create) an NCF-based project
-3. You understand basic NCF modular development concepts
+On first installation of the simulated site, `Senparc.Xncf.MCP` is selected by
+default under Advanced Options. On an existing site, install and enable it from
+the admin module manager.
 
-## Installation Steps
+This is the recommended method for NCF applications. The framework performs
+module scanning, service registration, and route mapping automatically.
 
-### 1. Install via NCF Module Manager
+### NuGet reference
 
-The easiest method is using the module manager in the NCF admin panel:
-
-1. Sign in to the NCF admin panel
-2. Go to `Extension Modules` -> `Module Management`
-3. In the `Module Store` tab, find `Senparc.Xncf.MCP`
-4. Click `Install`
-
-### 2. Install via NuGet
-
-If you want to integrate MCP during development, use NuGet:
+The package version in the current source project is `0.4.0-preview3`:
 
 ```bash
-Install-Package Senparc.Xncf.MCP -Version 0.1.0
+dotnet add package Senparc.Xncf.MCP --version 0.4.0-preview3
 ```
 
-Or with .NET CLI:
+If that preview is not available from your NuGet source, use a version that is
+actually published there or use a `ProjectReference` in a source-development
+solution. Do not use the module's internal `Register.Version` (currently
+`0.1.0`) as the NuGet package version.
+
+## 2. Automatic registration
+
+Current NCF applications do not need manual `AddMcpServer()` or
+`MapMcp("sse")` calls in `Startup.cs`. A module declares:
+
+```csharp
+public override bool EnableMcpServer => true;
+```
+
+During startup, NCF automatically:
+
+- calls the module's `AddMcpServer()`;
+- scans for `[McpServerToolType]`;
+- enables HTTP transport;
+- calls `UseMcpServer()` to map the module route.
+
+## 3. Start the site and locate the endpoint
+
+For the source simulated site:
 
 ```bash
-dotnet add package Senparc.Xncf.MCP --version 0.1.0
+dotnet run \
+  --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj \
+  --launch-profile http
 ```
 
-### 3. Add Project Reference Manually
+The `Senparc.Xncf.MCP` endpoint is:
 
-You can also install by manually referencing the MCP project:
-
-1. Clone the NCF source code from GitHub
-2. Add a reference to `Senparc.Xncf.MCP` in your solution
-
-## Configure the MCP Module
-
-After installation, add the following basic configuration.
-
-### 1. Configure `appsettings.json`
-
-Add MCP settings to `appsettings.json`:
-
-```json
-{
-  "SenparcCoreSetting": {
-    "McpAccessToken": "your-access-token",
-    "McpEndpoint": "http://localhost:5000/sse/sse"
-  },
-  "SenparcAiSetting": {
-    "ModelName": {
-      "Chat": "gpt-4o"
-    },
-    "AzureOpenAIKeys": {
-      "ApiKey": "your-azure-openai-api-key",
-      "AzureEndpoint": "your-azure-openai-endpoint-url"
-    }
-  }
-}
+```text
+http://localhost:5000/mcp-senparc-xncf-mcp/sse
 ```
 
-### 2. Register MCP in `Startup.cs`
+Another module follows the same rule. For example, `Org.Xncf.Sample` maps to:
 
-In recent NCF versions, MCP is usually registered automatically. For manual/custom setup, add this in `ConfigureServices`:
-
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    // Other service registrations...
-
-    services.AddMcpServer(opt =>
-    {
-        opt.ServerInfo = new Implementation()
-        {
-            Name = "ncf-mcp-server",
-            Version = "1.0.0",
-        };
-    })
-    .WithHttpTransport()
-    .WithToolsFromAssembly();
-}
+```text
+http://localhost:5000/mcp-org-xncf-sample/sse
 ```
 
-### 3. Configure MCP Endpoint Routing
+You can also read `McpRoute` from
+`XncfRegisterManager.McpServerInfoCollection` instead of duplicating the route
+algorithm in application code.
 
-Configure MCP route endpoints in `Configure`:
+## 4. Verification checklist
 
-```csharp
-public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{
-    // Other middleware...
+1. The module was scanned and `EnableMcpServer` is `true`.
+2. Startup logs do not report incomplete service registration or an MCP route
+   mapping failure.
+3. The tool assembly contains at least one `[McpServerToolType]` type.
+4. An MCP client or the NCF MCP invocation function can connect to the complete
+   `/sse` URL.
 
-    app.UseEndpoints(endpoints =>
-    {
-        // Other endpoints...
+Opening an SSE endpoint in a browser can leave the page waiting for events.
+That is normal for a long-lived connection and is not a complete health check.
 
-        endpoints.MapMcp("sse");
-    });
-}
-```
+## 5. Production configuration
 
-## Verify Installation
+::: warning Current source boundary
+`SenparcCoreSetting.McpAccessToken` still exists, but the current automatically
+mapped route does not enable its query-string validation. Do not treat adding
+`?token=...` as working authentication.
+:::
 
-After installation and configuration:
+Before exposing MCP, provide at least:
 
-1. Run your NCF application
-2. Open `http://localhost:5000/sse/sse` in a browser (based on your own config)
-3. If you see a successful event stream response, the MCP server is running
+- HTTPS;
+- authentication and authorization at a trusted proxy or application layer;
+- tool allowlists and least privilege;
+- IP or network-scope controls;
+- rate limits, timeouts, call logs, and sensitive-value redaction.
 
-## Troubleshooting
-
-If you see issues during setup:
-
-1. Confirm all required dependencies are installed
-2. Verify all configuration values in your config files
-3. Check application logs for detailed errors
-4. Confirm network connectivity, especially to AI services
-
-If the issue remains, check [FAQ](./faq.md) or submit an issue in [GitHub Issues](https://github.com/NeuCharFramework/NcfPackageSources/issues).
+Next: [Basic usage](./basic-usage.md).

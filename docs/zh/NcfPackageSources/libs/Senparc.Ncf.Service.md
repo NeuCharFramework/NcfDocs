@@ -27,7 +27,8 @@
 ```csharp
 public class DemoService : ServiceBase<DemoEntity>
 {
-    public DemoService(IServiceProvider serviceProvider) : base(serviceProvider)
+    public DemoService(IRepositoryBase<DemoEntity> repo, IServiceProvider serviceProvider)
+        : base(repo, serviceProvider)
     {
     }
 
@@ -42,6 +43,32 @@ public class DemoService : ServiceBase<DemoEntity>
 
 - Repository：通用数据访问能力。
 - Service：业务规则、事务边界、跨仓储协作、DTO 映射。
+
+示例中的 `IRepositoryBase<T>` 来自 `Senparc.Ncf.Repository`。框架已经注册通用
+仓储；Service 复用其能力，而不是直接操作 DbContext 或为普通查询另写模块仓储。
+下面是 Service 内通过现有仓储进行数据库端投影和可取消查询的示例，
+需要引用 `Microsoft.EntityFrameworkCore` 和 `Senparc.Ncf.Core.Enums`：
+
+```csharp
+public async Task<List<int>> GetEnabledIdsAsync(CancellationToken cancellationToken)
+{
+    return await RepositoryBase.GeAll(x => x.Id, OrderingType.Ascending)
+        .AsNoTracking()
+        .Where(x => x.Enabled)
+        .Select(x => x.Id)
+        .ToListAsync(cancellationToken)
+        .ConfigureAwait(false);
+}
+```
+
+租户隔离与软删除继续由底层统一处理，Service 只添加业务筛选。正常 HTTP 请求
+已经由多租户中间件初始化上下文，无需每次调用 `SetTenantInfo()`。宿主级后台任务
+应通过公共 `IBackgroundTenantScopeFactory` 获取已初始化的作用域，再从该作用域
+解析 Service；不要在业务模块中复制租户识别、启停判断或缓存反射代码。
+
+需要局部保存时复用仓储的 `SavePropertiesAsync`，见
+[Repository 指南](./Senparc.Ncf.Repository.md)；后台作用域示例见
+[多租户配置与后台任务](../../start/config/mutiple-tenant.md)。
 
 ## 实战建议
 

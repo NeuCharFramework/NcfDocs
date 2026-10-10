@@ -1,33 +1,59 @@
 # MCP (Model Context Protocol) Module
 
-The MCP (Model Context Protocol) module in NCF is used to interact with large AI models. It provides a standardized protocol for integrating and using AI models in NCF applications, helping teams deliver AI features faster.
+> Checked against the `NcfPackageSources` development line on 2026-07-27.
+> Current source package version: `Senparc.Xncf.MCP` `0.4.0-preview3`
 
-## What Is MCP?
+NCF registers an MCP server as a capability of an XNCF module. When a module
+enables `EnableMcpServer`, the framework scans that module assembly for MCP
+tools, registers an HTTP transport, and maps an independent route for the
+module.
 
-Model Context Protocol (MCP) is a protocol for context-based communication between models and platforms. In NCF, the MCP module works as a middleware layer between your application and AI models, so developers can use AI capabilities with less integration overhead.
+## Current registration flow
 
-MCP provides the following core capabilities:
+1. The module `Register` returns `EnableMcpServer => true`.
+2. Tool types use `[McpServerToolType]`; tool methods use `[McpServerTool]`.
+3. `XncfRegisterBase.AddMcpServer()` registers `WithHttpTransport()`.
+4. `XncfRegisterBase.UseMcpServer()` maps the module route.
 
-1. Standardized communication interfaces for different AI models
-2. Function calling so models can interact with external services
-3. Context management for model-user conversations
-4. Multi-model support for different AI providers and services
+The route convention is:
 
-## Why Use MCP?
+```text
+/mcp-<full-module-name-with-dots-replaced-by-hyphens-and-lowercased>/sse
+```
 
-The MCP module gives you these advantages:
+For `Senparc.Xncf.MCP`, the local HTTP endpoint is:
 
-- **Standardization**: One unified interface across different AI models
-- **Ease of use**: Simple APIs for faster AI feature implementation
-- **Extensibility**: Support for custom functions and services
-- **Flexibility**: Ability to switch models based on your needs
-- **Performance**: Optimized request flow for AI interactions
+```text
+http://localhost:5000/mcp-senparc-xncf-mcp/sse
+```
 
-## Getting Started
+The `/sse/sse` URL shown by older documentation is not the default endpoint of
+the current XNCF auto-registration flow.
 
-To get started with MCP, read the following documents:
+## MCP Manager and module MCP servers
 
-- [Installation and Configuration](../installation.md): Install and configure the MCP module
-- [Basic Usage](../basic-usage.md): Learn MCP fundamentals and workflow
-- [Advanced Features](../advanced-features.md): Explore advanced MCP capabilities
-- [API Reference](../api-reference.md): View MCP APIs and extension points
+- `Senparc.Xncf.MCP` provides sample tools, endpoint management, and an MCP
+  invocation entry point.
+- Any XNCF module can expose its own MCP server; tools do not have to be
+  centralized in MCP Manager.
+- Registered services are stored in
+  `XncfRegisterManager.McpServerInfoCollection` so admin functions can select a
+  server and build its full endpoint.
+
+## Security boundary
+
+::: danger Do not expose the default endpoint directly
+The currently executed `MapMcp(routePattern)` path does not enable the
+`McpAccessToken` query-string check. Having an `McpAccessToken` setting does not
+mean the MCP route uses it for authorization. Before production exposure, add
+authentication, authorization, rate limiting, and auditing at a trusted reverse
+proxy, network boundary, or application authorization layer.
+:::
+
+## Continue reading
+
+- [Installation and configuration](../installation.md)
+- [Basic usage](../basic-usage.md)
+- [Advanced usage and production security](../advanced-features.md)
+- [API reference](../api-reference.md)
+- [FAQ](../faq.md)
