@@ -27,7 +27,29 @@ docker info
 
 You should see both Client and Server versions, and `docker info` should succeed. Podman is fine if it exposes a working `docker`-compatible CLI.
 
-### 2.1 If Docker is missing
+### 2.1 Shared isolated runtime configuration
+
+Sandbox and Workspace now use the same `IIsolatedRuntimeProvider` for Docker:
+
+```json
+{
+  "SenparcNcf": {
+    "IsolatedRuntime": {
+      "Docker": {
+        "Executable": "docker",
+        "ProbeTimeoutSeconds": 8
+      }
+    }
+  }
+}
+```
+
+The provider centralizes structured mounts, ports, environment variables, networking, CPU, memory,
+pids, read-only root filesystems, capabilities, no-new-privileges, process timeouts, logs, removal,
+and orphan queries. Sandbox still owns temporary sessions and TTL, while Workspace owns durable files
+and editing sessions.
+
+### 2.2 If Docker is missing
 
 Install manually for your OS (commands differ by platform):
 

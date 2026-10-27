@@ -260,8 +260,6 @@ docker compose --profile cuda build cuda
 docker compose --profile cuda up -d cuda gateway
 curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
   http://127.0.0.1:8091/health
-curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
-  http://127.0.0.1:8091/capabilities
 docker compose --profile cuda logs --tail 100 cuda gateway
 ```
 
@@ -288,8 +286,6 @@ export NCF_DATA_ROOT="$HOME/aikernel/private-training-data"
 ```bash
 curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
   http://127.0.0.1:8091/health
-curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
-  http://127.0.0.1:8091/capabilities
 ```
 
 在同一台 Mac 上，NCF Worker 端点填 `http://127.0.0.1:8091`。如果 NCF 在另一台机器，不能直接把 Worker 监听到公网；应使用受限内网/TLS 代理，并显式设置 `NCF_BIND_HOST`、防火墙和访问控制。M2 的统一内存同时被 macOS、模型权重、激活和优化器使用；正式训练前先以短序列、`batchSize=1`、小 `loraRank` 冒烟，再观察系统内存和 Worker 资源事件。
@@ -300,7 +296,7 @@ curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
 
 无论使用哪台机器，都按下面顺序操作：
 
-1. 启动并检查 Worker 的 `/health`、`/capabilities`，确认模型目录和后端均可用。
+1. 启动并检查 Worker 的 `/health`；该响应已经包含 Worker 能力列表，确认模型目录和后端均可用。
 2. 在 NCF Admin 打开 **AIKernel → 本地微调**，点击 **添加 Worker**。填写唯一别名、显示名称、绝对 HTTP(S) 端点、超时（首次预检可设 180 秒）并启用；保存后确认状态为可用。API key 通过 NCF 服务端配置注入，不在浏览器表单或 URL 中填写。
 3. 选择刚添加的 Worker，等待模型、后端能力、数据集和任务历史加载完成。不要在上传、创建或取消请求期间切换 Worker。
 4. 在 **数据集** 中上传 UTF-8 JSONL。训练集和验证集分别上传并命名；优先使用独立验证集。核对记录数、SHA-256 和校验结果，失败时按行号修正，不要用 CSV 或 JSON 数组替代。

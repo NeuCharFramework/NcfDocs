@@ -255,8 +255,6 @@ docker compose --profile cuda build cuda
 docker compose --profile cuda up -d cuda gateway
 curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
   http://127.0.0.1:8091/health
-curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
-  http://127.0.0.1:8091/capabilities
 docker compose --profile cuda logs --tail 100 cuda gateway
 ```
 
@@ -283,8 +281,6 @@ In another terminal:
 ```bash
 curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
   http://127.0.0.1:8091/health
-curl --fail -H "X-NCF-Worker-Key: $NCF_WORKER_KEY" \
-  http://127.0.0.1:8091/capabilities
 ```
 
 On the same Mac, configure `http://127.0.0.1:8091` in NCF. If NCF runs elsewhere, use a restricted private-network/TLS proxy rather than exposing the Worker publicly. macOS, model weights, activations and optimizer state share unified memory; start with a short sequence, `batchSize=1` and a small `loraRank`, then inspect memory and Worker resource events.
@@ -295,7 +291,7 @@ Use `mlx + lora` for unquantized models. Use `mlx + qlora` only when preflight r
 
 Regardless of platform:
 
-1. Check `/health` and `/capabilities`; confirm the model directory and requested backend are available.
+1. Check `/health`; its response includes the Worker capabilities. Confirm the model directory and requested backend are available.
 2. In NCF Admin, open **AIKernel → Local Fine-Tuning**, choose **Add Worker**, and enter a unique alias, display name, absolute HTTP(S) endpoint, timeout (180 seconds is a practical first preflight value), and enabled status. Inject the API key on the NCF server; never put it in the browser form or URL.
 3. Select the Worker and wait for models, capabilities, datasets and job history to load. Do not switch Workers during upload, create or cancel requests.
 4. Under **Datasets**, upload UTF-8 JSONL training data and a separately named validation set. Verify row count, SHA-256 and validation results; fix reported line numbers instead of using CSV or a JSON array.

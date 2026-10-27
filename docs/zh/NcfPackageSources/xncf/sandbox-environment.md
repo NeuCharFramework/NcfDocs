@@ -32,7 +32,28 @@ docker info
 
 若使用 Podman 且提供了 `docker` 兼容命令，只要上述检查通过即可。
 
-### 2.1 未安装时的建议（手动）
+### 2.1 共享隔离运行时配置
+
+Sandbox 与 Workspace 现在通过统一的 `IIsolatedRuntimeProvider` 使用 Docker。可在宿主配置中指定兼容 CLI：
+
+```json
+{
+  "SenparcNcf": {
+    "IsolatedRuntime": {
+      "Docker": {
+        "Executable": "docker",
+        "ProbeTimeoutSeconds": 8
+      }
+    }
+  }
+}
+```
+
+共享 Provider 负责结构化生成挂载、端口、环境变量、网络、CPU、内存、pids、只读根、
+capabilities、`no-new-privileges` 参数，并统一执行超时、日志、销毁和孤儿容器查询。
+Sandbox 仍管理临时会话和 TTL；Workspace 仍管理长期文件与编辑会话，两者不会互相销毁容器。
+
+### 2.2 未安装时的建议（手动）
 
 按操作系统自行安装（任选其一，命令可能随发行版变化，请对照官方文档）：
 
