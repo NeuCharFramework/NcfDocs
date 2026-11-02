@@ -6,7 +6,7 @@
   "scripts": {
     "docs:build": "vuepress build docs --clean-cache --clean-temp",
     "docs:build-webpack": "DOCS_BUNDLER=webpack pnpm docs:build",
-    "docs:test": "node --test tests/markdown.test.mjs",
+    "docs:test": "node --test tests/*.test.mjs",
     "docs:clean": "rimraf docs/.vuepress/.temp docs/.vuepress/.cache docs/.vuepress/dist",
     "docs:dev": "vuepress dev docs --clean-cache --clean-temp",
     "docs:dev-webpack": "DOCS_BUNDLER=webpack pnpm docs:dev",

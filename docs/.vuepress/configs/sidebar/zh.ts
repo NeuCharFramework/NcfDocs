@@ -128,6 +128,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/NcfPackageSources/home/capability-guide',
         '/zh/NcfPackageSources/home/xncf-extension-modules',
         '/zh/NcfPackageSources/xncf/module-documentation-map',
+        '/zh/NcfPackageSources/xncf/admin-operations',
         '/zh/NcfPackageSources/xncf/senparc-web-admin',
         '/zh/NcfPackageSources/xncf/aikernel-local-fine-tuning',
         '/zh/NcfPackageSources/xncf/xncfbuilder-isolated-development',

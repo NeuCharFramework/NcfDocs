@@ -52,6 +52,12 @@ Install to server: [https://docs.microsoft.com/dotnet/core/install/](https://doc
 - ARM64
 - Other supported CPU architectures: [See the .NET 10 support policy](https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md)
 
+## GPU and Local AI Training
+
+The optional AIKernel local fine-tuning Worker is a separate Python service. GPU support must be verified inside the Worker's virtual environment; a working `nvidia-smi` command alone does not make PyTorch CUDA-enabled. On NVIDIA ARM64 hosts, check `uname -m`, the driver, `torch.version.cuda`, and `torch.cuda.is_available()` before configuring a CUDA Worker. Use the same Python architecture and CUDA wheel supported by the host, keep Worker keys outside source control, and keep one Worker process per `NCF_DATA_ROOT`.
+
+See the [AIKernel local fine-tuning guide](../../NcfPackageSources/xncf/aikernel-local-fine-tuning.md#nvidia-cuda-and-arm64-host-checklist) for the CUDA/ARM64 installation sequence, dependency integrity checks, `/health` verification, and troubleshooting.
+
 ## Source Code
 
 - During the development of NCF, you can use the "NCF Template" project as the base project (100% open source), and run it without modifying any code. Further development can be done on this basis. Source code: [https://github.com/NeuCharFramework/NCF](https://github.com/NeuCharFramework/NCF)

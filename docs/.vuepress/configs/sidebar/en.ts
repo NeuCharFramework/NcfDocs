@@ -125,6 +125,7 @@ export const sidebarEn: SidebarConfig = {
         '/NcfPackageSources/home/capability-guide',
         '/NcfPackageSources/home/xncf-extension-modules',
         '/NcfPackageSources/xncf/module-documentation-map',
+        '/NcfPackageSources/xncf/admin-operations',
         '/NcfPackageSources/xncf/senparc-web-admin',
         '/NcfPackageSources/xncf/aikernel-local-fine-tuning',
         '/NcfPackageSources/xncf/xncfbuilder-isolated-development',

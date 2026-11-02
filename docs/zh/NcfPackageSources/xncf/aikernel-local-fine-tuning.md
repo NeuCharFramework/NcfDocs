@@ -105,6 +105,27 @@ Prompt/completion 示例（两行）：
 
 训练目标为**所有非 padding token 的因果下一 token loss**，包含 prompt/user，不是只对 assistant 进行 mask 的 SFT。messages 必须使用批准 tokenizer 的 chat template，不静默降级为通用模板。两种后端使用 AdamW、线性预热/衰减与梯度裁剪，右截断会警告，仍需人工检查答案没有被截掉。
 
+### 训练参数、训练步数与事件游标
+
+Worker 会区分**记录数**、**批次**、**优化器步数**和**事件游标**：
+
+- `trainingRows`（训练记录数）是完成验证集划分后实际参与训练的记录数，不一定等于上传 JSONL 的总行数。
+- `batchSize`（批次大小）是一次前向/反向计算处理的记录数；最后一个批次可能不足该数量。
+- `gradientAccumulationSteps`（梯度累积步数）表示累积多少个批次后执行一次优化器更新。有效批次大小约为 `batchSize × gradientAccumulationSteps`，不会把数据集行数乘大。
+- 令 `N = trainingRows`（训练记录数），Worker 计算 `batchesPerEpoch`（每轮批次数）`= ceil(N / batchSize)`，再计算 `updatesPerEpoch`（每轮优化器更新数）`= ceil(batchesPerEpoch / gradientAccumulationSteps)`。
+- 当 `maxSteps`（最大训练步数）`> 0` 时，它是硬性的优化器更新步数上限，并覆盖 `epochs`（训练轮数）；当 `maxSteps = 0` 时，目标步数为 `epochs × updatesPerEpoch`。
+- 监控中的 `totalSteps`（总训练步数）就是这个优化器步数目标；`step`（当前训练步）和 `completedSteps`（已完成训练步数）统计的是优化器更新，不是行数、批次、epoch（训练轮数）、token（词元）或 checkpoint（检查点）次数。页面中的 `epoch` 是小数形式的进度估计。
+
+例如，训练集有 30,000 条，`batchSize=1`（批次大小）、`gradientAccumulationSteps=4`（梯度累积步数）时，每轮有 `ceil(30,000 / 1) = 30,000` 个批次，得到 `ceil(30,000 / 4) = 7,500` 个优化器步数。设置 3 轮且 `maxSteps=0`（按训练轮数计算）时，目标为 22,500 步；如果 `maxSteps=2,000`，即使 `epochs` 更大也会在 2,000 步停止。验证集不计入这些训练步数。
+
+事件**游标（cursor）**又是另一种数字：它是 `GET /jobs/{id}/events?after=...` 增量轮询使用的不透明递增位置，不是训练步数。客户端必须保存并把 `nextCursor` 作为下一次请求的 `after`，直到追上事件流。日志、警告、checkpoint、训练指标、评估指标和错误都会推进游标，因此它通常会远大于 `step`。只有切换 Worker/任务范围或明确要重放事件时才重置游标；不要用 `totalSteps` 推算游标。
+
+### 实际参数范围
+
+正式训练建议使用独立验证集，不要完全依赖自动留出的 20%。对于约 30,000 条数据，可从 `epochs`（训练轮数）`=1–3`、`maxSteps`（最大训练步数）`=0`、`learningRate`（学习率）`=0.0001–0.0002`、`batchSize`（批次大小）`=1`、`gradientAccumulationSteps`（梯度累积步数）`=4`、`maxSequenceLength`（最大序列长度）`=512` 或 `1024`、`loraRank`（LoRA 秩）`=8` 或 `16`、`loraAlpha`（LoRA 缩放系数）`=16` 或 `32`、`loraDropout`（LoRA Dropout）`=0.05`、`seed`（随机种子）`=42` 开始。这些是起始值，不是质量保证。
+
+增加 epoch（训练轮数）或步数会提供更多更新机会，但也会增加过拟合和耗时。提高学习率通常收敛更快，但可能不稳定或遗忘目标行为；降低学习率更稳但可能欠拟合。增大 batch（批次大小）或梯度累积会平滑梯度并提高有效批次大小，但需要更多内存或让每次更新等待更多批次。增大序列长度可以保留更长的答案和上下文，却会明显增加内存和耗时。增大 rank（LoRA 秩）或 alpha（LoRA 缩放系数）会增加 adapter 容量或更新缩放，dropout 用于正则化；建议一次只改变一组参数，并使用同一个独立验证集比较。`maxDurationMinutes`（最大训练时长，分钟）应高于实测预计时长并留出余量；超时可能留下部分产物，但任务仍属于失败/未完成。
+
 ### 许可证与隐私
 
 - 确认基座权重、tokenizer、数据集及预期用途的授权；分别检查训练、再分发、衍生/adapter、合并权重与商业使用限制。
@@ -163,6 +184,43 @@ export SenparcXncfAIKernel__FineTuning__Enabled=true
 只有 NCF 能访问相同宿主/网络命名空间中的 worker 时才能使用 loopback。Compose 中应使用 worker 服务 DNS 名与端口；分离部署时使用私网鉴权端点，并按需启用 TLS。不要将 worker API 直接暴露到公网，也不要把共享 key 放入 URL、截图、日志或前端配置。
 
 NCF 微调页面和 AppService 要求 **NCF Admin 授权**。worker 共享 key 是服务身份认证，不是最终用户授权。目前数据集、任务、事件和产物均属于**全局运维资源**，尚未实现租户级归属/隔离。不能将其当作多租户自助训练服务开放。
+
+### 轮询、事件游标与 CLI 日志
+
+UI 和可选的控制面同步服务不需要持续反复拉取完整事件历史。UI 仍会按正常刷新周期检查任务/健康目录，但只有在任务处于运行中，或事件游标落后于任务记录的 `lastEventSequence` 时才拉取事件。终态任务会进行一次有边界的补齐，之后停止事件轮询；已完成的验证结果也不会重复读取，除非重新启动验证。后台同步服务按更长周期运行，在进程内保存每个 Worker 的事件游标，只拉取新增事件；已经追平事件的终态任务会跳过。
+
+因此，反复出现的 `GET /jobs/{id}/events` 通常只应发生在排队、运行、状态转换任务或有限的历史补齐阶段，不应永久持续。HTTP Client 的 `Information` 日志只是传输诊断，不代表训练仍在运行。如需降低 CLI 噪声，可将 `System.Net.Http.HttpClient.FineTuningWorkerClient` 的日志级别提高到 `Warning`；不要关闭 Worker 错误和审计事件。
+
+UI 现在会把非指标的命令/警告/错误事件与周期性指标流分开显示：左侧窗口显示命令和事件文本，右侧窗口显示 GPU、损失、步数、吞吐量和时间记录。两个窗口分别保留滚动位置，只有用户已经位于对应窗口底部时，才会跟随最新消息自动滚动。
+
+### NVIDIA CUDA 与 ARM64 主机检查清单
+
+CUDA 是否可用由 Worker 进程本身决定，不能只看 `nvidia-smi` 是否能识别 GPU。连接 NCF UI 前，应在启动 Worker 的同一个虚拟环境和用户上下文中执行：
+
+```bash
+uname -m
+nvidia-smi
+./.venv/bin/python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'no CUDA device')"
+```
+
+在 NVIDIA Spark/GB10 主机上，`aarch64`、驱动 `580.142` 和驱动报告的 CUDA `13.0` 均正常，但 `torch==2.8.0+cpu` 会显示 `torch.version.cuda=None`、`torch.cuda.is_available()=False`。这属于安装了 CPU 版 PyTorch，不是 Worker 探测代码的问题。CUDA 版 PyTorch 必须同时匹配 Python、CPU 架构和支持的 CUDA runtime；在已验证的 Python 3.12/aarch64 环境中，`torch==2.9.1+cu128` 存在匹配的 `manylinux_2_28_aarch64` wheel。驱动版本可以高于 wheel 自带的 CUDA runtime；应按框架兼容性验证，不要把 `nvidia-smi` 显示的版本当成 pip 包版本。
+
+请使用虚拟环境解释器，而不是可能被 PEP 668 阻止的系统 `pip`，并且不要绕过依赖或 hash 校验：
+
+```bash
+./.venv/bin/python -m pip uninstall -y torch
+./.venv/bin/python -m pip install --no-cache-dir \
+  torch==2.9.1+cu128 \
+  --index-url https://download.pytorch.org/whl/cu128
+./.venv/bin/python -m pip install --no-cache-dir \
+  -r requirements-api.txt -r requirements-training.txt nvidia-ml-py
+```
+
+在 ARM64 主机上，NVIDIA 依赖 wheel 可能很大，从 `pypi.nvidia.com` 下载时可能超时或得到截断内容。应使用可断点续传且会校验完整性的下载方式，或使用可信的内部镜像；只有在与发布页 SHA-256 完全一致后才安装精确 wheel。猜测文件名得到 `404` 并不能证明包不存在，应先查看包索引中的确切平台标签（例如 `manylinux_2_27_aarch64`）。禁止使用 `--no-deps`、关闭 hash 校验，或把 HTML/错误响应当作 wheel 安装。只有确认 `bitsandbytes` 的具体版本支持当前架构和 CUDA 路径后才安装；CUDA LoRA 本身不要求 QLoRA。
+
+安装较新的 CUDA torch 后，不要直接照搬当前 `requirements-cuda.txt`：它通过 `requirements-cpu.txt` 间接固定 CPU 基线 `torch==2.8.0`，可能把 CUDA 版本替换掉。应先安装 CUDA torch，再安装 API/training 依赖，并重新确认 pip 没有降级 torch。CUDA Docker 镜像是另一条部署路径，必须验证基础镜像、PyTorch wheel、架构和驱动的组合；在 ARM64 Spark 上本地安装成功，不代表 x86_64 CUDA 容器也能工作，反之亦然。
+
+安装完成后重启 Worker，并在鉴权条件下检查 `/health`。返回结果应显示 CUDA 可用及预期设备；`/capabilities` 不是 Worker 路由。如果仍不可用，应收集上面命令中的 `uname -m`、`nvidia-smi`、Python 输出、`pip show torch` 和 Worker error event，再决定是否更换版本。相同 `NCF_DATA_ROOT` 只能运行一个 Worker；第二个进程可能因存储锁失败，从而掩盖真正的 CUDA 问题。
 
 ### 只允许经批准的本地模型
 
@@ -355,16 +413,16 @@ Worker 的 `storeId` 保存在 SQLite 中，正常重启不变；更换或重建
 
 任务契约提供以下控制项；后端可以拒绝无法准确实现的组合。共用表单不代表各后端语义完全一致。
 
-| 控制项                                                  | 含义与操作建议                                                                                               |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `epochs`、`maxSteps`                                    | epoch 是遍历训练集的次数；正数 step 上限限制优化器更新次数。不要无限训练，也不要把重复遍历当作新增样本。     |
-| `learningRate`                                          | 更新幅度。过高可能不稳定/遗忘，过低可能学不到目标；以独立评估调参，不照搬配方。                              |
-| `batchSize`、`gradientAccumulationSteps`                | microbatch 与每次更新累计的 microbatch 数。单设备有效 batch 约为两者乘积；累积降低激活内存需求，但增加耗时。 |
-| `maxSequenceLength`                                     | token 序列上限。长序列增加内存和计算，截断可能丢失重要监督信号。                                             |
-| `loraRank`、`loraAlpha`、`loraDropout`、`targetModules` | adapter 容量、缩放、正则化和层选择；必须符合模型架构/后端。                                                  |
-| `warmupRatio`、`weightDecay`                            | 学习率预热比例与优化器正则化。预热缓和初期更新；具体后端支持需核对。                                         |
-| `loggingSteps`、`saveSteps`、`evalSteps`                | 按优化器步数设置日志、checkpoint 和验证间隔。频繁保存/评估消耗磁盘和时间；评估需要独立验证集。               |
-| `seed`                                                  | 可复现输入，不保证不同硬件/依赖版本下结果完全一致。                                                          |
+| 控制项                                                  | 含义与操作建议                                                                                                            |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `epochs`、`maxSteps`                                    | epoch 是遍历训练集的次数；正数 step 上限限制优化器更新次数。不要无限训练，也不要把重复遍历当作新增样本。                  |
+| `learningRate`                                          | 更新幅度。过高可能不稳定/遗忘，过低可能学不到目标；以独立评估调参，不照搬配方。                                           |
+| `batchSize`、`gradientAccumulationSteps`                | microbatch 与每次更新累计的 microbatch 数。单设备有效 batch 约为两者乘积；累积降低激活内存需求，但增加耗时。              |
+| `maxSequenceLength`                                     | token 序列上限。长序列增加内存和计算，截断可能丢失重要监督信号。                                                          |
+| `loraRank`、`loraAlpha`、`loraDropout`、`targetModules` | adapter 容量、缩放、正则化和层选择；必须符合模型架构/后端。                                                               |
+| `warmupRatio`、`weightDecay`                            | 学习率预热比例与优化器正则化。预热缓和初期更新；具体后端支持需核对。                                                      |
+| `loggingSteps`、`saveSteps`、`evalSteps`                | 按优化器步数设置日志、checkpoint 和验证间隔。频繁保存/评估消耗磁盘和时间；评估需要独立验证集。                            |
+| `seed`                                                  | 可复现输入，不保证不同硬件/依赖版本下结果完全一致。                                                                       |
 | `maxDurationMinutes`                                    | 任务 wall-time 预算，与 NCF HTTP 超时及宿主 CPU/内存限制分开。超时会请求 Worker 在安全边界保存 checkpoint，然后终止任务。 |
 
 **优化器**维护更新状态，即便使用 adapter 也可能占用较多内存。NCF 任务契约没有优化器选择器，不要编造 `optimizer` 请求字段；使用后端实际实现的优化器。优化器/调度器及后端限制以 worker 版本为准。
@@ -543,6 +601,38 @@ python -m mlx_lm.generate \
 
 如果数据使用 `messages`，使用 tokenizer 的 chat template 生成 prompt；不要把 MLX QLoRA Adapter 直接交给 PyTorch PEFT、CUDA bitsandbytes 或 Ollama。Ollama 通常需要先将 Adapter 与相同基座 fuse，再转换成兼容的 GGUF；是否能转换取决于模型架构和工具版本。
 
+对于 CPU 或 CUDA 的 `lora`/`qlora` 产物，应使用 PyTorch/PEFT 加载器。这也是 UI 显示 `Automated validation currently supports native MLX exports only` 时的命令行替代方案：
+
+```bash
+export BASE_MODEL="$HOME/AIModels/Qwen2.5-0.5B-Instruct"
+export ADAPTER_PATH="$HOME/AIKernelArtifacts/m2-lora/extracted/adapter"
+export PROMPT="请用小红书风格介绍一款适合通勤的保温杯。"
+
+python - <<'PY'
+import os
+import torch
+from peft import PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+base = os.environ["BASE_MODEL"]
+adapter = os.environ["ADAPTER_PATH"]
+prompt = os.environ["PROMPT"]
+device = "cuda" if torch.cuda.is_available() else "cpu"
+tokenizer = AutoTokenizer.from_pretrained(base, local_files_only=True, trust_remote_code=False)
+model = AutoModelForCausalLM.from_pretrained(
+    base, local_files_only=True, trust_remote_code=False,
+    use_safetensors=True, torch_dtype="auto",
+).to(device)
+model = PeftModel.from_pretrained(model, adapter, local_files_only=True).eval()
+inputs = tokenizer(prompt, return_tensors="pt").to(device)
+with torch.no_grad():
+    output = model.generate(**inputs, max_new_tokens=200, do_sample=False)
+print(tokenizer.decode(output[0], skip_special_tokens=True))
+PY
+```
+
+请在 DGX Spark 上确认 `torch.cuda.is_available()=True` 的同一个环境中运行。对于 CUDA QLoRA 产物，加载 Adapter 前必须根据 `adapter/config.json` 中的量化设置重建原始基座；不要假定 MLX 的量化配置与 bitsandbytes 兼容。当前 UI 的快速验证接口不会执行这条 PyTorch 路径。
+
 ### 8.5 超时任务与部分产物
 
 如果页面显示 `Failed`，但仍然列出了 `manifest.json`、`metrics.jsonl` 或 `training-export.zip`，这通常表示 Worker 在超时或中断前已经完成了至少一个 checkpoint，并在子进程退出后归档了现有输出。它不是矛盾状态：
@@ -566,7 +656,9 @@ python -m mlx_lm.generate \
 5. 最大 token 数、超时和输出大小；
 6. 与训练 Worker 相同的离线依赖环境。
 
-页面验证已实现为 Worker 内的受限任务：只接受已成功任务绑定的同一基础模型、导出 Adapter 和每行一个的测试提示，最多 8 条，输出上限为 16–256 tokens。Worker 在后台运行并持久化每条结果，页面会轮询显示进度、Prompt 和回复；它不接受 shell 命令、Python 文件、网络 URL、用户路径或用户指定的可执行程序。该功能首期仅支持原生 MLX 任务；CPU/CUDA 任务仍使用上面的手动验证方式。
+页面验证已实现为 Worker 内的受限任务：只接受已成功任务绑定的同一基础模型、导出 Adapter 和每行一个的测试提示，最多 8 条，输出上限为 16–256 tokens。有 manifest 或旧任务请求时，后端/方法默认使用其中的配置；旧任务缺少字段时允许手动选择。手动选择与记录不一致时，UI 会显示 ⚠️ 警告并要求确认，Worker 也会再次强制校验。Worker 在后台运行并持久化每条结果，页面会轮询显示进度、Prompt 和回复；它不接受 shell 命令、Python 文件、网络 URL、用户路径或用户指定的可执行程序。原生 MLX、CPU 和 CUDA LoRA 验证分别使用匹配的运行时；PyTorch QLoRA 仍要求对应量化运行时，在启用前会被当前验证器拒绝。
+
+如果 UI 收到 `body.backend`、`body.method` 或 `body.confirmMismatch` 的 `Extra inputs are not permitted`，说明连接的 Worker 仍旧于当前验证协议。对于已知为 MLX 且没有手动冲突选择的任务，UI 只删除这些可选字段并重试一次旧请求。要支持 CPU/CUDA 验证及 manifest 冲突检查，仍应升级 Worker；该回退不会屏蔽用户主动选择不一致配置时的警告。
 
 ### 8.6 模型下载自动化的边界
 
@@ -616,6 +708,16 @@ python3 -m venv .venv-cpu-smoke
 
 苹果原生可在独立环境安装 `requirements-mlx.txt` 及仅用于生成权重的 `torch==2.8.0` 后执行 `python -m tests.run_native_smoke --backend mlx`，验证 LoRA 与量化 LoRA 及各自导出的重载。已有独立测试 Worker 可运行 `python -m tests.smoke --backend cpu --model tiny-gpt2 --models-root /absolute/path/to/test-models`；省略本地基座路径时不会做重载验证，输出会明确为 false。
 
+在 NVIDIA Linux 主机上执行 CUDA smoke 测试前，先准备启用 CUDA 的 PyTorch 环境，启动已鉴权的 CUDA Worker，再运行：
+
+```bash
+python -m tests.smoke --endpoint http://127.0.0.1:8091 \
+  --backend cuda --model tiny-gpt2 \
+  --models-root /absolute/path/to/test-models
+```
+
+该命令验证短时 CUDA 训练、导出和重载闭环；它不同于 UI 的训练后 Prompt 快速验证，也不代表正式模型质量。对于真实训练任务，应解压 `training-export.zip`，然后使用上面的 PyTorch/PEFT 命令，并严格使用 `manifest.json` 中记录的同一基座模型和 Adapter。
+
 另见 [XNCF 扩展模块概览](../home/xncf-extension-modules.md)、[模块文档地图](./module-documentation-map.md)和 [Sandbox 环境指南](./sandbox-environment.md)。
 
 ### 控制面数据库、FileManager 与自动迁移
@@ -660,9 +762,13 @@ python3 -m venv .venv-cpu-smoke
     "ModelPreparation": {
       "Enabled": true,
       "ControlledModelRoot": "/absolute/path/to/approved-models",
+      "RequireFileHashes": true,
       "Providers": {
         "modelscope": {
-          "BaseUrl": "https://your-approved-provider.example/"
+          "BaseUrl": "https://your-approved-provider.example/",
+          "SearchPathTemplate": "catalog/models?query={query}&limit={limit}",
+          "ManifestPathTemplate": "models/{model}/resolve/{revision}/manifest.json",
+          "FilePathTemplate": "models/{model}/resolve/{revision}/{path}"
         }
       },
       "AllowedModels": {
@@ -675,4 +781,6 @@ python3 -m venv .venv-cpu-smoke
 }
 ```
 
-页面只提交 Provider、模型和 Revision；服务端校验 Provider 主机、模型白名单、Revision、路径穿越、符号链接、文件数量、单文件大小和总大小。下载采用临时文件和原子替换，失败或取消不会留下可被 Worker 使用的半成品。不要把真实 Provider Token 写入浏览器或提交到仓库；当前 Provider 必须提供受控的公开 manifest/文件地址，带 Token 的私有源需要另行接入服务端密钥提供程序。
+页面可以搜索已配置 Provider 的目录，但目录响应必须是数组，或 `{ "models": [...] }`，每项包含 `{ "model", "revision", "description", "sizeBytes" }`。搜索结果还会再次与 `AllowedModels` 对照；搜索不能授权新的模型或 Revision。选择结果只会填充表单，仍需用户显式点击“下载”，并继续经过原有 manifest/文件校验。启用 `RequireFileHashes=true` 后，每个 manifest 文件还必须包含 64 位 SHA-256 的 `sha256` 值；下载文件和已存在文件在使用前都会校验。
+
+页面提交 Provider、模型和 Revision 后，服务端仍会校验 Provider 主机、模型白名单、Revision、路径穿越、符号链接、文件数量、单文件大小和总大小。下载采用临时文件和原子替换，失败或取消不会留下可被 Worker 使用的半成品。不要把真实 Provider Token 写入浏览器或提交到仓库；Provider 必须提供受控的公开目录、manifest 和文件地址，带 Token 的私有源需要另行接入服务端密钥提供程序。

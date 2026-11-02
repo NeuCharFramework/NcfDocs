@@ -105,6 +105,27 @@ If no validation dataset is selected, this worker deterministically holds out ap
 
 This implementation computes causal next-token loss on **all non-padding tokens**, including prompt/user tokens, rather than assistant-only masked SFT. `messages` requires the approved tokenizer's chat template; there is no silent generic-template fallback. Both backends use AdamW, linear warmup/decay and gradient clipping. Right truncation is warned, but operators must inspect length distributions to avoid losing answers.
 
+### Training Parameters, Steps, and Event Cursors
+
+The Worker distinguishes **rows**, **batches**, **optimizer steps**, and **event cursors**:
+
+- `trainingRows` is the number of rows remaining after validation splitting. It is not necessarily the uploaded JSONL line count.
+- `batchSize` is the number of rows processed by one forward/backward batch. The last batch may be smaller.
+- `gradientAccumulationSteps` combines that many batches before one optimizer update. The effective batch size is approximately `batchSize × gradientAccumulationSteps`; it does not multiply the number of rows in the dataset.
+- For `N = trainingRows`, the Worker calculates `batchesPerEpoch = ceil(N / batchSize)` and `updatesPerEpoch = ceil(batchesPerEpoch / gradientAccumulationSteps)`.
+- If `maxSteps > 0`, it is the hard optimizer-step target and overrides `epochs`. If `maxSteps = 0`, the target is `epochs × updatesPerEpoch`.
+- `totalSteps` in metrics is this optimizer-step target. `step` and `completedSteps` count optimizer updates, not rows, batches, epochs, tokens, or checkpoints. The displayed `epoch` is a fractional progress estimate.
+
+For example, 30,000 training rows with `batchSize=1` and `gradientAccumulationSteps=4` produce `ceil(30,000 / 1) = 30,000` batches and `ceil(30,000 / 4) = 7,500` optimizer steps per epoch. Three epochs therefore target 22,500 steps when `maxSteps=0`. With `maxSteps=2,000`, the run stops at 2,000 steps even if the epoch setting is larger. A validation set is not included in these training-step calculations.
+
+The event **cursor** is different again: it is an opaque monotonically increasing position used by `GET /jobs/{id}/events?after=...` for incremental polling. It is not a training step and must be persisted and sent back as `after` until `nextCursor` is reached. A cursor can advance for logs, warnings, checkpoints, metrics, errors, and evaluation events, so it can be much larger than `step`. Reset it only when switching Worker/job scope or deliberately replaying the event stream; do not derive it from `totalSteps`.
+
+### Practical Parameter Ranges
+
+For a first formal run, use an independent validation set rather than relying on the automatic 20% holdout. For roughly 30,000 rows, a reasonable starting point is `epochs=1–3`, `maxSteps=0`, `learningRate=0.0001–0.0002`, `batchSize=1`, `gradientAccumulationSteps=4`, `maxSequenceLength=512` or `1024`, `loraRank=8` or `16`, `loraAlpha=16` or `32`, `loraDropout=0.05`, and `seed=42`. These are starting points, not quality guarantees.
+
+Increasing epochs or steps gives the adapter more update opportunities but increases overfitting and wall time. Increasing learning rate converges faster but can destabilize or forget the desired behavior; decreasing it is slower and may underfit. Increasing batch size or accumulation smooths gradients and increases effective batch size, but needs more memory or delays each update. Increasing sequence length preserves longer answers and context at a substantial memory/time cost. Increasing rank or alpha increases adapter capacity or update scale, while dropout regularizes; change one family at a time and compare the same held-out set. Set `maxDurationMinutes` above the measured estimate with a reserve; a timeout may leave partial artifacts but is still a failed/incomplete job.
+
 ### Licenses and Privacy
 
 - Obtain permission for the base weights, tokenizer, dataset, and intended use. Review training, redistribution, derivative/adapter, merged-weight, and commercial-use restrictions separately.
@@ -163,6 +184,43 @@ Use one database profile and one secret alias per Worker. Route only through app
 Loopback works only when NCF can reach the worker in the same host/network namespace. In Compose, use the worker service DNS name and port; in separate deployments, use a private authenticated endpoint with TLS where appropriate. Do not publish the worker API directly to the Internet or put the shared key in URLs, screenshots, logs, or frontend configuration.
 
 The NCF fine-tuning page and AppService require **NCF Admin authorization**. The shared worker key is service authentication, not end-user authorization. Current datasets, jobs, events, and artifacts are **global operator resources**: tenant-specific ownership/isolation is not implemented. Do not expose this as a self-service multi-tenant training service.
+
+### Polling, event cursors, and CLI logs
+
+The UI and the optional control-plane synchronizer do not need to fetch event history continuously. The UI polls job/health catalog data on its normal refresh cycle, but it fetches events only while a job is active or while its event cursor is behind the job's recorded `lastEventSequence`. A terminal job receives one bounded catch-up, then event polling stops; completed validation results also stop being re-read until a new validation starts. The background synchronizer runs on its longer interval, uses each Worker's persisted-in-process event cursor, fetches only new events, and skips terminal jobs whose events are already caught up.
+
+Therefore, repeated `GET /jobs/{id}/events` lines should occur for queued/running/transitioning jobs or during a bounded catch-up, but they are not required forever. The HTTP client `Information` logs are transport diagnostics, not evidence that training is still running. If an operator wants quieter CLI output, raise the logging level for `System.Net.Http.HttpClient.FineTuningWorkerClient` to `Warning`; do not disable Worker errors or audit events.
+
+The UI separates non-metric command/warning/error events from the periodic metrics stream. The left pane is for command and event text; the right pane is for GPU, loss, step, throughput and timing records. Each pane preserves its own scroll position and follows the newest entries only when the user is already at that pane's bottom.
+
+### NVIDIA CUDA and ARM64 Host Checklist
+
+CUDA availability is determined by the Worker process, not by the presence of `nvidia-smi` alone. Before connecting the NCF UI, run the checks below in the same virtual environment and user context that will start the Worker:
+
+```bash
+uname -m
+nvidia-smi
+./.venv/bin/python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'no CUDA device')"
+```
+
+On an NVIDIA Spark/GB10 host, `aarch64`, driver `580.142`, and driver-reported CUDA `13.0` were healthy, but `torch==2.8.0+cpu` reported `torch.version.cuda=None` and `torch.cuda.is_available()=False`. This is a CPU-wheel installation problem, not a Worker probe problem. A CUDA-capable PyTorch wheel must match Python, architecture, and the supported CUDA runtime; for the tested Python 3.12/aarch64 environment, `torch==2.9.1+cu128` had a matching `manylinux_2_28_aarch64` wheel. The driver can be newer than the CUDA runtime bundled by the wheel; verify the framework's compatibility instead of treating the `nvidia-smi` version as the pip package version.
+
+Use the virtual-environment interpreter, not system `pip` (which may be blocked by PEP 668), and do not bypass dependency or hash validation:
+
+```bash
+./.venv/bin/python -m pip uninstall -y torch
+./.venv/bin/python -m pip install --no-cache-dir \
+  torch==2.9.1+cu128 \
+  --index-url https://download.pytorch.org/whl/cu128
+./.venv/bin/python -m pip install --no-cache-dir \
+  -r requirements-api.txt -r requirements-training.txt nvidia-ml-py
+```
+
+On ARM64, NVIDIA dependency wheels may be large and downloads from `pypi.nvidia.com` can time out or return truncated content. Use a resumable, integrity-checked download or a trusted internal mirror, then install the exact wheel only after its published SHA-256 matches. A `404` for a guessed filename does not prove that the package is unavailable: inspect the package index for the exact platform tag (for example `manylinux_2_27_aarch64`). Never use `--no-deps`, disable hash checking, or install an HTML/error response as a wheel. Install `bitsandbytes` only after confirming that the selected version supports the host architecture and CUDA path; CUDA LoRA does not require QLoRA.
+
+Do not install `requirements-cuda.txt` unchanged after installing a newer CUDA torch if it transitively pins the CPU baseline (`requirements-cpu.txt` currently pins `torch==2.8.0`). Install the CUDA torch first, then the API/training requirements, and verify that pip did not replace it. The CUDA Docker image is a separate deployment path and must use a base image, PyTorch wheel, architecture, and driver combination that has been tested together; a local ARM64 Spark install is not evidence that an x86_64 CUDA container will work, and vice versa.
+
+After installation, restart the Worker and verify `/health` (authenticated). The response must report CUDA available and the expected device; `/capabilities` is not a Worker route. If CUDA remains unavailable, collect `uname -m`, `nvidia-smi`, `python -c` output above, `pip show torch`, and the Worker error event before changing versions. Keep one Worker process per `NCF_DATA_ROOT`; a second process can fail on the storage lock and mask the actual CUDA diagnosis.
 
 ### Approved Local Models Only
 
@@ -360,7 +418,7 @@ The job contract exposes the following controls; the selected backend may reject
 | `warmupRatio`, `weightDecay`                            | LR warmup fraction and optimizer regularization. Warmup reduces abrupt initial updates; backend support must be checked.                                                                   |
 | `loggingSteps`, `saveSteps`, `evalSteps`                | Logging, checkpoint, and validation cadence in optimizer steps. Frequent checkpoints/evaluation cost disk/time; evaluation requires held-out data.                                         |
 | `seed`                                                  | Reproducibility input, not a promise of identical results across hardware/dependency versions.                                                                                             |
-| `maxDurationMinutes`                                    | Job wall-time budget; separate from NCF HTTP timeout and host CPU/memory limits. On timeout the Worker requests a checkpoint at a safe boundary, then terminates the job. |
+| `maxDurationMinutes`                                    | Job wall-time budget; separate from NCF HTTP timeout and host CPU/memory limits. On timeout the Worker requests a checkpoint at a safe boundary, then terminates the job.                  |
 
 **Optimizer** state tracks updates and can consume significant memory even with adapters. There is no optimizer selector in the NCF job contract; use the backend's implemented optimizer, rather than inventing an `optimizer` request field. Optimizer choice/scheduler and backend-specific limitations belong to the worker version.
 
@@ -538,6 +596,38 @@ python -m mlx_lm.generate \
 
 For `messages` data, use the tokenizer chat template to build the prompt. Do not pass an MLX QLoRA Adapter directly to PyTorch PEFT, CUDA bitsandbytes or Ollama. Ollama usually requires fusing the Adapter into the same base and converting the result to compatible GGUF; conversion depends on the model architecture and tool version.
 
+For a CPU or CUDA `lora`/`qlora` export, use the PyTorch/PEFT loader instead. This is also the command-line alternative when the UI reports `Automated validation currently supports native MLX exports only`:
+
+```bash
+export BASE_MODEL="$HOME/AIModels/Qwen2.5-0.5B-Instruct"
+export ADAPTER_PATH="$HOME/AIKernelArtifacts/m2-lora/extracted/adapter"
+export PROMPT="Write a Xiaohongshu-style post about a commuter thermos."
+
+python - <<'PY'
+import os
+import torch
+from peft import PeftModel
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+base = os.environ["BASE_MODEL"]
+adapter = os.environ["ADAPTER_PATH"]
+prompt = os.environ["PROMPT"]
+device = "cuda" if torch.cuda.is_available() else "cpu"
+tokenizer = AutoTokenizer.from_pretrained(base, local_files_only=True, trust_remote_code=False)
+model = AutoModelForCausalLM.from_pretrained(
+    base, local_files_only=True, trust_remote_code=False,
+    use_safetensors=True, torch_dtype="auto",
+).to(device)
+model = PeftModel.from_pretrained(model, adapter, local_files_only=True).eval()
+inputs = tokenizer(prompt, return_tensors="pt").to(device)
+with torch.no_grad():
+    output = model.generate(**inputs, max_new_tokens=200, do_sample=False)
+print(tokenizer.decode(output[0], skip_special_tokens=True))
+PY
+```
+
+Run this in the same environment that reports `torch.cuda.is_available()=True` on the DGX Spark. For a CUDA QLoRA export, reconstruct the original base with the quantization settings recorded in `adapter/config.json` before loading the Adapter; do not assume an MLX quantization configuration is compatible with bitsandbytes. The UI quick-validation endpoint currently does not run this PyTorch path.
+
 ### 8.5 Timed-out jobs and partial artifacts
 
 If the page shows `Failed` but still lists `manifest.json`, `metrics.jsonl` or `training-export.zip`, the Worker usually reached at least one checkpoint before timeout or interruption and archived the output that existed when the child exited. This is not contradictory:
@@ -561,7 +651,9 @@ The Worker already verifies Adapter export and compatible reload. A successful j
 5. Maximum tokens, timeout and output limits;
 6. The same offline dependencies as the training Worker.
 
-The page starts a restricted Worker-side task: it accepts only the same base model bound to the successful job, its exported Adapter, and one prompt per line (at most 8 cases, with a 16–256 token output limit). Results are persisted and polled into the page with progress, prompts and responses. Shell commands, Python files, network URLs, user paths and user-selected executables are rejected. The first release supports native MLX jobs; use the explicit `mlx_lm.generate` commands above for CPU/CUDA jobs.
+The page starts a restricted Worker-side task: it accepts only the same base model bound to the successful job, its exported Adapter, and one prompt per line (at most 8 cases, with a 16–256 token output limit). The backend/method default to the manifest or legacy job request when present; older jobs can be selected manually. If a manual selection differs from recorded metadata, the UI shows a warning and requires confirmation, while the Worker enforces the same mismatch check. Results are persisted and polled into the page with progress, prompts and responses. Shell commands, Python files, network URLs, user paths and user-selected executables are rejected. Native MLX, CPU and CUDA LoRA validation use their matching runtime; PyTorch QLoRA validation still requires its matching quantization runtime and is rejected by this validator until enabled.
+
+If the UI receives `Extra inputs are not permitted` for `body.backend`, `body.method` or `body.confirmMismatch`, the selected Worker is older than this validation contract. For a known MLX job without a manual mismatch, the UI removes only these optional fields and retries the legacy request once. Upgrade the Worker for CPU/CUDA validation and for manifest-aware mismatch checks; the fallback never suppresses a deliberate mismatch warning.
 
 ### 8.6 Boundaries for model-download automation
 
@@ -611,6 +703,16 @@ Restore the .NET project first using the repository's usual workflow on a fresh 
 
 Native Apple checks use `python -m tests.run_native_smoke --backend mlx` in a separate environment with `requirements-mlx.txt` and `torch==2.8.0` for fixture generation only, checking both LoRA and quantized-LoRA exports. Against an existing disposable Worker, use `python -m tests.smoke --backend cpu --model tiny-gpt2 --models-root /absolute/path/to/test-models`; omitting the local base path skips reload verification and explicitly reports false.
 
+For a CUDA smoke run on an NVIDIA Linux host, install a CUDA-enabled PyTorch environment first, start an authenticated CUDA Worker, and run:
+
+```bash
+python -m tests.smoke --endpoint http://127.0.0.1:8091 \
+  --backend cuda --model tiny-gpt2 \
+  --models-root /absolute/path/to/test-models
+```
+
+This validates a short CUDA training/export/reload cycle; it is not the UI's post-training prompt validation and does not prove production model quality. For a real trained job, extract `training-export.zip` and use the PyTorch/PEFT command above with the exact base model and Adapter recorded in `manifest.json`.
+
 See also the [XNCF extension overview](../home/xncf-extension-modules.md), [module documentation map](./module-documentation-map.md), and [Sandbox environment guide](./sandbox-environment.md).
 
 ### Control-plane database, FileManager, and migration
@@ -655,9 +757,13 @@ Model preparation is disabled by default. Before enabling it, configure server-s
     "ModelPreparation": {
       "Enabled": true,
       "ControlledModelRoot": "/absolute/path/to/approved-models",
+      "RequireFileHashes": true,
       "Providers": {
         "modelscope": {
-          "BaseUrl": "https://your-approved-provider.example/"
+          "BaseUrl": "https://your-approved-provider.example/",
+          "SearchPathTemplate": "catalog/models?query={query}&limit={limit}",
+          "ManifestPathTemplate": "models/{model}/resolve/{revision}/manifest.json",
+          "FilePathTemplate": "models/{model}/resolve/{revision}/{path}"
         }
       },
       "AllowedModels": {
@@ -670,4 +776,6 @@ Model preparation is disabled by default. Before enabling it, configure server-s
 }
 ```
 
-The page submits only the provider, model, and revision. The server validates the provider host, model/revision allowlists, traversal, symlinks, file count, per-file size, and total size. Downloads use temporary files and atomic replacement; a failed or cancelled download cannot leave a usable partial model. Never put provider tokens in the browser or repository. The current provider contract requires a controlled public manifest/file endpoint; private token-backed sources need a separate server-side secret-provider integration.
+The page can search the configured Provider catalog, but the response must be an array (or `{ "models": [...] }`) of `{ "model", "revision", "description", "sizeBytes" }` objects. Search results are filtered again against `AllowedModels`; search cannot authorize a new model or revision. Selecting a result only fills the form, and the normal manifest/file download still requires an explicit Download action. With `RequireFileHashes=true`, every manifest file must also include a 64-character SHA-256 `sha256` value; downloaded and already-present files are checked before use.
+
+The page submits the provider, model, and revision. The server validates the provider host, model/revision allowlists, traversal, symlinks, file count, per-file size, and total size. Downloads use temporary files and atomic replacement; a failed or cancelled download cannot leave a usable partial model. Never put provider tokens in the browser or repository. The provider must expose controlled public catalog/manifest/file endpoints; private token-backed sources need a separate server-side secret-provider integration.
