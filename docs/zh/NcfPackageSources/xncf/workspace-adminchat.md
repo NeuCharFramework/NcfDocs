@@ -1,5 +1,8 @@
 # Workspace 与 AdminChat
 
+长期偏好与项目记忆请参阅 [AdminChat Memory 与对话设置](./adminchat-memory.md)。
+Workspace 作用域记忆仍按用户隔离并保存在数据库中，不会自动读写工作区内的 `Memory.md`。
+
 ## 设计边界
 
 Workspace 使用可配置的持久化目录，适合 AI Harness、源码、HTML/CSS/素材和构建中间文件。文件不会强制保存在 Docker 可写层；删除或重建运行时不会删除 Workspace。FileManager 仍然用于长期资产、用户上传文件、归档版本和最终发布产物。

@@ -107,6 +107,11 @@ are separate concerns. Switching sessions is not consent to modify files.
 Review generated output and tool requests rather than treating fluent answers
 as proof that a task completed.
 
+Memory defaults to Off and can be set to Read only or Learn per session.
+It is distinct from chat history and Workspace files. For modes, scopes,
+persistence receipts, Markdown editing, and SystemMessage, see
+[AdminChat Memory and conversation settings](./adminchat-memory.md).
+
 <a id="help-chat-harness"></a>
 
 ## Simple conversation and Harness

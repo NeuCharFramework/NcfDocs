@@ -89,6 +89,10 @@ Accounts 页面管理应用用户，不是后台管理员或租户管理员。
 会话历史、Workspace 关联和当前模型是不同的配置；切换会话不代表授权修改文件。
 检查生成内容和工具请求，不要把流畅的回答当作任务已经完成的证据。
 
+Memory 默认关闭，可按会话选择只读或学习；它与聊天历史和 Workspace 文件不同。
+模式、作用域、保存回执、Markdown 编辑及 SystemMessage 请参阅
+[AdminChat Memory 与对话设置](./adminchat-memory.md)。
+
 <a id="help-chat-harness"></a>
 
 ## 普通对话与 Harness

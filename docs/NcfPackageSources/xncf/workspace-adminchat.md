@@ -1,5 +1,8 @@
 # Workspace and AdminChat
 
+For durable preferences and project memory, see [AdminChat Memory and conversation settings](./adminchat-memory.md).
+Workspace-scoped memory remains user-isolated database data; it does not automatically read or write a Workspace `Memory.md` file.
+
 Workspace keeps durable files in a configurable host directory. Docker is an optional isolated runtime, not the owner of the data. Recreating a runtime does not delete the Workspace. FileManager remains the system for durable assets, uploads, archived versions, and published results.
 
 Only super administrators can attach a Workspace to a new AdminChat session. Access is enforced on the server, not only by the UI.

@@ -193,6 +193,8 @@ Therefore, repeated `GET /jobs/{id}/events` lines should occur for queued/runnin
 
 The UI separates non-metric command/warning/error events from the periodic metrics stream. The left pane is for command and event text; the right pane is for GPU, loss, step, throughput and timing records. Each pane preserves its own scroll position and follows the newest entries only when the user is already at that pane's bottom.
 
+The event monitor can switch between a side-by-side layout and a stacked layout for long lines or narrow screens. Use **Expand** to give the monitor at least 60% of the viewport height, and **Restore** to return to the normal card height.
+
 ### NVIDIA CUDA and ARM64 Host Checklist
 
 CUDA availability is determined by the Worker process, not by the presence of `nvidia-smi` alone. Before connecting the NCF UI, run the checks below in the same virtual environment and user context that will start the Worker:
