@@ -1,6 +1,6 @@
 # AdminChat Memory and Conversation Settings
 
-Memory stores the current user's durable working preferences, project conventions,
+Memory stores durable facts explicitly requested by the current user, ordinary person characteristics, preferences, project conventions,
 decisions, and references. It is not chat history, knowledge-base retrieval,
 Workspace files, or SystemMessage. It never grants tool permissions or overrides
 current user instructions and system safety rules.
@@ -47,6 +47,40 @@ produces an entry. The current implementation looks for explicit English or Chin
 triggers such as “remember,” “prefer,” “correction,” or “forget” in the current user's
 message. Overlong inputs and recognized requests not to save are skipped.
 Implicit preferences may be missed; add them manually when necessary.
+
+### Ordinary person facts and self-contained requests
+
+Names, nicknames, aliases, and non-sensitive characteristics are no longer excluded
+merely because they are not working preferences. State the complete fact explicitly,
+for example: “Remember: the fictional character Alpha is also called Little A.”
+Ordinary facts use kind `reference` and may use your global scope without a Workspace.
+Project-specific decisions and conventions still use Workspace scope.
+A question about someone's name is not a request to save a fact, and the system must
+not guess identities or relationships. Use an explicit correction such as
+“Update memory: …” rather than an ambiguous fragment.
+
+### Remembering earlier content and reviewing candidates
+
+An explicit reference to earlier content uses recent user/assistant messages from
+the **same authorized session**: at most six messages preceding the request,
+skipping messages over 2000 characters, with a total limit of 6000 characters.
+It does not read other sessions, System messages, or attachment/tool contents directly.
+The answer generated after the current request is not earlier context.
+User statements and corrections take precedence; assistant content is only an
+unverified candidate source.
+
+1. Send “Remember the above” or “Remember that.” and wait for the system's pending-review receipt.
+2. Select **Review candidate** for each entry. Inspect the content, source excerpt, scope, and pin option; edit the wording if needed.
+3. Only **Save entry** writes it. A deletion candidate requires **Delete** and confirmation.
+4. Confirmed entries default to manually pinned entries. Clear the pin during review if you want later automatic corrections.
+
+Opening, cancelling, or closing review does not save anything. Candidates are page-local,
+like turn receipts; refresh or a subsequent receipt replaces them, so request them again.
+Revision conflicts preserve newer memory. If the reference is too old, overlong, or
+ambiguous, the system asks for a complete fact rather than claiming a save.
+Eligible self-contained requests can still save automatically; the prior-context path
+always requires review. Off/Read-only stops automatic learning, but users may still
+manually confirm already displayed candidates.
 
 <a id="help-memory-scopes"></a>
 
@@ -112,11 +146,14 @@ that no update occurred:
 - capacity or revision conflicts;
 - invalid output/evidence, rejected safety checks, extraction timeout, or a failed call.
 
-Extraction uses the current user's original message and a bounded selection of
-related existing memories. Assistant replies, attachments, tool output, and the
-whole transcript are not sources of new factual evidence. Do not infer persistence
+Direct saves use the current user's original message and a bounded selection of
+related existing memories. References to earlier content may use a bounded conversation
+window to prepare candidates, but assistant statements cannot become durable facts without review. Do not infer persistence
 from an assistant's promise when validation fails. The turn's PromptCode can help
 diagnose extraction behavior.
+Upgrades replace untouched, unscored old default Memory prompts, not customized or
+scored versions. If the selected old version still permits only working preferences,
+inspect the reported PromptCode in PromptRange and publish a version suited to the new rules.
 
 <a id="help-memory-markdown"></a>
 

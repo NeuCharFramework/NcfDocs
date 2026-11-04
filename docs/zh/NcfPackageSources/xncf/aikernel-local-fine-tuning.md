@@ -658,7 +658,7 @@ PY
 5. 最大 token 数、超时和输出大小；
 6. 与训练 Worker 相同的离线依赖环境。
 
-页面验证已实现为 Worker 内的受限任务：只接受已成功任务绑定的同一基础模型、导出 Adapter 和每行一个的测试提示，最多 8 条，输出上限为 16–256 tokens。有 manifest 或旧任务请求时，后端/方法默认使用其中的配置；旧任务缺少字段时允许手动选择。手动选择与记录不一致时，UI 会显示 ⚠️ 警告并要求确认，Worker 也会再次强制校验。Worker 在后台运行并持久化每条结果，页面会轮询显示进度、Prompt 和回复；它不接受 shell 命令、Python 文件、网络 URL、用户路径或用户指定的可执行程序。原生 MLX、CPU 和 CUDA LoRA 验证分别使用匹配的运行时；PyTorch QLoRA 仍要求对应量化运行时，在启用前会被当前验证器拒绝。
+页面验证已实现为 Worker 内的受限任务：只接受已成功任务绑定的同一基础模型、导出 Adapter 和每行一个的测试提示，最多 8 条，协议上限为 16–32,768 个输出 token。Worker 会计算 Prompt 的 token 数，并将请求的输出长度限制在模型剩余上下文窗口内；如果剩余输出空间少于 16 token，则拒绝该 Prompt。有 manifest 或旧任务请求时，后端/方法默认使用其中的配置；旧任务缺少字段时允许手动选择。手动选择与记录不一致时，UI 会显示 ⚠️ 警告并要求确认，Worker 也会再次强制校验。Worker 在后台运行并持久化每条结果，页面会轮询显示进度、Prompt 和回复；它不接受 shell 命令、Python 文件、网络 URL、用户路径或用户指定的可执行程序。原生 MLX、CPU 和 CUDA LoRA 验证分别使用匹配的运行时；PyTorch QLoRA 仍要求对应量化运行时，在启用前会被当前验证器拒绝。
 
 如果 UI 收到 `body.backend`、`body.method` 或 `body.confirmMismatch` 的 `Extra inputs are not permitted`，说明连接的 Worker 仍旧于当前验证协议。对于已知为 MLX 且没有手动冲突选择的任务，UI 只删除这些可选字段并重试一次旧请求。要支持 CPU/CUDA 验证及 manifest 冲突检查，仍应升级 Worker；该回退不会屏蔽用户主动选择不一致配置时的警告。
 
