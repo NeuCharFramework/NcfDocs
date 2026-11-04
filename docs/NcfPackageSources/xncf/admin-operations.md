@@ -137,6 +137,38 @@ successful upload does not prove text extraction succeeded. Removing an unsent
 attachment can delete its Workspace resource, so do not use that action as a
 generic way to hide an already submitted file.
 
+<a id="help-chat-prompt-references"></a>
+
+## Prompt references in AdminChat
+
+The message input offers a **PromptRange** button that opens the prompt
+selector (filter by range, lane, or keyword; sorted by current score).
+Selecting a prompt inserts its full text at the caret; the insertion is not
+sent or executed automatically. The inserted span becomes a *reference*
+bound to the selected PromptCode version, so the message keeps a link to the
+prompt asset instead of a detached copy.
+
+- Reference tags appear above the input. Use a tag to rate the prompt (0–10),
+  open a read-only preview, locate the referenced text, or remove the
+  reference while keeping the text.
+- At most 32 references per message, and the ranges must not overlap.
+  Editing the message updates the ranges; editing inside a reference removes
+  that reference.
+- On send, the server re-validates each reference: the text must still match
+  the stored prompt content, and the PromptRange module must be available.
+  If the prompt changed after insertion, the send is rejected; remove the
+  reference or insert the prompt again.
+- Only user messages can carry references. They are stored with the message
+  and rendered in history as tags showing `PromptCode · score`.
+
+Rating records a manual score, or—when the prompt has a benchmark and the
+message has a completed assistant reply—an AI score that evaluates that input
+and reply against the benchmark; model charges may apply. The last successful
+rating wins, and all references to the same prompt share the current score.
+Existing deployments need the `Add_PromptCode_Scores` (PromptRange) and
+`Add_AdminChat_PromptReferences` (Admin) migrations for each database
+provider before using references or ratings.
+
 <a id="help-workspace-permissions"></a>
 
 ## Workspace permissions

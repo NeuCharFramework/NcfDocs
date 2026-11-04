@@ -56,7 +56,7 @@ Docker Runtime：
 
 ```bash
 cd NcfPackageSources/src/Extensions
-docker build -f Senparc.Xncf.Workspace.Agent/Dockerfile \
+docker build -f Senparc.Xncf.WorkspaceAgent/Dockerfile \
   -t senparc/ncf-workspace-agent:0.2.0 .
 ```
 
@@ -73,6 +73,21 @@ Linux 部署需要确保容器用户对 Workspace 持久化目录拥有读写权
 5. 扩展使用 `ncf-workspace://` 打开远程文件夹。
 
 令牌保存在 VS Code SecretStorage。远程访问同时要求 HTTPS（本机 loopback 例外）、DesktopBridge 会话和 Admin JWT。网关按 JWT 管理员 ID 校验 Workspace 所有者。文件保存携带 `If-Match`，冲突返回 HTTP 409，不会静默覆盖其他客户端修改。
+
+## 手动上传到 input 目录
+
+超级管理员可以在 Workspace 管理页面直接向工作区上传文件。文件通过
+`/api/Senparc.Areas.Admin/WorkspaceFiles/{workspaceId}/upload` 流式写入
+工作区的 `input/` 目录；页面前端会先调用 `capabilities` 读取当前生效的
+限制。
+
+- 单文件上限：`SenparcXncfWorkspace:MaxUploadFileBytes`（默认 300 MiB）；
+  工作区配额：`MaxWorkspaceBytes`（默认 2 GiB）；单次请求传输上限 320 MiB。
+- 上传要求超级管理员会话、防伪令牌，并校验工作区所有权；其他管理员的
+  工作区返回"不存在"。
+- 上传的文件就是普通 Workspace 文件：模型、VS Code 与 Cursor 按会话的
+  读取/写入/执行权限访问，与 Agent 写入的文件同样受路径、ETag 与大小
+  规则约束。上传本身不授予执行权限。
 
 ## 配置
 
