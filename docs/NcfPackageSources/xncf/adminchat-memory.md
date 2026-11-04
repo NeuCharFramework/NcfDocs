@@ -48,6 +48,28 @@ triggers such as “remember,” “prefer,” “correction,” or “forget”
 message. Overlong inputs and recognized requests not to save are skipped.
 Implicit preferences may be missed; add them manually when necessary.
 
+### Decide intent before saving
+
+A trigger only starts a check: **the word “remember” is not permission to write now**.
+The same model call classifies current intent before extracting entries. Only a
+present update request can proceed to validation, automatic saving, or contextual review.
+
+| User message                                                                            | This turn                                                                    |
+| --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| “I will give you some rules; remember them when I send them. Let's begin.”              | Wait for content; do not store the announcement or invent rules              |
+| “Remember this rule: be concise, but do not save yet; wait for confirmation.”           | Wait for confirmation without saving                                         |
+| “Do you remember the earlier rules?”, translations, or hypothetical “remember” requests | Not a present request to write                                               |
+| “From now on, please reply in Chinese.”                                                 | A concrete durable rule is available for extraction and saving               |
+| “I will add more rules later; first remember to reply in Chinese.”                      | Extract only the concrete rule requested now                                 |
+| “Remember the above.”                                                                   | Prepare contextual candidates for individual review when currently requested |
+
+Deferred intent produces an informational receipt saying that Memory is waiting for
+content or confirmation and nothing was saved, rather than a successful save or
+extraction failure. It does not create a background queue or permanently authorize
+all subsequent messages; explicitly request saving when supplying the complete rules.
+Ambiguous intent does not authorize a write. Missing or contradictory intent output
+reports a validation failure; a legacy bare array cannot bypass the intent check.
+
 ### Ordinary person facts and self-contained requests
 
 Names, nicknames, aliases, and non-sensitive characteristics are no longer excluded
