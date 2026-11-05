@@ -1,5 +1,7 @@
 # Admin Login
 
+<a id="help-admin-login"></a>
+
 The default admin login address is: `/Admin/Login`:
 
 <img src="./images/admin-login-01.png" />

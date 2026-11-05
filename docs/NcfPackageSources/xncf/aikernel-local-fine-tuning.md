@@ -41,6 +41,28 @@ Content-Type: application/json
 
 Replace IDs and the sequence cap with real values for the selected Worker. Saving a Worker returns a **Worker DTO**, not a training-job DTO: verify the saved profile and connection state. Disabling a profile blocks access but does not terminate existing training.
 
+<a id="help-fine-tuning"></a>
+
+## Local fine-tuning management
+
+Follow **Select Worker → Diagnose/prepare model → Upload/select dataset → Create training job → Inspect logs and artifacts**.
+Worker registration, model search/download and training jobs are separate stages; a downloaded model is not a finished training run.
+Refreshing or checking status does not create a job. Verify the job and retained artifacts before stopping or cleaning up.
+After artifact registration, check the resulting AI model configuration.
+See [local fine-tuning](./aikernel-local-fine-tuning.md) for parameters, dataset formats and backend limits.
+
+<a id="help-fine-tuning-workers"></a>
+
+## Fine-tuning Workers
+
+Select an enabled Worker with a configured secret before uploading datasets or
+starting a job. Registering a Worker endpoint does not install its runtime,
+download models, or grant network access. Match the backend to the host and use
+approved local models. Follow the [local fine-tuning guide](./aikernel-local-fine-tuning.md)
+for deployment, datasets, parameter ranges, monitoring, and artifact registration.
+**Add Worker** / **Edit Worker** configure alias, name, endpoint, timeout and secret, not training hyperparameters.
+Control-plane migration, diagnostics and model preparation are separate actions; editing an endpoint does not execute them.
+
 ## 1. What Fine-Tuning Changes
 
 ### SFT, Full Fine-Tuning, LoRA, and QLoRA

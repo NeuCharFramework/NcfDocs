@@ -2,6 +2,8 @@
 
 > Checked against the `NcfPackageSources` development line on 2026-08-22. This page documents the visual encoding, data boundaries, and troubleshooting path for the AgentsManager home-page 3D view. The 3D view is an operational overview, not a replacement for Agent, Group, Task, or HIL detail pages.
 
+<a id="help-agents-status"></a>
+
 ## 1. Purpose
 
 The 3D view places local Agents, remote A2A Agents, Agent groups, and current task relationships in one scene:

@@ -9,7 +9,7 @@ Open the **Memory** button in the AdminChat sidebar, or choose
 **Memory → Memory / conversation settings** in the launcher or current conversation.
 Nearby question marks open this guide or its relevant section. Chinese UI locales
 use Chinese documentation; all other UI locales use English.
-See also [Chat basics](./admin-operations.md) and [Workspace access](./workspace-adminchat.md).
+See also [Chat basics](./adminchat.md#help-admin-chat) and [Workspace access](./workspace-adminchat.md#help-workspace-permissions).
 
 <a id="help-memory-start"></a>
 
@@ -44,7 +44,7 @@ Learn requires an available PromptRange Memory prompt provider and Chat model.
 Read only does not initialize learning prompts or call the extraction model.
 Learning uses an additional model call and may incur costs; not every conversation
 produces an entry. The current implementation looks for explicit English or Chinese
-triggers such as “remember,” “prefer,” “correction,” or “forget” in the current user's
+triggers such as “remember,” “save,” “record,” “note,” “prefer,” “correction,” or “forget” in the current user's
 message. Overlong inputs and recognized requests not to save are skipped.
 Implicit preferences may be missed; add them manually when necessary.
 
@@ -54,14 +54,14 @@ A trigger only starts a check: **the word “remember” is not permission to wr
 The same model call classifies current intent before extracting entries. Only a
 present update request can proceed to validation, automatic saving, or contextual review.
 
-| User message                                                                            | This turn                                                                    |
-| --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| “I will give you some rules; remember them when I send them. Let's begin.”              | Wait for content; do not store the announcement or invent rules              |
-| “Remember this rule: be concise, but do not save yet; wait for confirmation.”           | Wait for confirmation without saving                                         |
-| “Do you remember the earlier rules?”, translations, or hypothetical “remember” requests | Not a present request to write                                               |
-| “From now on, please reply in Chinese.”                                                 | A concrete durable rule is available for extraction and saving               |
-| “I will add more rules later; first remember to reply in Chinese.”                      | Extract only the concrete rule requested now                                 |
-| “Remember the above.”                                                                   | Prepare contextual candidates for individual review when currently requested |
+| User message                                                                            | This turn                                                                             |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| “I will give you some rules; remember them when I send them. Let's begin.”              | Wait for content; do not store the announcement or invent rules                       |
+| “Remember this rule: be concise, but do not save yet; wait for confirmation.”           | Wait for confirmation without saving                                                  |
+| “Do you remember the earlier rules?”, translations, or hypothetical “remember” requests | Not a present request to write                                                        |
+| “From now on, please reply in Chinese.”                                                 | A concrete durable rule is available for extraction and saving                        |
+| “I will add more rules later; first remember to reply in Chinese.”                      | Extract only the concrete rule requested now                                          |
+| “Remember the above.” / “Save it now.” / “Record that.”                                 | Resolve earlier content; user-stated facts may save, assistant sources require review |
 
 Deferred intent produces an informational receipt saying that Memory is waiting for
 content or confirmation and nothing was saved, rather than a successful save or
@@ -83,25 +83,40 @@ not guess identities or relationships. Use an explicit correction such as
 
 ### Remembering earlier content and reviewing candidates
 
-An explicit reference to earlier content uses recent user/assistant messages from
-the **same authorized session**: at most six messages preceding the request,
+Eligible learning checks receive recent user/assistant messages from
+the **same authorized session** to resolve short commands with omitted objects: at most six messages preceding the request,
 skipping messages over 2000 characters, with a total limit of 6000 characters.
 It does not read other sessions, System messages, or attachment/tool contents directly.
 The answer generated after the current request is not earlier context.
 User statements and corrections take precedence; assistant content is only an
-unverified candidate source.
+unverified candidate source. Self-contained requests still extract only the requested
+facts in the current message, not unrelated content from the accompanying context.
 
-1. Send “Remember the above” or “Remember that.” and wait for the system's pending-review receipt.
-2. Select **Review candidate** for each entry. Inspect the content, source excerpt, scope, and pin option; edit the wording if needed.
-3. Only **Save entry** writes it. A deletion candidate requires **Delete** and confirmation.
-4. Confirmed entries default to manually pinned entries. Clear the pin during review if you want later automatic corrections.
+For example, announce that you will supply facts, then state “The fictional character
+Alpha is also called Little A,” and finally say “Please record that.” The first two
+steps do not write Memory. The final request resolves the user-stated fact and may
+save it automatically after validation, without a redundant UI confirmation.
+“Save it now,” “Note it down,” and a request to use the review function to save can
+also express present intent; the literal word “above” is not required.
+Saving files, recording audio, and logging program output are not Memory requests.
+
+Review depends on **actual evidence provenance**, not simply on referencing prior content:
+
+- If all effective changes are supported by user statements, they may save automatically with the original fact's message ID; they default to unpinned.
+- If any effective change relies on assistant content, the whole batch becomes review candidates without partial automatic writes. “Save now” does not turn assistant claims into user statements.
+- **Review candidate** appears only when a system receipt actually returns candidates. The assistant cannot click it and must not claim candidates exist in advance.
+
+When review is required, select **Review candidate** for each entry, inspect its content,
+source excerpt, scope, and pin option, then select **Save entry**. Deletion requires
+**Delete** and confirmation. Manually confirmed entries default to pinned; clear the
+pin if you want later automatic corrections.
 
 Opening, cancelling, or closing review does not save anything. Candidates are page-local,
 like turn receipts; refresh or a subsequent receipt replaces them, so request them again.
 Revision conflicts preserve newer memory. If the reference is too old, overlong, or
 ambiguous, the system asks for a complete fact rather than claiming a save.
-Eligible self-contained requests can still save automatically; the prior-context path
-always requires review. Off/Read-only stops automatic learning, but users may still
+Eligible self-contained requests and earlier user-stated facts can save automatically;
+pinned entries remain protected from automatic changes. Off/Read-only stops automatic learning, but users may still
 manually confirm already displayed candidates.
 
 <a id="help-memory-scopes"></a>

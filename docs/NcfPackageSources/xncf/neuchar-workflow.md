@@ -5,6 +5,42 @@
 
 `NeuCharWorkflow` is a server-side visual orchestration module. It connects enabled XNCF Functions, Agent / Agent-group / A2A objects, and built-in system nodes as a directed graph executed by the server. It is not a browser scripting engine and it never evaluates arbitrary JavaScript in a template.
 
+<a id="help-workflow-designer"></a>
+
+## Workflow designer
+
+Select or create a workflow, connect nodes and configure inputs, variables and manual/interval/Webhook/Chat triggers.
+Save before a test run; resolve disconnected draft nodes first. Autosave runs only while this page is open and changes exist;
+it does not promise publication or background scheduled saves. Automatic canvas layout changes presentation, not node semantics.
+Tasks, analytics and import/export are separate entries. Stopping a run does not undo external effects already performed.
+See [the Workflow guide](./neuchar-workflow.md) for nodes and expressions.
+
+<a id="help-workflow-tasks"></a>
+
+## Workflow tasks
+
+Search and filter execution records by state, open running details or replay, and stop running tasks.
+Quick cleanup removes records in the selected scope: check that scope first. Create workflows in the designer instead.
+Human-input pauses require the requested response, not repeated starts.
+See the [Workflow guide](./neuchar-workflow.md) for node behavior,
+triggers, expressions, and Agent integration.
+
+<a id="help-workflow-replay"></a>
+
+## Workflow replay
+
+Replay uses a frozen snapshot of that run. Play, pause and step through node order, inputs/outputs and failures.
+Viewing does not execute again or undo work. Opening the latest Workflow and copying the current Workflow are different actions;
+do not treat today's design as the definition used by a historical run. Recorded output can contain sensitive data.
+
+<a id="help-workflow-analytics"></a>
+
+## Workflow analytics
+
+Select time, Workflow, state and resource filters before inspecting trends, resource calls, health and details.
+Use the task/replay view to investigate individual failures. Aggregates
+do not replace the original run records.
+
 ## 1. Capabilities and Boundaries
 
 Installation runs the module's database migrations and adds two Admin entries:

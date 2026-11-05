@@ -1,22 +1,40 @@
-# Senparc.Xncf.Sandbox Environment Setup
+# Sandbox session management and environment setup
 
-This page explains how to **manually** prepare Docker (or a compatible CLI) and images before using `Senparc.Xncf.Sandbox`.  
+This page covers the `Senparc.Xncf.Sandbox` session dashboard and how to **manually** prepare Docker (or a compatible CLI) and images before use.
 Image names, tags, and private registry examples are maintained here and may change over time. **Treat this page as the source of truth.** The XNCF UI only shows a short checklist and links here.
 
 > Docs site: <https://doc.ncf.pub>  
 > The module does not auto-install Docker and does not silently run `docker pull` from the web process.
 
+<a id="help-sandbox-panel"></a>
+
+## Sandbox dashboard
+
+The panel shows runtime overview, Function shortcuts and sandbox sessions.
+Check the environment before creating a sandbox or executing code against a specific SessionId.
+Runtime, status, ports and TTL describe the execution environment, current state, access endpoints and lifetime.
+Changing an alias does not create another sandbox; changing TTL does not change code execution timeout.
+**Destroy** targets the selected sandbox: check its tasks and retained artifacts first.
+**Environment setup** instead covers Docker/image probing and manual installation.
+See [Sandbox environment setup](./sandbox-environment.md#help-sandbox-setup) for installation, not session management.
+
 ## 1. Scope
 
-| Item | Notes |
-| --- | --- |
-| Module responsibility | Orchestrate create/destroy lab sandboxes (Exec / optional Jupyter) |
-| Operator responsibility | Install a container runtime, pre-pull images, configure private registries |
-| Out of scope | Silent Docker installation by the web app; hard-coding image tags in UI copy |
+| Item                    | Notes                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| Module responsibility   | Orchestrate create/destroy lab sandboxes (Exec / optional Jupyter)           |
+| Operator responsibility | Install a container runtime, pre-pull images, configure private registries   |
+| Out of scope            | Silent Docker installation by the web app; hard-coding image tags in UI copy |
 
 See also: [XNCF extension modules](../home/xncf-extension-modules.md).
 
+<a id="help-sandbox-setup"></a>
+
 ## 2. Verify Docker
+
+The Admin **Environment setup** page refreshes Docker probe results and shows the configured registry prefix.
+It provides a manual installation/image-pull checklist and this guide; refreshing does not install Docker or pull every image.
+Creating, executing and destroying sandboxes belong to the [dashboard](./sandbox-environment.md#help-sandbox-panel), not this page.
 
 On the same host that runs NCF:
 
@@ -180,15 +198,15 @@ Mirror images internally, then configure the host `appsettings.json`:
 
 ## 5. Enable the module in NCF
 
-1. Start the site and sign in to Admin  
-2. Install/enable `Senparc.Xncf.Sandbox`  
-3. Open **Environment setup** and confirm the Docker probe passes  
+1. Start the site and sign in to Admin
+2. Install/enable `Senparc.Xncf.Sandbox`
+3. Open **Environment setup** and confirm the Docker probe passes
 4. Use the **Sandbox panel** or Functions
 
 ## 6. Security notes
 
-- Prefer localhost/intranet experiments; do not expose Jupyter `127.0.0.1` + token URLs to the public internet without a reverse proxy and auth  
-- Without Docker, the module will **not** fall back to bare-process execution of untrusted code  
+- Prefer localhost/intranet experiments; do not expose Jupyter `127.0.0.1` + token URLs to the public internet without a reverse proxy and auth
+- Without Docker, the module will **not** fall back to bare-process execution of untrusted code
 
 ## 7. NCF/XNCF Preview Workload
 

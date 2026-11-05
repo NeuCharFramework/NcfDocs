@@ -18,6 +18,18 @@ NuGet/Template 项目的使用者不应为了操作功能而定位实现文件�
 
 ## 当前已有的详细覆盖
 
+2026-11-05 补充了后台功能专题。下方早期审计中的缺口仍用于追踪源码深度，
+不再表示这些功能没有操作说明；使用者可直接进入：
+
+- [AdminChat](./adminchat.md)、[Memory](./adminchat-memory.md)、[后台日志](./admin-logs.md)。
+- [AIKernel 配置](./aikernel-admin.md)、[知识库与召回](./knowledge-base.md)、
+  [PromptRange](./prompt-range.md)、[Skill](./skills.md)、[AgentsManager](./agents-manager.md)。
+- [MCP Manager](./mcp-manager.md)、[NeuCharPivot](./neuchar-pivot.md)、
+  [NeuBell WebHook](./neubell-webhooks.md)、[FileManager](./file-manager.md)。
+- [DynamicData](./dynamic-data.md)、[SenMapic](./senmapic.md)、
+  [微信公众号](./weixin-manager.md)、[个人微信 Bot](./weixin-bot.md)。
+
+
 | 模块/能力                             | 使用说明                                                                                                    | 源码剖析                                                            | 说明                                                               |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `Senparc.Xncf.XncfBuilder`            | [有](/zh/start/xncf-develop/isolated-xncf-development.html)                                                 | [有](./xncfbuilder-isolated-development.md)                         | 创建/修改/预览/评审/合入边界。                                     |

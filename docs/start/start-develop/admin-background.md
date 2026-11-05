@@ -2,6 +2,58 @@
 
 After successful login, you can enter the admin backend.
 
+<a id="help-admin-home"></a>
+
+## Admin home
+
+Home combines module status, Agents status, Host monitoring, the AI chat entry and configured NeuCharPivot boards.
+Module counters lead to installation/update management. **Manage Agents** and **Manage boards** open their respective pages,
+not start tasks. **Open quick chat** opens the conversation UI; a model request begins when a message is sent.
+See **Host resource monitor** below for chart units and time ranges, or [Admin basics](./admin-background.html)
+for system navigation and administrator accounts.
+
+<a id="help-host-monitor"></a>
+
+## Host resource monitor
+
+The home panel combines live Host/Web-process metrics and historical trends.
+Choose a time range, zoom to inspect an interval, and return to live tracking
+when finished. CPU and memory use the percentage axis; network throughput uses
+Mbps. A similarity in chart shapes is not evidence that metrics share a unit.
+History is cache-backed and bounded: an empty interval can mean no retained
+samples, not zero utilization.
+
+<a id="help-admin-users"></a>
+
+## Administrators
+
+Use **Administrator management** to create or edit an administrator, then assign
+roles. Check the target username before resetting credentials or changing role
+membership. An administrator account is not the same as an Accounts-module user
+or a Weixin follower. Do not copy passwords into documentation, chat, or logs.
+
+<a id="help-admin-roles"></a>
+
+## Roles and permissions
+
+Create a role, configure its permission tree, and assign it to the intended
+administrators. Save each stage and verify access with the affected account.
+A visible menu alone does not grant API or Function access. If access is denied,
+check role membership, permission codes, module availability, and any separate
+NeuCharPivot policy before broadening permissions.
+
+<a id="help-admin-menus"></a>
+
+## Menus
+
+Use menu management to maintain navigation, parent-child relationships, and
+target addresses. Verify the destination after saving. Hiding an entry is not
+an authorization boundary; the destination still needs server-side permission
+checks. Module-provided navigation should remain consistent with module state.
+**Configuration mode** adjusts navigation layout/order and requires saving the configuration.
+The regular editor's type, path, operation code, lock and visibility fields serve different purposes.
+New menus still require role authorization; they are not automatically visible to every administrator.
+
 ## Homepage
 
 <img src="./images/admin-background-01-homepage.png" />

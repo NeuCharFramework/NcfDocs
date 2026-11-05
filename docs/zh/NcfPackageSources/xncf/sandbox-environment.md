@@ -1,22 +1,38 @@
-# Senparc.Xncf.Sandbox 环境准备指南
+# Sandbox 会话管理与环境准备
 
-本页说明如何在使用 `Senparc.Xncf.Sandbox` 之前，**手动**准备 Docker（或兼容 CLI）与镜像。  
+本页说明 `Senparc.Xncf.Sandbox` 的会话面板操作，以及使用前如何**手动**准备 Docker（或兼容 CLI）与镜像。
 镜像名称、版本与内部仓库地址会随文档更新，**请以本页为准**；模块内只提供简要说明并链到此处。
 
 > 文档站点：<https://doc.ncf.pub>  
 > 模块不会自动安装 Docker，也不会在后台静默 `docker pull`（安全与权限边界）。
 
+<a id="help-sandbox-panel"></a>
+
+## Sandbox 沙箱面板
+
+面板显示运行概况、Function 快捷操作和沙箱会话。先检查环境，再创建沙箱或对指定 SessionId 执行代码。
+会话表中的运行时、状态、端口和 TTL 分别表示执行环境、当前状态、访问入口及存活期限；
+修改别名不是创建新沙箱，修改 TTL 也不是修改代码超时。
+“销毁”针对所选沙箱，执行前确认任务和需要保留的产物；“环境准备”则是 Docker/镜像检测与手动安装指南。
+安装步骤见 [Sandbox 环境准备](./sandbox-environment.md#help-sandbox-setup)，不能用安装说明替代本面板的会话操作。
+
 ## 1. 目标与边界
 
-| 项目 | 说明 |
-| --- | --- |
-| 模块做什么 | 编排可快速创建/销毁的实验沙箱（Exec / 可选 Jupyter） |
-| 运维需要做什么 | 安装容器运行时、预拉镜像、按需配置内部仓库 |
-| 模块不做什么 | 不以 Web 进程自动安装 Docker；不把镜像版本写死在 UI 文案中 |
+| 项目           | 说明                                                       |
+| -------------- | ---------------------------------------------------------- |
+| 模块做什么     | 编排可快速创建/销毁的实验沙箱（Exec / 可选 Jupyter）       |
+| 运维需要做什么 | 安装容器运行时、预拉镜像、按需配置内部仓库                 |
+| 模块不做什么   | 不以 Web 进程自动安装 Docker；不把镜像版本写死在 UI 文案中 |
 
 相关模块说明见：[XNCF 扩展库说明](../home/xncf-extension-modules.md)。
 
+<a id="help-sandbox-setup"></a>
+
 ## 2. 检查 Docker 是否可用
+
+后台“环境准备”页可刷新 Docker 探测结果并查看当前镜像仓库前缀。
+页面列出手动安装/拉取清单及本文入口；刷新探测不会自动安装 Docker 或拉取所有镜像。
+创建、执行和销毁沙箱属于[沙箱面板](./sandbox-environment.md#help-sandbox-panel)，不是本页操作。
 
 在运行 NCF 宿主的同一台机器上执行：
 
@@ -210,9 +226,9 @@ docker pull registry.example.com/ncf-sandbox/python:3.12-alpine
 
 ## 5. 在 NCF 中启用模块
 
-1. 启动站点并登录管理后台  
-2. 安装/启用 `Senparc.Xncf.Sandbox`  
-3. 打开模块菜单 **环境准备**，确认「Docker 检测」通过  
+1. 启动站点并登录管理后台
+2. 安装/启用 `Senparc.Xncf.Sandbox`
+3. 打开模块菜单 **环境准备**，确认「Docker 检测」通过
 4. 再使用 **沙箱面板** 或 Function（创建 / Exec / 销毁）
 
 模块内简要引导页不会复制完整镜像版本表，避免文档与代码双处漂移。
@@ -268,13 +284,13 @@ docker pull registry.example.com/ncf-sandbox/python:3.12-alpine
 
 ## 8. 故障排查速查
 
-| 现象 | 排查 |
-| --- | --- |
-| `docker: command not found` | 未安装或未加入 PATH |
-| `Cannot connect to the Docker daemon` | Desktop/Engine 未启动，或当前用户无 socket 权限 |
-| Create 报 Docker 不可用 | 在宿主机器上重跑第 2 节；确认 NCF 进程与你执行 CLI 的是同一环境 |
-| pull 很慢/失败 | 配置镜像加速或改用第 4 节内部仓库 |
-| Jupyter 很卡 | 降低并发，或先只用 Exec 模板 |
+| 现象                                  | 排查                                                            |
+| ------------------------------------- | --------------------------------------------------------------- |
+| `docker: command not found`           | 未安装或未加入 PATH                                             |
+| `Cannot connect to the Docker daemon` | Desktop/Engine 未启动，或当前用户无 socket 权限                 |
+| Create 报 Docker 不可用               | 在宿主机器上重跑第 2 节；确认 NCF 进程与你执行 CLI 的是同一环境 |
+| pull 很慢/失败                        | 配置镜像加速或改用第 4 节内部仓库                               |
+| Jupyter 很卡                          | 降低并发，或先只用 Exec 模板                                    |
 
 ## 9. 文档维护约定
 

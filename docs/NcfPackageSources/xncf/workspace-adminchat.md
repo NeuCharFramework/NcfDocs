@@ -1,5 +1,43 @@
 # Workspace and AdminChat
 
+<a id="help-workspace-manage"></a>
+
+## My Workspaces and uploads
+
+The list shows names, creation times and last-access times. Enter a name and choose **Create Workspace** to create durable file space.
+Each row's **Upload files** sends selected files to that Workspace, not every session or FileManager.
+The **Connection guide** explains VS Code / Cursor access.
+Creating a Workspace does not grant AI file writes or Python execution; those are AdminChat session choices.
+See [Workspace and AdminChat](./workspace-adminchat.md) for runtimes and remote gateway configuration.
+
+<a id="help-workspace-permissions"></a>
+
+## Workspace permissions
+
+A Workspace stores durable files; the runtime is an execution environment.
+Read access, AI write access, and CLI/Python execution are distinct levels.
+Grant only the required level when creating the session. The default native
+runtime does not imply code execution is enabled; Docker availability does not
+automatically grant execution permission either.
+In the AdminChat launcher, select a Workspace before enabling **Allow AI file writes** or **Allow AI to execute Python**.
+Python requires write permission, runs `.py` files inside that Workspace and prefers its `.venv`.
+This help describes session authorization, not the Workspace creation/upload page.
+
+The remote gateway checks both the DesktopBridge device session and the Admin
+JWT, as well as ownership. Use HTTPS for remote access. Revoking a device session
+does not delete Workspace files. See [Workspace and AdminChat](./workspace-adminchat.md).
+
+<a id="help-desktop-pairing"></a>
+
+## DesktopBridge pairing
+
+Match the desktop-generated pairing code, client name, and source address
+before approving. Reject unexpected requests. Review active sessions and revoke
+devices that should no longer connect. Device pairing is separate from the
+administrator identity and Workspace ownership checks.
+
+## Runtime and deployment
+
 For durable preferences and project memory, see [AdminChat Memory and conversation settings](./adminchat-memory.md).
 Workspace-scoped memory remains user-isolated database data; it does not automatically read or write a Workspace `Memory.md` file.
 

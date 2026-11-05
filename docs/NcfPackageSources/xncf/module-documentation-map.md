@@ -1,5 +1,16 @@
 # XNCF Module Documentation Map
 
+The 2026-11-05 feature-guide update adds direct operating instructions.
+Gaps in the earlier audit below continue to track source-analysis depth, not an absence of UI help:
+
+- [AdminChat](./adminchat.md), [Memory](./adminchat-memory.md), [Admin logs](./admin-logs.md).
+- [AIKernel configuration](./aikernel-admin.md), [KnowledgeBase and recall](./knowledge-base.md),
+  [PromptRange](./prompt-range.md), [Skills](./skills.md), [AgentsManager](./agents-manager.md).
+- [MCP Manager](./mcp-manager.md), [NeuCharPivot](./neuchar-pivot.md),
+  [NeuBell WebHooks](./neubell-webhooks.md), [FileManager](./file-manager.md).
+- [DynamicData](./dynamic-data.md), [SenMapic](./senmapic.md),
+  [Weixin official accounts](./weixin-manager.md), [Personal Weixin Bot](./weixin-bot.md).
+
 > Coverage audit performed on 2026-08-14 against the `NcfPackageSources`
 > development line. This is a documentation coverage map, not a statement that
 > a module is unsupported or unsuitable for production.

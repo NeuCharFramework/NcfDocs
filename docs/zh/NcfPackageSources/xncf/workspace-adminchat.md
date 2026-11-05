@@ -3,6 +3,38 @@
 长期偏好与项目记忆请参阅 [AdminChat Memory 与对话设置](./adminchat-memory.md)。
 Workspace 作用域记忆仍按用户隔离并保存在数据库中，不会自动读写工作区内的 `Memory.md`。
 
+<a id="help-workspace-manage"></a>
+
+## 我的工作区与文件上传
+
+“我的工作区”列表显示名称、创建时间及最近访问时间。输入名称并点击“创建工作区”创建持久文件空间；
+每一行的“上传文件”把所选文件上传到那一个 Workspace，不会上传到所有会话或 FileManager。
+下方“连接指南”说明如何在 VS Code / Cursor 中连接。工作区创建成功不代表已授权 AI 写入或执行 Python，
+这两项在 AdminChat 创建会话时设置。运行时与远程网关配置见 [Workspace 与 AdminChat](./workspace-adminchat.md)。
+
+<a id="help-workspace-permissions"></a>
+
+## Workspace 权限
+
+Workspace 保存持久文件，运行时只是执行环境。
+读取、允许 AI 写入、CLI/Python 执行是不同权限级别，创建会话时只授予所需级别。
+默认原生运行时不表示已经开放代码执行；有 Docker 也不会自动获得执行权限。
+AdminChat 创建入口中先选择 Workspace，再分别勾选“允许 AI 写入文件”“允许 AI 执行 Python”；
+Python 选项依赖写入权限，只执行 Workspace 内的 `.py` 文件，并优先使用该 Workspace 的 `.venv`。
+这个问号解释会话授权，不负责创建或上传工作区文件。
+
+远程网关同时检查 DesktopBridge 设备会话、管理员 JWT 和所有权。
+远程访问使用 HTTPS。撤销设备会话不会删除 Workspace 文件。
+参见 [Workspace 与 AdminChat](./workspace-adminchat.md)。
+
+<a id="help-desktop-pairing"></a>
+
+## DesktopBridge 设备配对
+
+批准前核对桌面生成的配对码、客户端名称和来源地址，拒绝非预期请求。
+检查活动会话，撤销不再需要连接的设备。
+设备配对与管理员身份、Workspace 所有权检查是不同环节。
+
 ## 设计边界
 
 Workspace 使用可配置的持久化目录，适合 AI Harness、源码、HTML/CSS/素材和构建中间文件。文件不会强制保存在 Docker 可写层；删除或重建运行时不会删除 Workspace。FileManager 仍然用于长期资产、用户上传文件、归档版本和最终发布产物。

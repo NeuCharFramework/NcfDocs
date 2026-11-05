@@ -7,6 +7,17 @@ you do not need to read the implementation to use the workflow safely.
 For the code-level architecture, state machine, and extension points, see
 [XncfBuilder Isolated Development Source Analysis](/NcfPackageSources/xncf/xncfbuilder-isolated-development.html).
 
+<a id="help-builder-preview"></a>
+
+## XncfBuilder preview monitor
+
+Monitor started isolated preview pipelines and development tasks by module, stage, source fingerprint, process, Host, time and state.
+Generated source does not automatically enter the preview queue; start an XNCF isolated preview first.
+**Refresh status** updates the display, **Open** visits the preview site and **Stop** stops that preview.
+**Manual merge** and **Discard** act on isolated development tasks; inspect differences and paths first.
+Resolve persistence-not-ready messages rather than treating an empty list as a successful build.
+See [isolated development and manual merge](./isolated-xncf-development.html) for the full flow.
+
 ## What This Workflow Solves
 
 Traditional **Generate XNCF** writes directly into the selected solution. That
