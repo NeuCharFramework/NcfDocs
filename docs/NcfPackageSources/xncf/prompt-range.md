@@ -35,3 +35,12 @@ Configure the models used for prompt testing and evaluation, then verify the
 selected model in the prompt page. Distinguish model configuration from the
 prompt text and from knowledge-base embeddings. Model access and credentials
 still depend on the configured provider.
+
+## AdminChat system prompt range
+
+AdminChat's built-in default SystemMessage is stored as the
+`AdminChat.SystemMessage` PromptRange. The range is initialized on first use,
+and the selected published version is the highest-scoring current version.
+Use the AdminChat settings link to open the range editor, then publish and score
+versions there. This default prompt is separate from each user's personal or
+tenant-wide SystemMessage.

@@ -210,6 +210,12 @@ Memory 用于保存当前用户明确要求记住的长期事实、人物普通�
 个人设置使用“保存更改”，租户全局设置使用其独立的“保存全局 SystemMessage”按钮。
 修改系统提示词不等于新增 Memory 条目，关闭 Memory 也不会撤销这些系统提示词。
 
+AdminChat 内置的默认 SystemMessage 由 PromptRange 通过
+`AdminChat.SystemMessage` 靶场别名维护。安装 PromptRange 后，AdminChat
+首次初始化时会创建该靶场及默认的已发布版本。AdminChat 设置面板可以直接
+打开 PromptRange 编辑器；在其中发布并评分多个版本后，后续请求会选择当前
+评分最高的版本。这与上面的个人和租户 SystemMessage 字段相互独立。
+
 <a id="help-memory-deployment"></a>
 
 ## 部署、隐私与排障

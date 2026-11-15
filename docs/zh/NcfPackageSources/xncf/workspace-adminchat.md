@@ -121,6 +121,12 @@ Linux 部署需要确保容器用户对 Workspace 持久化目录拥有读写权
   读取/写入/执行权限访问，与 Agent 写入的文件同样受路径、ETag 与大小
   规则约束。上传本身不授予执行权限。
 
+当 `Senparc.Xncf.WorkspaceAgent` 作为 NuGet 包被消费时，包内的
+`buildTransitive/Senparc.Xncf.WorkspaceAgent.targets` 会把 Agent 运行时文件
+复制到消费方的输出目录和发布目录。这样包消费者无需手工添加构建后复制步骤，
+也能保留持久 Agent 协议所需的运行时文件。仅完成打包不能证明部署主机可以
+启动 Agent；仍需在目标环境检查发布文件和运行时配置。
+
 ## 配置
 
 可在配置中调整限制：

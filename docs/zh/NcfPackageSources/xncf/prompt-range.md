@@ -33,3 +33,10 @@
 配置提示词测试和评价使用的模型，再到 Prompt 页面核对实际选择。
 区分模型配置、提示词文本与知识库 Embedding。
 模型访问能力及凭据仍取决于对应服务商配置。
+
+## AdminChat 系统提示词靶场
+
+AdminChat 内置默认 SystemMessage 存储在 `AdminChat.SystemMessage`
+PromptRange 靶场中。首次使用时会自动初始化该靶场，后续选择当前评分最高
+的已发布版本。可以从 AdminChat 设置入口打开靶场编辑器，在其中发布并评分
+版本。该默认提示词与用户个人 SystemMessage、租户全局 SystemMessage 相互独立。

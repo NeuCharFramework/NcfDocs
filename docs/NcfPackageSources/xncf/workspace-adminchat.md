@@ -77,6 +77,14 @@ page first reads the effective limits from the `capabilities` endpoint.
   they follow the same path, ETag, and size rules as Agent-written files.
   Uploading does not grant execution rights.
 
+When `Senparc.Xncf.WorkspaceAgent` is consumed as a NuGet package, its
+`buildTransitive/Senparc.Xncf.WorkspaceAgent.targets` file copies the Agent
+runtime files into the consuming application's output and publish directories.
+This keeps the persistent Agent protocol available to package consumers without
+requiring a manual post-build copy. A package build alone does not prove that a
+deployed host can start the Agent; verify the published files and runtime
+configuration in the target environment.
+
 No database model changed in this upgrade, so no migration was added. Existing migrations remain generated with `dotnet ef migrations add`.
 
 The simulated site now includes standard EF Core migrations for SQLite, MySQL, SQL Server, PostgreSQL, Oracle, and DM. Run `dotnet ef database update` with the matching `AdminSenparcEntities_*` context, the Admin project, and `Senparc.Web.DatabasePlant` as startup project before using the Workspace option. Each migration changes only the three Workspace fields on `ADMIN_AdminChatSession`.

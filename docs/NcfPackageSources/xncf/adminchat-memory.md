@@ -241,6 +241,13 @@ Use **Save changes** for personal settings and the separate **Save global
 SystemMessage** button for tenant-wide settings. Changing a system prompt is not
 the same as adding an entry; disabling Memory does not remove these prompts.
 
+The built-in default SystemMessage is maintained by PromptRange under the
+`AdminChat.SystemMessage` range alias. The first AdminChat initialization creates
+the range and its default published version when PromptRange is installed. The
+AdminChat settings panel can open the PromptRange editor directly; publish and
+score versions there to select the highest current score for later requests.
+This is separate from the personal and tenant SystemMessage fields above.
+
 <a id="help-memory-deployment"></a>
 
 ## Deployment, privacy, and troubleshooting
