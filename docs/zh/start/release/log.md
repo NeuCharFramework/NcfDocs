@@ -1,5 +1,21 @@
 # 日志
 
+## 2026-11-16 更新
+
+NcfPackageSources（当前开发线，核对日期：2026-11-16）——后台导航上下文、XNCF 检查能力、Workspace 运维与多语言：
+
+1、Admin iframe Tab 现在会记录打开新页面的来源 Tab，并在 Tab 悬浮面板中提供快速返回来源的操作。直接 URL 打开的 Tab 先使用精简路径名称，iframe 页面加载后可采用页面 `title`；从菜单打开的 Tab 保留菜单文字作为权威名称，不再把过长 URL 作为主要标签文字。
+
+2、菜单树节点和 Tab 增加 XNCF 模块上下文。悬浮详情可以显示所属模块名称、UID、已注册页面及快速跳转链接；Tab 顶部颜色根据 UID 分段数据计算，并限制在适度的 HSL 范围内，在提高模块区分度的同时避免颜色过于突兀。
+
+3、XNCF 模块管理页在模块提供相应能力时展示已注册 Function 元数据与数据库/实体洞察。实体检查继续使用现有管理员重新认证边界；页面展示接口、Function 数量、数据库前缀/上下文、迁移状态、实体名称、可读取时的行数以及公开列信息，不会修改模块数据。
+
+4、Workspace 管理页现在展示按所有者隔离的文件数量与用量，支持清空 Workspace 内容但保留 Workspace 记录，并补充 Workspace Agent 打包运行时文档。上传、清空、服务端消息和页面文案统一接入源文本多语言处理链路。
+
+5、NeuCharWorkflow、PromptRange、Sandbox、Workspace 及相关 Admin 页面继续推进国际化：共享 Admin 多语言脚本加载各模块的 `Frontend.*` 资源映射，Vue 动态消息使用 `ncfST`，代码注释和日志描述逐步统一为英文，同时保留中文资源源文本以支持语言切换。
+
+运维说明见：[Workspace 与 AdminChat](../../NcfPackageSources/xncf/workspace-adminchat.md)、[NeuChar Workflow](../../NcfPackageSources/xncf/neuchar-workflow.md)、[PromptRange](../../NcfPackageSources/xncf/prompt-range.md) 和 [XNCF 模块文档映射](../../NcfPackageSources/xncf/module-documentation-map.md)。
+
 ## 2026-09-20更新
 
 NcfPackageSources（Developer-MAF-V3-Spark 分支）——多租户模块完整升级 + AdminChat 按账号隔离：

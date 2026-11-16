@@ -1,5 +1,21 @@
 # Logs
 
+## 2026-11-16 update
+
+NcfPackageSources (current development line, checked on 2026-11-16) — Admin navigation context, XNCF inspection, Workspace operations, and localization:
+
+1. Admin iframe tabs now retain the source tab that opened a new page and expose a quick return action in the tab hover panel. Direct URL tabs start with a short path label and can adopt the loaded iframe document title; menu-opened tabs keep the menu label as their authoritative title. Long URL text is no longer used as the primary tab label.
+
+2. XNCF module context is attached to menu tree nodes and tabs. Hover details can show the owning module name, UID, registered pages, and quick links to those pages. Tab accent colors are derived from segmented UID data with constrained HSL output so modules remain visually distinguishable without producing disruptive colors.
+
+3. The XNCF module administration page now exposes registered Function metadata and database/entity insights where the module provides them. Entity inspection requires the existing administrator re-authentication boundary; the page reports interfaces, Function counts, database prefix/context information, migration state, entity names, row counts when available, and public columns without changing module data.
+
+4. Workspace administration now reports owner-scoped file counts and usage, supports clearing Workspace contents while preserving the Workspace record, and documents the packaged Workspace Agent runtime. Upload, cleanup, server messages, and page copy use the shared localization source-map pipeline.
+
+5. NeuCharWorkflow, PromptRange, Sandbox, Workspace, and related Admin surfaces continue the internationalization pass: module `Frontend.*` resource mappings are loaded by the shared Admin localization script, dynamic Vue messages use `ncfST`, and source comments/log descriptions are being normalized to English while preserving Chinese resource source text for language switching.
+
+For the operator guides, see [Workspace and AdminChat](../../NcfPackageSources/xncf/workspace-adminchat.md), [NeuChar Workflow](../../NcfPackageSources/xncf/neuchar-workflow.md), [PromptRange](../../NcfPackageSources/xncf/prompt-range.md), and [XNCF module documentation map](../../NcfPackageSources/xncf/module-documentation-map.md).
+
 ## 2026-09-20 update
 
 NcfPackageSources (Developer-MAF-V3-Spark branch) — full multi-tenant module upgrade + AdminChat per-account isolation:
