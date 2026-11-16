@@ -14,6 +14,8 @@ NcfPackageSources (current development line, checked on 2026-11-16) — Admin na
 
 5. NeuCharWorkflow, PromptRange, Sandbox, Workspace, and related Admin surfaces continue the internationalization pass: module `Frontend.*` resource mappings are loaded by the shared Admin localization script, dynamic Vue messages use `ncfST`, and source comments/log descriptions are being normalized to English while preserving Chinese resource source text for language switching.
 
+6. Frontend source-text mapping now uses the neutral resource key as the stable source and the active culture resource as the target. This fixes the case where an English or other localized RESX translated both sides of `Frontend.*` and therefore could not match Chinese text still present in legacy Vue templates.
+
 For the operator guides, see [Workspace and AdminChat](../../NcfPackageSources/xncf/workspace-adminchat.md), [NeuChar Workflow](../../NcfPackageSources/xncf/neuchar-workflow.md), [PromptRange](../../NcfPackageSources/xncf/prompt-range.md), and [XNCF module documentation map](../../NcfPackageSources/xncf/module-documentation-map.md).
 
 ## 2026-09-20 update

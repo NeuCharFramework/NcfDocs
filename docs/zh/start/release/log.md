@@ -14,6 +14,8 @@ NcfPackageSources（当前开发线，核对日期：2026-11-16）——后台�
 
 5、NeuCharWorkflow、PromptRange、Sandbox、Workspace 及相关 Admin 页面继续推进国际化：共享 Admin 多语言脚本加载各模块的 `Frontend.*` 资源映射，Vue 动态消息使用 `ncfST`，代码注释和日志描述逐步统一为英文，同时保留中文资源源文本以支持语言切换。
 
+6、前端源文本映射现在以中性资源中的源键作为稳定来源，以当前语言资源作为目标值。这样修复了 English 或其他语言 RESX 同时翻译 `Frontend.*` 两侧，导致旧 Vue 模板中的中文无法匹配的问题。
+
 运维说明见：[Workspace 与 AdminChat](../../NcfPackageSources/xncf/workspace-adminchat.md)、[NeuChar Workflow](../../NcfPackageSources/xncf/neuchar-workflow.md)、[PromptRange](../../NcfPackageSources/xncf/prompt-range.md) 和 [XNCF 模块文档映射](../../NcfPackageSources/xncf/module-documentation-map.md)。
 
 ## 2026-09-20更新
