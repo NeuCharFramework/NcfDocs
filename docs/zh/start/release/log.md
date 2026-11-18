@@ -34,8 +34,6 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——多租户模块完整�
 
 详见 [配置多租户](../config/mutiple-tenant.md)。
 
-
-
 NcfPackageSources（Developer-MAF-V3-Spark 分支）——Sandbox v0.3.3：JupyterLab 外部控制、可选容器端口映射与会话别名：
 
 1、JupyterLab 外部控制：模块现具备完整的外部操作接口。新增可被 AI 调用的「创建 Notebook」（`LabCreateNotebook`）Function：在运行中的 Lab 工作区写入 nbformat-4 的 `.ipynb` 文件，支持 Python 与 C#（dotnet-interactive，内核 `C# .NET SDK`）；Notebook 源码遵循 Jupyter 百分号文件约定（`# %%` 分隔代码单元格、`# %% [markdown]` 标记 Markdown 单元格；可选标题生成首个 Markdown 标题单元格），单个字符串即可完整描述 Notebook。「执行 Lab 命令」Function 新增可选 `StdinContent` 参数（最多 32 KB），经 `docker exec -i` 执行，可向容器内终端程序 / REPL 批量提交指令。
@@ -50,7 +48,6 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——Sandbox v0.3.3：Jupyt
 
 完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
-
 ## 2026-09-18更新
 
 NcfPackageSources（Developer-MAF-V3-Spark 分支）——Function 全局 Provit 访问控制：覆盖代码属性的数据库策略：
@@ -62,7 +59,6 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——Function 全局 Provit
 3、访问控制管理页：NeuCharPivot 菜单下新增页面（`/Admin/NeuCharPivot/Access`，仅超级管理员），为每个 Function 完整展示决策上下文——模块标识/版本/可用状态、代码基线、当前数据库策略与最终生效策略（含来源：数据库或代码）——以及模块已清除的孤儿策略。支持单条编辑（策略模式、用户/角色/权限选择器、备注）与对选中行的批量操作：批量应用 开放 / 受限 / 禁用 / 继承，或批量清除。数据库迁移已同步六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL）；单元测试同步扩展（覆盖语义、受限主体匹配、孤儿保留、绑定规范化）。
 
 完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
-
 
 ## 2026-09-14更新
 
@@ -114,7 +110,6 @@ NcfPackageSources（Developer-MAF-V3 分支）——后台体验、AIKernel 可�
 
 完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
-
 ## 2026-08-30更新
 
 NcfPackageSources（Developer-MAF-V3 分支）各 XNCF 模块功能文档同步更新，主要内容：
@@ -124,6 +119,7 @@ NcfPackageSources（Developer-MAF-V3 分支）各 XNCF 模块功能文档同步�
 2、AgentsManager（0.3.22）：A2A（Agent-to-Agent）远程智能体支持——远程智能体接入/发布管理、ChatGroup 上下文共享（可配置）、`AgentTemplateRunner` 统一本地与 A2A 智能体执行、已发布 A2A 智能体手动 Prompt 执行与部署模型回退机制；`AgentModelRequestDiagnostics` 模型请求诊断（敏感数据脱敏）；线程管理引入取消令牌实现优雅停机。
 
 3、新增模块：
+
 - `Senparc.Xncf.Sandbox`（0.1.0-preview1）：独立沙箱编排，Docker/Wasm 快速创建/销毁隔离实验环境，支持配额/TTL、JupyterLab、csharp-exec（.NET 10）、持久化 Lab 工作区文件上传/下载，与 XncfBuilder Preview Host 解耦。
 - `Senparc.Xncf.DesktopBridge`（0.2.1-preview2）：为 NCF 桌面伴侣应用提供受保护的 HTTP/SSE 桥接：能力发现、活动快照、授权资源变更同步流、一次性 PKCE 会话交接；以 `NCF_DESKTOP_BRIDGE_TOKEN` 作为启动安全边界。
 - `Senparc.Xncf.Dapr`（0.0.1）：Dapr 客户端抽象，提供服务调用（GET/POST/PUT/PATCH/DELETE）、Pub/Sub 发布、状态读写删除、健康检查与序列化抽象。
@@ -134,7 +130,6 @@ NcfPackageSources（Developer-MAF-V3 分支）各 XNCF 模块功能文档同步�
 5、其他：`SystemManager` 1.1.3、`XncfBuilder` 0.10.3（Preview Host 进程级模块预览）、`FileManager` 0.6.0；PromptRange 新增 API 文档 XML（ApiDocXML）。
 
 详细模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
-
 
 ## 2026-08-29更新
 
@@ -149,7 +144,6 @@ NcfPackageSources（Developer-MAF-V3 分支）发布更新，主要内容：
 4、版本更新：XncfBuilder 模板 `1.1.7`、Senparc.Ncf.Database `0.21.8-preview8`；下载页支持选择下载源（自动 / 本地 / GitHub）并展示 MD5 指纹；NCF Desktop 更新至 `0.10.1-build10066`。
 
 详细升级说明见 [NcfPackageSources 版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
-
 
 ## 2025-05-04更新
 

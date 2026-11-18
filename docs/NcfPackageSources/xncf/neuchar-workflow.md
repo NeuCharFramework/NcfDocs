@@ -58,7 +58,7 @@ The pages require a signed-in administrator. When troubleshooting, check module 
 | Run records             | The task list shows status and summary. A completed run can be replayed read-only from its captured graph without changing the current definition.                      |
 | Variables and code      | Up to 30 workflow variables; the Safe Code node assigns only declared variables and cannot run arbitrary JavaScript.                                                    |
 | Human interaction       | The native **Wait for human input** node is available; when AgentsManager is enabled, Agent / Agent-group HIL requests also appear in the same Workflow handling panel. |
-| File exchange            | Versioned `ncf.workflow` JSON/YAML import, export, and validation are available; imports create disabled drafts. |
+| File exchange           | Versioned `ncf.workflow` JSON/YAML import, export, and validation are available; imports create disabled drafts.                                                        |
 
 ### 1.2 Standard files, import, and migration
 
@@ -105,15 +105,15 @@ Minimal structure:
 
 Core fields:
 
-| Field | Meaning |
-| --- | --- |
-| `format` | Must be `ncf.workflow` |
+| Field           | Meaning                                                            |
+| --------------- | ------------------------------------------------------------------ |
+| `format`        | Must be `ncf.workflow`                                             |
 | `schemaVersion` | File-format version; different from the database Workflow revision |
-| `metadata` | Name, description, and tags |
-| `trigger` | `manual`, `interval`, `webhook`, or `chat` and its configuration |
-| `graph` | Nodes, edges, variables, and layout |
-| `requirements` | External Function, object, and sub-workflow requirements |
-| `secrets` | Sensitive paths that must be configured after import |
+| `metadata`      | Name, description, and tags                                        |
+| `trigger`       | `manual`, `interval`, `webhook`, or `chat` and its configuration   |
+| `graph`         | Nodes, edges, variables, and layout                                |
+| `requirements`  | External Function, object, and sub-workflow requirements           |
+| `secrets`       | Sensitive paths that must be configured after import               |
 
 The Admin designer supports:
 
@@ -124,12 +124,12 @@ The Admin designer supports:
 
 Admin endpoints:
 
-| Method | Address | Purpose |
-| --- | --- | --- |
-| GET | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=json` | Export JSON |
-| GET | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=yaml` | Export YAML |
-| POST | `/Admin/NeuCharWorkflow/Index?handler=ValidateImport` | Validate without creating data |
-| POST | `/Admin/NeuCharWorkflow/Index?handler=Import` | Validate and create a disabled draft |
+| Method | Address                                                           | Purpose                              |
+| ------ | ----------------------------------------------------------------- | ------------------------------------ |
+| GET    | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=json` | Export JSON                          |
+| GET    | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=yaml` | Export YAML                          |
+| POST   | `/Admin/NeuCharWorkflow/Index?handler=ValidateImport`             | Validate without creating data       |
+| POST   | `/Admin/NeuCharWorkflow/Index?handler=Import`                     | Validate and create a disabled draft |
 
 Import request:
 

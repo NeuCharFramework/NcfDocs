@@ -56,7 +56,7 @@
 | 运行记录   | 任务列表显示状态与摘要；完成后的任务可进入只读回看，回看使用当时的图快照，不会改动最新定义。                         |
 | 变量与代码 | 最多声明 30 个工作流变量；“安全代码”只能给已声明变量赋值，不能执行任意 JavaScript。                                  |
 | 人工交互   | 支持原生“等待人工输入”节点；启用 AgentsManager 后，Agent / Agent 组运行触发的 HIL 也会汇入同一个 Workflow 处理面板。 |
-| 文件交换   | 支持标准化 `ncf.workflow` JSON/YAML 文件的导入、导出和校验；导入默认创建禁用草稿。 |
+| 文件交换   | 支持标准化 `ncf.workflow` JSON/YAML 文件的导入、导出和校验；导入默认创建禁用草稿。                                   |
 
 ### 1.2 标准化文件、导入与迁移
 
@@ -103,15 +103,15 @@ Workflow 支持使用版本化的 `ncf.workflow` 文件保存完整定义，包�
 
 核心字段：
 
-| 字段 | 说明 |
-| --- | --- |
-| `format` | 固定为 `ncf.workflow` |
-| `schemaVersion` | 文件格式版本，不等同于数据库 Workflow Revision |
-| `metadata` | 名称、说明和标签 |
-| `trigger` | `manual`、`interval`、`webhook` 或 `chat` 及其配置 |
-| `graph` | 节点、连线、变量和布局 |
-| `requirements` | Function、对象和子 Workflow 等外部依赖 |
-| `secrets` | 导入后必须重新配置的敏感字段路径 |
+| 字段            | 说明                                               |
+| --------------- | -------------------------------------------------- |
+| `format`        | 固定为 `ncf.workflow`                              |
+| `schemaVersion` | 文件格式版本，不等同于数据库 Workflow Revision     |
+| `metadata`      | 名称、说明和标签                                   |
+| `trigger`       | `manual`、`interval`、`webhook` 或 `chat` 及其配置 |
+| `graph`         | 节点、连线、变量和布局                             |
+| `requirements`  | Function、对象和子 Workflow 等外部依赖             |
+| `secrets`       | 导入后必须重新配置的敏感字段路径                   |
 
 管理端设计器支持：
 
@@ -122,12 +122,12 @@ Workflow 支持使用版本化的 `ncf.workflow` 文件保存完整定义，包�
 
 对应管理端接口：
 
-| 方法 | 地址 | 说明 |
-| --- | --- | --- |
-| GET | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=json` | 导出 JSON |
-| GET | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=yaml` | 导出 YAML |
-| POST | `/Admin/NeuCharWorkflow/Index?handler=ValidateImport` | 只校验，不创建数据 |
-| POST | `/Admin/NeuCharWorkflow/Index?handler=Import` | 校验后创建禁用草稿 |
+| 方法 | 地址                                                              | 说明               |
+| ---- | ----------------------------------------------------------------- | ------------------ |
+| GET  | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=json` | 导出 JSON          |
+| GET  | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=yaml` | 导出 YAML          |
+| POST | `/Admin/NeuCharWorkflow/Index?handler=ValidateImport`             | 只校验，不创建数据 |
+| POST | `/Admin/NeuCharWorkflow/Index?handler=Import`                     | 校验后创建禁用草稿 |
 
 导入请求体：
 

@@ -73,6 +73,7 @@ NuGet/deployment path.
    ```
 
    The isolated workflow never downloads or installs a template by itself.
+
 3. Apply the XncfBuilder database migration that creates
    `XncfBuilderXncfDevelopmentJob`. This workflow intentionally has no
    in-memory fallback: without the table it creates no snapshot and changes no
@@ -95,9 +96,9 @@ job**.
 
 Choose one mode:
 
-| Mode | Use when | Result |
-| --- | --- | --- |
-| `CreateNew` | A module does not exist yet | The locally installed `XNCF` template generates the module only in the isolated workspace. |
+| Mode             | Use when                       | Result                                                                                     |
+| ---------------- | ------------------------------ | ------------------------------------------------------------------------------------------ |
+| `CreateNew`      | A module does not exist yet    | The locally installed `XNCF` template generates the module only in the isolated workspace. |
 | `ModifyExisting` | A source module already exists | The existing module is copied into the isolated workspace; the original remains unchanged. |
 
 Provide the target `.sln`, full module project name, requirement, and template
@@ -179,14 +180,14 @@ source.
 
 ## Troubleshooting
 
-| Message or symptom | First action |
-| --- | --- |
-| Development-task persistence is not ready | Apply the XncfBuilder database migration. Do not retry creation until it succeeds. |
-| `XNCF` template is unavailable | Install an organization-approved local template; the job intentionally will not install one. |
-| Host project reference validation fails | Ensure `Senparc.Web.csproj` directly references the module project in the isolated source solution. |
-| Sandbox preview refuses to start | Check Sandbox enablement, Docker availability, pinned image digest, and the path-base host opt-in. |
-| Restore fails in preview | Keep network disabled and bake/cache dependencies in the approved image, or use a dedicated package-mirror Docker network. |
-| Merge is refused because target changed | Create a new job from the current target source; do not overwrite a newer checkout. |
+| Message or symptom                        | First action                                                                                                               |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Development-task persistence is not ready | Apply the XncfBuilder database migration. Do not retry creation until it succeeds.                                         |
+| `XNCF` template is unavailable            | Install an organization-approved local template; the job intentionally will not install one.                               |
+| Host project reference validation fails   | Ensure `Senparc.Web.csproj` directly references the module project in the isolated source solution.                        |
+| Sandbox preview refuses to start          | Check Sandbox enablement, Docker availability, pinned image digest, and the path-base host opt-in.                         |
+| Restore fails in preview                  | Keep network disabled and bake/cache dependencies in the approved image, or use a dedicated package-mirror Docker network. |
+| Merge is refused because target changed   | Create a new job from the current target source; do not overwrite a newer checkout.                                        |
 
 ## Related Guides
 

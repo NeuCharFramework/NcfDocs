@@ -146,7 +146,7 @@ Linux 部署需要确保容器用户对 Workspace 持久化目录拥有读写权
     "DockerCpuLimit": 1.0,
     "CommandTimeoutSeconds": 60,
     "MaxCommandOutputBytes": 2097152,
-    "AllowedCommands": [ "dotnet", "git", "node", "npm", "python", "pytest" ]
+    "AllowedCommands": ["dotnet", "git", "node", "npm", "python", "pytest"]
   },
   "SenparcNcf": {
     "IsolatedRuntime": {

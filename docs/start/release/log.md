@@ -34,8 +34,6 @@ Unit tests: new `AdminChatAccountIsolationTests` (cross-account session/message 
 
 See [Configure Multi-Tenant](../config/mutiple-tenant.md).
 
-
-
 NcfPackageSources (Developer-MAF-V3-Spark branch) — Sandbox v0.3.3: external JupyterLab control, optional container port mappings, and session aliases:
 
 1. External JupyterLab control: the module now exposes complete external interfaces for operating a running JupyterLab container. A new AI-callable Function 创建 Notebook (`LabCreateNotebook`) writes nbformat-4 `.ipynb` files into the Lab workspace for Python or C# (dotnet-interactive, kernel `C# .NET SDK`); the notebook source follows the Jupyter percent-file convention (`# %%` separates code cells, `# %% [markdown]` marks markdown cells, and an optional title becomes the first markdown heading), so one string fully describes the notebook. The existing 执行 Lab 命令 Function now accepts an optional `StdinContent` (up to 32 KB) — executed via `docker exec -i` — so commands can be piped into terminal programs or REPLs inside the container.
@@ -50,7 +48,6 @@ Persistence: two new nullable columns `SandboxSession.Alias` / `SandboxSession.E
 
 For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
-
 ## 2026-09-18 update
 
 NcfPackageSources (Developer-MAF-V3-Spark branch) — Function global Provit access control: database policies that override code attributes:
@@ -62,7 +59,6 @@ NcfPackageSources (Developer-MAF-V3-Spark branch) — Function global Provit acc
 3. Access Control management page: a new page under the NeuCharPivot menu (`/Admin/NeuCharPivot/Access`, super admin only) shows the full decision context for every Function — module identity/version/availability, code baseline, current DB policy, and the resulting effective policy (with source: DB or code) — plus orphan policies whose module was cleared. Supports single-row editing (policy mode, user/role/permission pickers, remark) and batch operations across selected rows: apply Open / Restricted / Deny / Inherit, or clear. Migrations synced for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL); unit tests extended for override semantics, restricted subject matching, orphan retention, and binding normalization.
 
 For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
-
 
 ## 2026-09-14 update
 
@@ -114,7 +110,6 @@ NcfPackageSources (Developer-MAF-V3 branch) — Admin experience, AIKernel obser
 
 For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
-
 ## 2026-08-30 update
 
 Documentation sync for all XNCF module capabilities in NcfPackageSources (Developer-MAF-V3 branch), highlights:
@@ -124,6 +119,7 @@ Documentation sync for all XNCF module capabilities in NcfPackageSources (Develo
 2. AgentsManager (0.3.22): A2A (Agent-to-Agent) remote agent support — remote agent connect/publish management, configurable ChatGroup context sharing, `AgentTemplateRunner` for unified local/A2A agent execution, manual-prompt execution of published A2A agents with deployment-model fallback; `AgentModelRequestDiagnostics` for model request diagnostics with sensitive-data redaction; thread management now uses cancellation tokens for graceful shutdown.
 
 3. New modules:
+
 - `Senparc.Xncf.Sandbox` (0.1.0-preview1): standalone sandbox orchestration — create/destroy isolated Docker/Wasm experiment environments with quota/TTL, optional JupyterLab, csharp-exec (.NET 10), and persistent Lab workspace file upload/download; decoupled from the XncfBuilder Preview Host.
 - `Senparc.Xncf.DesktopBridge` (0.2.1-preview2): secured HTTP/SSE bridge for NCF desktop companion apps — capability discovery, activity snapshots, authorized resource-change sync stream, one-time PKCE session handoff; `NCF_DESKTOP_BRIDGE_TOKEN` acts as the startup security boundary.
 - `Senparc.Xncf.Dapr` (0.0.1): Dapr client abstraction with service invocation (GET/POST/PUT/PATCH/DELETE), pub/sub publishing, state read/write/delete, health checks, and serializer abstractions.
@@ -134,7 +130,6 @@ Documentation sync for all XNCF module capabilities in NcfPackageSources (Develo
 5. Others: `SystemManager` 1.1.3, `XncfBuilder` 0.10.3 (Preview Host process-level module preview), `FileManager` 0.6.0; PromptRange adds API documentation XML (ApiDocXML).
 
 For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
-
 
 ## 2026-08-29 Update
 
@@ -149,7 +144,6 @@ NcfPackageSources (Developer-MAF-V3 branch) released. Highlights:
 4. Version bumps: XncfBuilder template `1.1.7`, Senparc.Ncf.Database `0.21.8-preview8`; the download page supports source selection (auto / local / GitHub) and shows MD5 fingerprints; NCF Desktop updated to `0.10.1-build10066`.
 
 See [NcfPackageSources Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md) for full upgrade details.
-
 
 ## 2023-04-21 Update
 

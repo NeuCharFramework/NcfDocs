@@ -108,7 +108,7 @@ Instructions moved to [Attachments, vision, and large files](./adminchat.md#help
 The message input offers a **PromptRange** button that opens the prompt
 selector (filter by range, lane, or keyword; sorted by current score).
 Selecting a prompt inserts its full text at the caret; the insertion is not
-sent or executed automatically. The inserted span becomes a *reference*
+sent or executed automatically. The inserted span becomes a _reference_
 bound to the selected PromptCode version, so the message keeps a link to the
 prompt asset instead of a detached copy.
 

@@ -142,6 +142,7 @@ export const sidebarZh: SidebarConfig = {
         '/zh/NcfPackageSources/xncf/neubell-webhooks',
         '/zh/NcfPackageSources/xncf/neuchar-pivot',
         '/zh/NcfPackageSources/xncf/mcp-manager',
+        '/zh/NcfPackageSources/xncf/connectors',
         '/zh/NcfPackageSources/xncf/aikernel-admin',
         '/zh/NcfPackageSources/xncf/aikernel-local-fine-tuning',
         '/zh/NcfPackageSources/xncf/knowledge-base',

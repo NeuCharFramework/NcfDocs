@@ -1,7 +1,7 @@
 # Current XNCF Template Structure
 
 > For Template-based development and aligned with
-> `Senparc.Xncf.XncfBuilder.Template` `0.13.0`. See
+> `Senparc.Xncf.XncfBuilder.Template` `0.15.0`. See
 > [Project Relationships, Synchronization, and Release](/NcfPackageSources/home/project-relationships.html)
 > for the relationship between the runnable source and packaging project.
 
@@ -88,7 +88,8 @@ override.
 
 ## EventBus example
 
-Template `0.13.0` adds an in-module EventBus round-trip example. Event types and
+Template `0.15.0` includes the in-module EventBus round-trip example and
+localized Area/sample metadata. Event types and
 handlers live in `Application/Events` and `Application/EventHandlers`. Keep this
 pattern when the module needs decoupled application services or handler
 collaboration. If EventBus is not needed, the example can be removed without

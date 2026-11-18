@@ -2,7 +2,7 @@
 
 > This is Template-based development documentation. It describes public module
 > composition and usage contracts without analyzing the internal scanner. The
-> content was checked against `Senparc.Xncf.XncfBuilder.Template` `0.13.0`.
+> content was checked against `Senparc.Xncf.XncfBuilder.Template` `0.15.0`.
 
 An XNCF is an NCF module unit that can be scanned, installed, enabled, disabled,
 and governed independently. In most cases, start with the

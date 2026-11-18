@@ -6,9 +6,9 @@
 
 `Senparc.Xncf.XncfBuilder` 有两条明确区分的创建路径：
 
-| 路径 | 入口 | 适用信任级别 |
-| --- | --- | --- |
-| 直接生成 | `BuildXncfAppService.Build()` | 开发者明确修改受信任源码工作区。 |
+| 路径         | 入口                           | 适用信任级别                              |
+| ------------ | ------------------------------ | ----------------------------------------- |
+| 直接生成     | `BuildXncfAppService.Build()`  | 开发者明确修改受信任源码工作区。          |
 | 隔离开发任务 | `XncfDevelopmentJobAppService` | AI 协助、生成式或其他不受信任的模块改动。 |
 
 第二条路径的目标是：系统能够协助创建和测试源码，但在人工批准前绝不写入自己的目标工作区。
@@ -33,15 +33,15 @@
 
 ## 2. 服务与持久化地图
 
-| 源码位置 | 职责 | 关键边界 |
-| --- | --- | --- |
-| `OHS/Local/XncfDevelopmentJobAppService.cs` | 创建、读写、校验、预览、查询、请求审批和丢弃的 FunctionRender 门面 | 特意没有 `ApplyApprovedJobAsync()` 的 FunctionRender。 |
-| `Domain/Services/Development/XncfDevelopmentJobService.cs` | 每任务协调器与状态机 | 唯一能够合入的服务，使用每任务锁。 |
-| `Domain/Services/Development/XncfDevelopmentJobStateStore.cs` | 基于数据库的任务快照存储 | 复制源码前先持久化；失败不会退化为内存状态。 |
-| `Domain/Models/DatabaseModel/XncfDevelopmentJob.cs` | 审计/持久化实体 | 记录所属用户、路径、需求、指纹、校验、预览和审批时间。 |
-| `Domain/Services/Workspace/XncfDevelopmentWorkspaceService.cs` | 清洗源码快照和受控模块 Diff | 该服务将目标工作区视为只读。 |
-| `Domain/Services/Workspace/XncfWorkspaceFileService.cs` | 安全路径解析、SHA-256 乐观并发、原子写入 | AI 只能访问选定模块和小范围扩展名白名单。 |
-| `Areas/Admin/Pages/XncfBuilder/PreviewMonitor.*` | 状态、路径、Diff、Sandbox 链接和带防伪校验的合入/丢弃 UI | 合入要求确认短语；页面状态轮询始终单飞。 |
+| 源码位置                                                       | 职责                                                               | 关键边界                                               |
+| -------------------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------ |
+| `OHS/Local/XncfDevelopmentJobAppService.cs`                    | 创建、读写、校验、预览、查询、请求审批和丢弃的 FunctionRender 门面 | 特意没有 `ApplyApprovedJobAsync()` 的 FunctionRender。 |
+| `Domain/Services/Development/XncfDevelopmentJobService.cs`     | 每任务协调器与状态机                                               | 唯一能够合入的服务，使用每任务锁。                     |
+| `Domain/Services/Development/XncfDevelopmentJobStateStore.cs`  | 基于数据库的任务快照存储                                           | 复制源码前先持久化；失败不会退化为内存状态。           |
+| `Domain/Models/DatabaseModel/XncfDevelopmentJob.cs`            | 审计/持久化实体                                                    | 记录所属用户、路径、需求、指纹、校验、预览和审批时间。 |
+| `Domain/Services/Workspace/XncfDevelopmentWorkspaceService.cs` | 清洗源码快照和受控模块 Diff                                        | 该服务将目标工作区视为只读。                           |
+| `Domain/Services/Workspace/XncfWorkspaceFileService.cs`        | 安全路径解析、SHA-256 乐观并发、原子写入                           | AI 只能访问选定模块和小范围扩展名白名单。              |
+| `Areas/Admin/Pages/XncfBuilder/PreviewMonitor.*`               | 状态、路径、Diff、Sandbox 链接和带防伪校验的合入/丢弃 UI           | 合入要求确认短语；页面状态轮询始终单飞。               |
 
 `XncfDevelopmentJob` 属于 XncfBuilder DbContext，表名为
 `XncfBuilderXncfDevelopmentJob`，并对任务 ID、阶段/更新时间、模块/创建时间、所属用户/更新时间建立索引。Migration 的生成与执行仍是运维操作，本功能不会自动生成 Migration。
@@ -65,15 +65,15 @@ Snapshotting -> ReadyForCode -> Validating -> ReadyForReview
 
 关键方法及其效果如下：
 
-| 方法 | 证明或修改的内容 |
-| --- | --- |
-| `CreateAsync()` | 先保存任务意图，再快照源码；随后在隔离工作区运行本机 `dotnet new XNCF` 或定位复制后的模块。 |
-| `ReadFileAsync()` / `WriteFileAsync()` | 返回文本和 SHA-256；通过期望哈希比较、写穿透临时文件和原子移动写入。 |
-| `ValidateAsync()` | 解析项目路径、确认隔离 `Senparc.Web` 直接引用模块、刷新 Diff；不在此处构建宿主。 |
-| `StartSandboxPreviewAsync()` | 在任务锁内再次校验引用/Diff，检查 path-base 支持，再委托 `IXncfSandboxPreviewService` 构建/运行。 |
-| `RequestMergeApprovalAsync()` | 冻结评审阶段并记录请求；不写入目标源码。 |
-| `ApplyApprovedJobAsync()` | 校验精确的 `APPLY <module>`、目标指纹和项目文件不可变性，再进行带回滚的受控复制/暂存。 |
-| `DiscardAsync()` | 请求停止 Sandbox、删除临时任务工作区并记录终态。 |
+| 方法                                   | 证明或修改的内容                                                                                  |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `CreateAsync()`                        | 先保存任务意图，再快照源码；随后在隔离工作区运行本机 `dotnet new XNCF` 或定位复制后的模块。       |
+| `ReadFileAsync()` / `WriteFileAsync()` | 返回文本和 SHA-256；通过期望哈希比较、写穿透临时文件和原子移动写入。                              |
+| `ValidateAsync()`                      | 解析项目路径、确认隔离 `Senparc.Web` 直接引用模块、刷新 Diff；不在此处构建宿主。                  |
+| `StartSandboxPreviewAsync()`           | 在任务锁内再次校验引用/Diff，检查 path-base 支持，再委托 `IXncfSandboxPreviewService` 构建/运行。 |
+| `RequestMergeApprovalAsync()`          | 冻结评审阶段并记录请求；不写入目标源码。                                                          |
+| `ApplyApprovedJobAsync()`              | 校验精确的 `APPLY <module>`、目标指纹和项目文件不可变性，再进行带回滚的受控复制/暂存。            |
+| `DiscardAsync()`                       | 请求停止 Sandbox、删除临时任务工作区并记录终态。                                                  |
 
 ### 3.1 创建模块而不改目标源码
 

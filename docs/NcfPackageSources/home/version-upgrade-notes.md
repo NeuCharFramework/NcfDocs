@@ -256,9 +256,10 @@ the [Repository Guide](../libs/Senparc.Ncf.Repository.md), and the
 
 ### 4. XNCF Template Structure
 
-- The source template package is currently `0.13.0`; the XncfBuilder project version is `0.37.0-preview5`.
-- Template `0.13.0` adds an EventBus round-trip example under
-  `Application/Events` and `Application/EventHandlers`.
+- The source template package is now `0.15.0`; the XncfBuilder project version is `0.41.9`.
+- Template `0.15.0` keeps the EventBus round-trip example under
+  `Application/Events` and `Application/EventHandlers`, and improves localized
+  Area metadata, sample Function/API messages, and generated-page usability.
 - New templates place Function implementations and DTOs under `Application/AppServices` and `Application/DTOs`.
 - Functions are discovered from `[FunctionRender]` methods on `AppServiceBase`. Do not restore the retired `IXncfFunction` or `Register.Functions` model.
 

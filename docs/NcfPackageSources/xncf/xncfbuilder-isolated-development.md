@@ -7,9 +7,9 @@
 
 `Senparc.Xncf.XncfBuilder` has two distinct creation paths:
 
-| Path | Entry | Intended trust level |
-| --- | --- | --- |
-| Direct generation | `BuildXncfAppService.Build()` | A developer deliberately changing a trusted checkout. |
+| Path                     | Entry                          | Intended trust level                                           |
+| ------------------------ | ------------------------------ | -------------------------------------------------------------- |
+| Direct generation        | `BuildXncfAppService.Build()`  | A developer deliberately changing a trusted checkout.          |
 | Isolated development job | `XncfDevelopmentJobAppService` | AI-assisted, generated, or otherwise untrusted module changes. |
 
 The second path exists so a running NCF system can help create and test source
@@ -40,15 +40,15 @@ site.
 
 ## 2. Service and Persistence Map
 
-| Source | Responsibility | Important boundary |
-| --- | --- | --- |
-| `OHS/Local/XncfDevelopmentJobAppService.cs` | FunctionRender façade for creating, reading, writing, validating, previewing, status, approval request, and discard | There is intentionally no FunctionRender method for `ApplyApprovedJobAsync()`. |
-| `Domain/Services/Development/XncfDevelopmentJobService.cs` | Per-job coordinator and state machine | The only component that can apply a job; it uses per-job locks. |
-| `Domain/Services/Development/XncfDevelopmentJobStateStore.cs` | DB-backed snapshot store | Persists before copying source; failure does not fall back to memory. |
-| `Domain/Models/DatabaseModel/XncfDevelopmentJob.cs` | Audit/persistence entity | Stores owner, paths, requirement, fingerprints, validation, preview, and approval timestamps. |
-| `Domain/Services/Workspace/XncfDevelopmentWorkspaceService.cs` | Sanitized source snapshot and controlled module diff | Target checkout is read-only to this service. |
-| `Domain/Services/Workspace/XncfWorkspaceFileService.cs` | Safe file resolution, SHA-256 optimistic concurrency, atomic writes | AI can access only the selected module and a small extension allow-list. |
-| `Areas/Admin/Pages/XncfBuilder/PreviewMonitor.*` | Status, paths, diff, Sandbox link, antiforgery-protected Apply/Discard UI | Apply requires the confirmation phrase; the page keeps state polling single-flight. |
+| Source                                                         | Responsibility                                                                                                      | Important boundary                                                                            |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `OHS/Local/XncfDevelopmentJobAppService.cs`                    | FunctionRender façade for creating, reading, writing, validating, previewing, status, approval request, and discard | There is intentionally no FunctionRender method for `ApplyApprovedJobAsync()`.                |
+| `Domain/Services/Development/XncfDevelopmentJobService.cs`     | Per-job coordinator and state machine                                                                               | The only component that can apply a job; it uses per-job locks.                               |
+| `Domain/Services/Development/XncfDevelopmentJobStateStore.cs`  | DB-backed snapshot store                                                                                            | Persists before copying source; failure does not fall back to memory.                         |
+| `Domain/Models/DatabaseModel/XncfDevelopmentJob.cs`            | Audit/persistence entity                                                                                            | Stores owner, paths, requirement, fingerprints, validation, preview, and approval timestamps. |
+| `Domain/Services/Workspace/XncfDevelopmentWorkspaceService.cs` | Sanitized source snapshot and controlled module diff                                                                | Target checkout is read-only to this service.                                                 |
+| `Domain/Services/Workspace/XncfWorkspaceFileService.cs`        | Safe file resolution, SHA-256 optimistic concurrency, atomic writes                                                 | AI can access only the selected module and a small extension allow-list.                      |
+| `Areas/Admin/Pages/XncfBuilder/PreviewMonitor.*`               | Status, paths, diff, Sandbox link, antiforgery-protected Apply/Discard UI                                           | Apply requires the confirmation phrase; the page keeps state polling single-flight.           |
 
 `XncfDevelopmentJob` belongs to the XncfBuilder DbContext. Its table name is
 `XncfBuilderXncfDevelopmentJob`, and it has indexes for job ID, stage/update
@@ -75,15 +75,15 @@ Snapshotting -> ReadyForCode -> Validating -> ReadyForReview
 
 The actual high-value methods are:
 
-| Method | What it proves or changes |
-| --- | --- |
-| `CreateAsync()` | Saves the intent first, snapshots source, then either runs local `dotnet new XNCF` in the workspace or finds the copied module. |
-| `ReadFileAsync()` / `WriteFileAsync()` | Reads text plus SHA-256; writes with expected-hash comparison and a write-through temporary file followed by atomic move. |
-| `ValidateAsync()` | Resolves project paths, verifies that isolated `Senparc.Web` directly references the module, and refreshes the diff. It does not build the host. |
-| `StartSandboxPreviewAsync()` | Repeats reference/diff validation under the job lock, checks path-base support, then delegates build/run to `IXncfSandboxPreviewService`. |
-| `RequestMergeApprovalAsync()` | Freezes the review stage and records the request; it does not write target source. |
-| `ApplyApprovedJobAsync()` | Checks exact `APPLY <module>`, target fingerprint and project-file immutability, then performs guarded copy/staging with rollback. |
-| `DiscardAsync()` | Requests Sandbox stop, removes the temporary job workspace, and records the terminal state. |
+| Method                                 | What it proves or changes                                                                                                                        |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `CreateAsync()`                        | Saves the intent first, snapshots source, then either runs local `dotnet new XNCF` in the workspace or finds the copied module.                  |
+| `ReadFileAsync()` / `WriteFileAsync()` | Reads text plus SHA-256; writes with expected-hash comparison and a write-through temporary file followed by atomic move.                        |
+| `ValidateAsync()`                      | Resolves project paths, verifies that isolated `Senparc.Web` directly references the module, and refreshes the diff. It does not build the host. |
+| `StartSandboxPreviewAsync()`           | Repeats reference/diff validation under the job lock, checks path-base support, then delegates build/run to `IXncfSandboxPreviewService`.        |
+| `RequestMergeApprovalAsync()`          | Freezes the review stage and records the request; it does not write target source.                                                               |
+| `ApplyApprovedJobAsync()`              | Checks exact `APPLY <module>`, target fingerprint and project-file immutability, then performs guarded copy/staging with rollback.               |
+| `DiscardAsync()`                       | Requests Sandbox stop, removes the temporary job workspace, and records the terminal state.                                                      |
 
 ### 3.1 Creating a module without mutating the target
 

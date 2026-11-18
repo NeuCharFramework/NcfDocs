@@ -232,9 +232,9 @@
 
 ### 4. XNCF 模板结构调整
 
-- 当前源码中的模板包版本为 `0.13.0`，XncfBuilder 项目版本为 `0.37.0-preview5`。
-- 模板 `0.13.0` 增加 `Application/Events` 与 `Application/EventHandlers` 下的
-  EventBus 往返示例。
+- 当前源码中的模板包版本为 `0.15.0`，XncfBuilder 项目版本为 `0.41.9`。
+- 模板 `0.15.0` 保留 `Application/Events` 与 `Application/EventHandlers` 下的
+  EventBus 往返示例，并改进 Area 元数据、示例 Function/API 文案本地化和生成页面可用性。
 - 新模板把 Function 实现和 DTO 放在 `Application/AppServices` 与 `Application/DTOs`。
 - Function 继续通过 `AppServiceBase` 方法上的 `[FunctionRender]` 自动扫描；不要再实现旧的 `IXncfFunction` 或重写 `Register.Functions`。
 
