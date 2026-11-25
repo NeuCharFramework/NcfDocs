@@ -101,6 +101,7 @@ requiring a manual post-build copy. A package build alone does not prove that a
 deployed host can start the Agent; verify the published files and runtime
 configuration in the target environment.
 
+
 No database model changed in this upgrade, so no migration was added. Existing migrations remain generated with `dotnet ef migrations add`.
 
 The web-admin baseline now includes standard EF Core migrations for SQLite, MySQL, SQL Server, PostgreSQL, Oracle, and DM. Run `dotnet ef database update` with the matching `AdminSenparcEntities_*` context, the Admin project, and `Senparc.Web.DatabasePlant` as startup project before using the Workspace option. Each migration changes only the three Workspace fields on `ADMIN_AdminChatSession`.
