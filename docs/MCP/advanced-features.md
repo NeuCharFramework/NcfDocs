@@ -33,7 +33,7 @@ public static class LocalizedTools
 }
 ```
 
-The simulated site currently supports `zh-CN`, `en`, `ja`, `fr`, `es`, and
+The web-admin baseline currently supports `zh-CN`, `en`, `ja`, `fr`, `es`, and
 `ru`. Provide stable fallback descriptions so a missing resource does not leave
 the model with empty tool metadata.
 

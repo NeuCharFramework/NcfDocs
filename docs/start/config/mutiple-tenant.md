@@ -1,5 +1,14 @@
 # Configure Multi-Tenant
 
+<a id="help-tenants"></a>
+
+## Tenants
+
+Use tenant management only when the host is configured for multi-tenancy.
+Confirm the target tenant before administration and verify its initialization
+result. Do not assume a new tenant has all modules or permissions ready merely
+because its record exists. See [multi-tenant configuration](./mutiple-tenant.html).
+
 ## Multi-Tenant Overview
 
 Multi-tenancy allows multiple tenants to use one system while isolating their

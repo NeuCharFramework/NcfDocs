@@ -1,13 +1,17 @@
 # 项目关系、同步与发布
 
-> 本页解释 `NcfPackageSources` 中两个“模拟源”如何进入可发布项目。
-> 同步行为以 `tools/NcfSimulatedSiteSyncTool` 当前实现为准。
+> 本页解释 `NcfPackageSources` 中两类“权威源码”如何进入可发布项目。
+> 同步行为以 `tools/NcfWebAdminSyncTool` 当前实现为准。
+
+`NcfWebAdminBaseline` 不是最终发布的 NuGet 模板，而是直接引用源码、可运行的
+NCF Web Admin 标准基线，承担日常集成开发和验证。`NcfWebAdminSyncTool`
+将其中的变更同步到公开 NCF 模板及 XNCF 模板打包源码。
 
 ## 一图看懂
 
 ```text
 Template_OrgName.Xncf.Template_XncfName（可运行的 XNCF 模板母版）
-    │  NcfSimulatedSiteSyncTool：强制单向同步，并替换模板占位符
+    │  NcfWebAdminSyncTool：强制单向同步，并替换模板占位符
     ▼
 Senparc.Xncf.XncfBuilder.Template/templates/template1（打包内容）
     │  dotnet pack / 发布流水线准备包
@@ -17,8 +21,8 @@ Senparc.Xncf.XncfBuilder.Template（NuGet 模板包）
     ▼
 开发者自己的 XNCF 项目
 
-tools/NcfSimulatedSite（核心包的集成、联调站点）
-    │  同一个 NcfSimulatedSiteSyncTool：逐文件 Y / R / N 交互同步
+tools/NcfWebAdminBaseline（可运行的 NCF Web Admin 标准基线）
+    │  同一个 NcfWebAdminSyncTool：逐文件 Y / R / N 交互同步
     ▼
 NCF/src/back-end（公开 NCF 模板的后端内容）
     │
@@ -32,9 +36,9 @@ NCF/src/back-end（公开 NCF 模板的后端内容）
 
 | 项目或目录                                                                  | 角色                                                              | 是否直接发布                                         |
 | --------------------------------------------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------- |
-| `tools/NcfSimulatedSite/Template_OrgName.Xncf.Template_XncfName`            | 能运行、能联调的 XNCF 模板母版，也是模板内容的源码权威            | 否                                                   |
+| `tools/NcfWebAdminBaseline/Template_OrgName.Xncf.Template_XncfName`            | 能运行、能联调的 XNCF 模板母版，也是模板内容的源码权威            | 否                                                   |
 | `src/Extensions/Senparc.Xncf.XncfBuilder/Senparc.Xncf.XncfBuilder.Template` | NuGet 模板打包项目；实际模板位于 `templates/template1`            | 是，包名 `Senparc.Xncf.XncfBuilder.Template`         |
-| `tools/NcfSimulatedSite`                                                    | NCF 基础包与扩展模块的集成验证站点，也是 NCF 后端模板的日常同步源 | 否                                                   |
+| `tools/NcfWebAdminBaseline`                                                    | 可运行的 NCF Web Admin 集成与验证基线，也是公开 NCF 后端模板的日常同步源 | 否                                                   |
 | `NeuCharFramework/NCF` 的 `src/back-end`                                    | 面向最终用户的公开 NCF 后端模板内容                               | 由 `NCF.Template.csproj` 打入 `Senparc.NCF.Template` |
 | `NeuCharFramework/NCF` 的 `Senparc.Web`                                     | NCF 示例/可运行站点的发布入口                                     | CI 生成多平台压缩包和 GitHub Release 构件            |
 
@@ -43,20 +47,20 @@ NCF/src/back-end（公开 NCF 模板的后端内容）
 工具项目：
 
 ```text
-tools/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool/
-  NcfSimulatedSiteSyncTool.csproj
+tools/NcfWebAdminSyncTool/NcfWebAdminSyncTool/
+  NcfWebAdminSyncTool.csproj
 ```
 
 只同步 XNCF 模板：
 
 ```bash
-dotnet run --project tools/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool.csproj -- --template-only
+dotnet run --project tools/NcfWebAdminSyncTool/NcfWebAdminSyncTool/NcfWebAdminSyncTool.csproj -- --template-only
 ```
 
-先同步 XNCF 模板，再同步完整模拟站点与 NCF 仓库：
+先同步 XNCF 模板，再同步完整NCF Web Admin 标准基线与 NCF 仓库：
 
 ```bash
-dotnet run --project tools/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool.csproj
+dotnet run --project tools/NcfWebAdminSyncTool/NcfWebAdminSyncTool/NcfWebAdminSyncTool.csproj
 ```
 
 工具按当前仓库布局查找同级的 `NCF` 仓库，并把目标定位到
@@ -68,7 +72,7 @@ dotnet run --project tools/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool/Ncf
 模板同步方向固定为：
 
 ```text
-NcfSimulatedSite/Template_OrgName.Xncf.Template_XncfName
+NcfWebAdminBaseline/Template_OrgName.Xncf.Template_XncfName
     → Senparc.Xncf.XncfBuilder.Template/templates/template1
 ```
 
@@ -76,7 +80,7 @@ NcfSimulatedSite/Template_OrgName.Xncf.Template_XncfName
 - 同步时忽略隐藏文件、`bin`、`obj`、`.vs`、`.user` 和 `.DS_Store`。
 - `Register.cs` 中的示例 `Uid` 会转换为 `Template_Guid`，示例模块版本会转换为
   `Template_Version`，供 `dotnet new` 替换。
-- 应先修改并验证模拟站点中的模板母版，再运行同步工具；不要把打包目录当作
+- 应先修改并验证NCF Web Admin 标准基线中的模板母版，再运行同步工具；不要把打包目录当作
   独立维护的第二份源码。
 
 ### 发布方式
@@ -90,21 +94,21 @@ NcfSimulatedSite/Template_OrgName.Xncf.Template_XncfName
 仍需确保在包发现步骤之前显式构建或打包该项目。`GeneratePackageOnBuild` 不代表
 当前主流水线一定会自动产出这个模板包。
 
-## 模拟站点与 NCF：交互式同步
+## NCF Web Admin 标准基线与 NCF：交互式同步
 
 普通站点同步的默认方向是：
 
 ```text
-NcfPackageSources/tools/NcfSimulatedSite → NCF/src/back-end
+NcfPackageSources/tools/NcfWebAdminBaseline → NCF/src/back-end
 ```
 
 当同路径文件内容不同时，工具逐文件询问：
 
-- `Y`：以 `NcfSimulatedSite` 文件覆盖 `NCF/src/back-end`；
-- `R`：反向以 `NCF/src/back-end` 文件覆盖 `NcfSimulatedSite`；
+- `Y`：以 `NcfWebAdminBaseline` 文件覆盖 `NCF/src/back-end`；
+- `R`：反向以 `NCF/src/back-end` 文件覆盖 `NcfWebAdminBaseline`；
 - `N`：跳过这个差异。
 
-因此它是“默认以模拟站点为源、允许人工反向选择”的交互式同步，不是模板同步
+因此它是“默认以NCF Web Admin 标准基线为源、允许人工反向选择”的交互式同步，不是模板同步
 那样的强制单向镜像。工具还会排除构建产物、日志、`.git`、站点专用解决方案和
 开发环境配置等内容。
 
@@ -124,7 +128,7 @@ NcfPackageSources/tools/NcfSimulatedSite → NCF/src/back-end
 
 ## 推荐维护流程
 
-1. 在 `NcfPackageSources` 的模拟源中完成修改和本地验证。
+1. 在 `NcfPackageSources` 的权威源码中完成修改和本地验证。
 2. 先查看同步工具打印的绝对路径和差异，再选择同步模式。
 3. XNCF 模板使用 `--template-only`，检查占位符与目标包内容。
 4. 完整站点同步逐文件判断 `Y/R/N`，避免覆盖 NCF 仓库中的独立修改。

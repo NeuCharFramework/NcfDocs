@@ -1,6 +1,6 @@
-# `NcfPackageSources_Include_NcfSimulatedSite.sln` 项目地图
+# `NcfPackageSources_Include_NcfWebAdminBaseline.sln` 项目地图
 
-> 本页按 `NcfPackageSources/src/NcfPackageSources_Include_NcfSimulatedSite.sln`
+> 本页按 `NcfPackageSources/src/NcfPackageSources_Include_NcfWebAdminBaseline.sln`
 > 当前项目清单核对。它回答三个问题：项目是什么、第一次运行从哪里开始、二次开发应该改哪里。
 > `XNCF` 项目全部列出；带 `.Tests` 的项目只用于验证，不是运行时功能入口。
 
@@ -10,7 +10,7 @@
 
 1. **Basic**：NCF 的基础运行时、数据访问和数据库适配器。
 2. **Extensions / System**：可安装、可启停、可授权的 XNCF 能力模块。
-3. **NcfSimulatedSite**：把基础库和模块组合成可直接运行的 `Senparc.Web`，同时提供 Admin、安装器和示例模块。
+3. **NcfWebAdminBaseline**：把基础库和模块组合成可直接运行的 `Senparc.Web`，同时提供 Admin、安装器和示例模块。
 4. **Tests / DevelopmentTools**：自动化测试和开发辅助项目。
 
 小白建议按此顺序学习：
@@ -111,7 +111,7 @@ XNCF 是 NCF 的核心扩展方式。一个 `Senparc.Xncf.*` 模块通常拥有�
 
 | 项目                                      | 作用                                                                      |
 | ----------------------------------------- | ------------------------------------------------------------------------- |
-| `Senparc.Web`                             | 模拟宿主站点；组合 NCF 基础库、XNCF、Admin 和配置，是本解决方案的运行入口 |
+| `Senparc.Web`                             | NCF Web Admin 标准基线；组合 NCF 基础库、XNCF、Admin 和配置，是本解决方案的运行入口 |
 | `Senparc.Areas.Admin`                     | 后台管理 Area；提供登录后看到的 Admin 页面、管理交互、Chat/指标等管理能力 |
 | `Senparc.Xncf.Installer`                  | 首次运行安装器；创建初始配置、数据库和默认模块                            |
 | `Senparc.Xncf.Accounts`                   | 管理员/账号相关功能和登录配合                                             |
@@ -123,7 +123,7 @@ XNCF 是 NCF 的核心扩展方式。一个 `Senparc.Xncf.*` 模块通常拥有�
 启动宿主：
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
+dotnet run --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 第一次启动按安装器完成初始化，再到 `/Admin/Login` 登录。后台的“Extension
@@ -155,7 +155,7 @@ Menu 等系统 XNCF 协作完成。
 关键页面验证：
 
 ```bash
-dotnet test src/NcfPackageSources_Include_NcfSimulatedSite.sln --no-restore
+dotnet test src/NcfPackageSources_Include_NcfWebAdminBaseline.sln --no-restore
 ```
 
 ## 6. 快速选择表

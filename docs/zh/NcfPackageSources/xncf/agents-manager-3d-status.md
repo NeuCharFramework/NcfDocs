@@ -2,6 +2,8 @@
 
 > 本页按 `NcfPackageSources` 开发分支于 2026-08-22 核对。它说明 AgentsManager 首页 3D 视图的视觉编码、数据边界和排障方式；3D 画面用于运行态概览，不替代 Agent、Group、Task 和 HIL 的详细页面。
 
+<a id="help-agents-status"></a>
+
 ## 1. 视图用途
 
 3D 视图把本地 Agent、远程 A2A Agent、Agent 组和当前任务关系放在同一个空间中：

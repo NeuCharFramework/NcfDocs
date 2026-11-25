@@ -5,6 +5,75 @@
 
 `NeuCharWorkflow` is a server-side visual orchestration module. It connects enabled XNCF Functions, Agent / Agent-group / A2A objects, and built-in system nodes as a directed graph executed by the server. It is not a browser scripting engine and it never evaluates arbitrary JavaScript in a template.
 
+<a id="help-workflow-designer"></a>
+
+## Workflow designer
+
+Select or create a workflow, connect nodes and configure inputs, variables and manual/interval/Webhook/Chat triggers.
+Save before a test run; resolve disconnected draft nodes first. Autosave runs only while this page is open and changes exist;
+it does not promise publication or background scheduled saves. Automatic canvas layout changes presentation, not node semantics.
+Tasks, analytics and import/export are separate entries. Stopping a run does not undo external effects already performed.
+See [the Workflow guide](./neuchar-workflow.md) for nodes and expressions.
+
+### First run for a beginner
+
+Start with a **manual** trigger and one or two nodes that have no external side effects.
+Save the Workflow, run it once with a test input, and inspect the task record before adding
+Webhooks, schedules, HTTP calls, messages, or data mutations. Add one branch at a time and
+run the validation again after every graph change.
+
+Before enabling a schedule or Webhook, write down the expected input, the owner of the
+Workflow, the secret source, the maximum acceptable frequency, and what should happen after
+a failure. A green canvas or successful save does not prove that the downstream service
+accepted the request.
+
+<a id="help-workflow-ai-shortcuts"></a>
+
+### AdminChat shortcuts from the designer
+
+The designer's Footer **AI** shortcut inserts `/edit-workflow `. Once a saved workflow is selected, the command
+contains its `--id` and `--revision`, so the assistant can inspect that workflow's masked graph and current
+revision. A clear request is saved once through the dedicated edit tool, which preserves the existing name,
+description, trigger, enabled state and masked secret placeholders. The expected revision is checked again on the
+server. Ambiguous requests or revision conflicts stop for confirmation rather than creating another workflow.
+The command cannot start the workflow and does not receive general Workflow-creation, Workspace or Skill tools.
+Reload the editor after a successful AI save before making further page edits.
+
+Use `/run-workflow --id=<id> <input>` from AdminChat to start a saved workflow owned by the current administrator.
+Without an ID, the command searches by name/description and asks for a choice when the match is ambiguous. It starts
+at most one asynchronous run and returns its run ID; use the task page for completion, errors and replay.
+
+<a id="help-workflow-tasks"></a>
+
+## Workflow tasks
+
+Search and filter execution records by state, open running details or replay, and stop running tasks.
+Quick cleanup removes records in the selected scope: check that scope first. Create workflows in the designer instead.
+Human-input pauses require the requested response, not repeated starts.
+See the [Workflow guide](./neuchar-workflow.md) for node behavior,
+triggers, expressions, and Agent integration.
+
+Use **Quick cleanup** only after confirming the selected status and scope. Cleanup removes
+records; it does not repair a failed Workflow or undo side effects. For a failed run, open
+the record first, capture the error and resource information, then decide whether to replay,
+edit the Workflow, or rerun it.
+
+<a id="help-workflow-replay"></a>
+
+## Workflow replay
+
+Replay uses a frozen snapshot of that run. Play, pause and step through node order, inputs/outputs and failures.
+Viewing does not execute again or undo work. Opening the latest Workflow and copying the current Workflow are different actions;
+do not treat today's design as the definition used by a historical run. Recorded output can contain sensitive data.
+
+<a id="help-workflow-analytics"></a>
+
+## Workflow analytics
+
+Select time, Workflow, state and resource filters before inspecting trends, resource calls, health and details.
+Use the task/replay view to investigate individual failures. Aggregates
+do not replace the original run records.
+
 ## 1. Capabilities and Boundaries
 
 Installation runs the module's database migrations and adds two Admin entries:
@@ -22,6 +91,121 @@ The pages require a signed-in administrator. When troubleshooting, check module 
 | Run records             | The task list shows status and summary. A completed run can be replayed read-only from its captured graph without changing the current definition.                      |
 | Variables and code      | Up to 30 workflow variables; the Safe Code node assigns only declared variables and cannot run arbitrary JavaScript.                                                    |
 | Human interaction       | The native **Wait for human input** node is available; when AgentsManager is enabled, Agent / Agent-group HIL requests also appear in the same Workflow handling panel. |
+| File exchange           | Versioned `ncf.workflow` JSON/YAML import, export, and validation are available; imports create disabled drafts.                                                        |
+
+### 1.2 Standard files, import, and migration
+
+Workflow supports a versioned `ncf.workflow` file that captures the complete definition: metadata, trigger, graph, external requirements, and secret declarations. JSON is the canonical format and YAML is an optional human-readable representation. Both formats are converted back to the existing `GraphJson` and trigger configuration on import, so server-side execution semantics remain unchanged.
+
+Recommended extensions:
+
+```text
+*.workflow.json
+*.workflow.yaml
+```
+
+Minimal structure:
+
+```json
+{
+  "format": "ncf.workflow",
+  "schemaVersion": 1,
+  "metadata": {
+    "name": "Example workflow",
+    "description": "Generated by AI or edited by an administrator"
+  },
+  "compatibility": {},
+  "trigger": {
+    "type": "manual",
+    "config": {}
+  },
+  "graph": {
+    "nodes": [],
+    "edges": [],
+    "variables": [],
+    "layout": {
+      "direction": "vertical"
+    }
+  },
+  "requirements": {
+    "functions": [],
+    "objects": [],
+    "workflows": []
+  },
+  "secrets": []
+}
+```
+
+Core fields:
+
+| Field           | Meaning                                                            |
+| --------------- | ------------------------------------------------------------------ |
+| `format`        | Must be `ncf.workflow`                                             |
+| `schemaVersion` | File-format version; different from the database Workflow revision |
+| `metadata`      | Name, description, and tags                                        |
+| `trigger`       | `manual`, `interval`, `webhook`, or `chat` and its configuration   |
+| `graph`         | Nodes, edges, variables, and layout                                |
+| `requirements`  | External Function, object, and sub-workflow requirements           |
+| `secrets`       | Sensitive paths that must be configured after import               |
+
+The Admin designer supports:
+
+1. Open a Workflow and choose **Export**, then select JSON or YAML.
+2. Choose **Import** and select a `.json`, `.yaml`, or `.yml` file.
+3. The server validates the document, graph, and trigger consistency first.
+4. After confirmation, a new disabled draft is created; the current Workflow is not overwritten.
+
+Admin endpoints:
+
+| Method | Address                                                           | Purpose                              |
+| ------ | ----------------------------------------------------------------- | ------------------------------------ |
+| GET    | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=json` | Export JSON                          |
+| GET    | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=yaml` | Export YAML                          |
+| POST   | `/Admin/NeuCharWorkflow/Index?handler=ValidateImport`             | Validate without creating data       |
+| POST   | `/Admin/NeuCharWorkflow/Index?handler=Import`                     | Validate and create a disabled draft |
+
+Import request:
+
+```json
+{
+  "content": "...workflow file content...",
+  "format": "json"
+}
+```
+
+`format` may be omitted; the server detects JSON or YAML from the content. Validation returns `valid`, `errors`, `warnings`, and `secrets`.
+
+#### Secrets
+
+Exports never contain real secrets from the source environment. Webhook tokens, passwords, secrets, tokens, API keys, and Human Input `externalResumeKey` values are replaced with empty strings and listed in `secrets`:
+
+```json
+{
+  "secrets": [
+    {
+      "path": "trigger.config.token",
+      "reason": "Webhook token must be configured after import.",
+      "requiredOnImport": true
+    }
+  ]
+}
+```
+
+Configure these values again in the designer after import. Never put real secrets in Git, AI prompts, exported files, or logs.
+
+#### AI generation constraints
+
+When generating a Workflow with AI:
+
+1. Output only an `ncf.workflow` document with `schemaVersion: 1`; do not output arbitrary C#, JavaScript, or shell scripts.
+2. Keep node IDs unique and ensure every edge references an existing node.
+3. Include exactly one trigger matching `trigger.type`.
+4. Use only node types and condition branches supported by the current engine.
+5. Do not generate real passwords, tokens, API keys, or external resume keys.
+6. Declare external Function, Agent, object, and sub-workflow dependencies in `requirements`.
+7. Call `ValidateImport` first and fix every `error` before importing.
+
+Every import creates a disabled draft. An administrator must configure secrets and environment-specific resources, test the workflow, and only then enable it.
 
 ### 1.1 Data Access and Runtime State Persistence (2026-10-02)
 

@@ -9,7 +9,7 @@
 <img src="./images/install-01.png" />
 
 点击【立即安装】按钮前，可以展开【高级选项】确认将随首次安装提交的模块。
-当前模拟站点默认选中以下 6 项：
+当前NCF Web Admin 标准基线默认选中以下 6 项：
 
 - 后台管理模块（系统必需）
 - `Senparc.Xncf.PromptRange`

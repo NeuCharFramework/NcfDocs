@@ -70,7 +70,7 @@ After installation, execute `dotnet new` again to display the content as follows
 
 > Nuget address: [https://www.nuget.org/packages/Senparc.Xncf.XncfBuilder.Template](https://www.nuget.org/packages/Senparc.Xncf.XncfBuilder.Template)
 
-> The current source template package version is `0.13.0`; use the
+> The current source template package version is `0.15.0`; use the
 > version actually published by your NuGet source. Generated Function code now
 > lives under `Application/AppServices` and `Application/DTOs`, not the old
 > `OHS/Local/AppService` and `OHS/Local/PL` directories.

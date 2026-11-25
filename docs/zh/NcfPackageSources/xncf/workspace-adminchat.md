@@ -1,0 +1,214 @@
+# Workspace 与 AdminChat
+
+长期偏好与项目记忆请参阅 [AdminChat Memory 与对话设置](./adminchat-memory.md)。
+Workspace 作用域记忆仍按用户隔离并保存在数据库中，不会自动读写工作区内的 `Memory.md`。
+
+<a id="help-workspace-manage"></a>
+
+## 我的工作区与文件上传
+
+“我的工作区”列表显示名称、创建时间及最近访问时间。输入名称并点击“创建工作区”创建持久文件空间；
+每一行的“上传文件”把所选文件上传到那一个 Workspace，不会上传到所有会话或 FileManager。
+下方“连接指南”说明如何在 VS Code / Cursor 中连接。工作区创建成功不代表已授权 AI 写入或执行 Python，
+这两项在 AdminChat 创建会话时设置。运行时与远程网关配置见 [Workspace 与 AdminChat](./workspace-adminchat.md)。
+
+### 第一次使用
+
+建议一个 Workspace 对应一个项目或责任范围，只上传该范围需要的文件。
+除非项目确实需要，不要把生成产物或密钥放进工作区。
+连接 VS Code 或 Cursor 前，确认授权流程中显示的管理员账号和目标 Workspace。
+
+“清理”会删除所选 Workspace 中的文件，并重新创建空的 `input`、`output`、`logs`
+目录；Workspace 记录本身会保留，但操作不可撤销。不要把它当作刷新按钮，
+执行前先下载或归档必须保留的文件。
+
+<a id="help-workspace-permissions"></a>
+
+## Workspace 权限
+
+Workspace 保存持久文件，运行时只是执行环境。
+读取、允许 AI 写入、CLI/Python 执行是不同权限级别，创建会话时只授予所需级别。
+默认原生运行时不表示已经开放代码执行；有 Docker 也不会自动获得执行权限。
+AdminChat 创建入口中先选择 Workspace，再分别勾选“允许 AI 写入文件”“允许 AI 执行 Python”；
+Python 选项依赖写入权限，只执行 Workspace 内的 `.py` 文件，并优先使用该 Workspace 的 `.venv`。
+这个问号解释会话授权，不负责创建或上传工作区文件。
+
+排查操作被拒绝时，按顺序检查：当前选择的 Workspace、会话的读/写/CLI 开关、
+管理员是否拥有该工作区或具备超级管理员范围，以及所选运行时。
+上传文件不会开启 Python 或命令执行；启用 Docker 也不会自动授予模型使用 Docker 的权限。
+
+远程网关同时检查 DesktopBridge 设备会话、管理员 JWT 和所有权。
+远程访问使用 HTTPS。撤销设备会话不会删除 Workspace 文件。
+参见 [Workspace 与 AdminChat](./workspace-adminchat.md)。
+
+<a id="help-desktop-pairing"></a>
+
+## DesktopBridge 设备配对
+
+批准前核对桌面生成的配对码、客户端名称和来源地址，拒绝非预期请求。
+检查活动会话，撤销不再需要连接的设备。
+设备配对与管理员身份、Workspace 所有权检查是不同环节。
+
+## 设计边界
+
+Workspace 使用可配置的持久化目录，适合 AI Harness、源码、HTML/CSS/素材和构建中间文件。文件不会强制保存在 Docker 可写层；删除或重建运行时不会删除 Workspace。FileManager 仍然用于长期资产、用户上传文件、归档版本和最终发布产物。
+
+浏览器、模型、AdminChat、VS Code 和 Cursor 都不会获得 Workspace 的物理路径。所有文件操作统一通过长驻 `Workspace Agent`，使用 `WorkspaceId` 加相对路径。Agent 采用 stdin/stdout NDJSON 长连接，因此 Windows、Linux、macOS 使用同一协议，不依赖平台专有的 Unix Socket 或 Named Pipe。
+
+## 创建会话
+
+只有超级管理员可以在 AdminChat 新建会话时选择 Workspace。普通管理员即使伪造 `WorkspaceId` 请求，也会被后端拒绝。
+
+Workspace 权限分为三档：
+
+1. 不使用 Workspace：保持原有 AdminChat 行为；
+2. 只读：允许 AI 列出目录、读取文本文件；
+3. 写入：在只读基础上允许写文件和创建目录；
+4. 执行：只有隔离运行时或明确允许的受信任 NativeAgent 才能执行 Python/白名单命令。
+
+写入和 CLI 默认关闭，必须由超级管理员在创建会话时明确勾选。权限保存在会话中，不能由模型或普通用户临时提升。
+
+## 运行时与安全等级
+
+### NativeAgent（默认、无需 Docker）
+
+- 文件保存在 `RootPath`；
+- Agent 是独立长驻进程；
+- 支持二进制文件、目录、搜索、精确补丁、移动和删除；
+- 使用 ETag 检测 VS Code、Cursor 和 AdminChat 的并发修改；
+- 写入先落到同目录临时文件，再原子替换；
+- 默认 `AllowNativeExecution=false`，禁止 Python 和任意命令；
+- 适用于不允许安装 Docker 的客户环境。
+
+NativeAgent 能严格限制协议层文件路径，但不是操作系统沙箱。只有受信任环境才应打开原生执行。
+
+### Docker（推荐用于执行代码）
+
+Docker Runtime：
+
+- 不经过 `shell` 或字符串拼接；
+- 使用进程参数数组传递命令参数；
+- 只能执行 `WorkspaceOptions.AllowedCommands` 中的命令；
+- 工作目录必须位于当前 Workspace；
+- 拒绝绝对路径、`..` 路径和符号链接逃逸；
+- 有执行超时和标准输出/错误输出大小限制；
+- 清除宿主进程环境变量，只保留 PATH、临时目录等安全最小集合；
+- 使用 `--network none`、只读容器根、`no-new-privileges`、丢弃 capabilities、进程/CPU/内存限制；
+- 只把当前 Workspace 挂载到 `/workspace`；
+- 不向模型返回宿主机物理路径；
+- 执行、写入和删除操作写入服务日志，但不记录文件内容。
+
+构建 Agent 镜像：
+
+```bash
+cd NcfPackageSources/src/Extensions
+docker build -f Senparc.Xncf.WorkspaceAgent/Dockerfile \
+  -t senparc/ncf-workspace-agent:0.2.0 .
+```
+
+Linux 部署需要确保容器用户对 Workspace 持久化目录拥有读写权限；也可以根据客户 UID/GID 制作派生镜像。
+
+## VS Code / Cursor
+
+安装仓库中的 `NcfWorkspace.VSCode` 扩展后，执行 **NCF: 连接工作区**：
+
+1. 输入 NCF 站点地址；
+2. 核对并批准 DesktopBridge 设备码；
+3. 在已登录的管理员浏览器中确认 PKCE 授权；
+4. 选择 Workspace；
+5. 扩展使用 `ncf-workspace://` 打开远程文件夹。
+
+令牌保存在 VS Code SecretStorage。远程访问同时要求 HTTPS（本机 loopback 例外）、DesktopBridge 会话和 Admin JWT。网关按 JWT 管理员 ID 校验 Workspace 所有者。文件保存携带 `If-Match`，冲突返回 HTTP 409，不会静默覆盖其他客户端修改。
+
+## 手动上传到 input 目录
+
+超级管理员可以在 Workspace 管理页面直接向工作区上传文件。文件通过
+`/api/Senparc.Areas.Admin/WorkspaceFiles/{workspaceId}/upload` 流式写入
+工作区的 `input/` 目录；页面前端会先调用 `capabilities` 读取当前生效的
+限制。
+
+- 单文件上限：`SenparcXncfWorkspace:MaxUploadFileBytes`（默认 300 MiB）；
+  工作区配额：`MaxWorkspaceBytes`（默认 2 GiB）；单次请求传输上限 320 MiB。
+- 上传要求超级管理员会话、防伪令牌，并校验工作区所有权；其他管理员的
+  工作区返回"不存在"。
+- 上传的文件就是普通 Workspace 文件：模型、VS Code 与 Cursor 按会话的
+  读取/写入/执行权限访问，与 Agent 写入的文件同样受路径、ETag 与大小
+  规则约束。上传本身不授予执行权限。
+
+当 `Senparc.Xncf.WorkspaceAgent` 作为 NuGet 包被消费时，包内的
+`buildTransitive/Senparc.Xncf.WorkspaceAgent.targets` 会把 Agent 运行时文件
+复制到消费方的输出目录和发布目录。这样包消费者无需手工添加构建后复制步骤，
+也能保留持久 Agent 协议所需的运行时文件。仅完成打包不能证明部署主机可以
+启动 Agent；仍需在目标环境检查发布文件和运行时配置。
+
+
+## 配置
+
+可在配置中调整限制：
+
+```json
+{
+  "SenparcXncfWorkspace": {
+    "RootPath": "App_Data/AIWorkspaces",
+    "MaxWorkspaceBytes": 2147483648,
+    "MaxFileReadBytes": 2097152,
+    "MaxFileWriteBytes": 10485760,
+    "RuntimeProvider": "NativeAgent",
+    "AgentPath": "",
+    "AllowNativeExecution": false,
+    "DockerImage": "senparc/ncf-workspace-agent:0.2.0",
+    "DockerMemoryMegabytes": 512,
+    "DockerCpuLimit": 1.0,
+    "CommandTimeoutSeconds": 60,
+    "MaxCommandOutputBytes": 2097152,
+    "AllowedCommands": ["dotnet", "git", "node", "npm", "python", "pytest"]
+  },
+  "SenparcNcf": {
+    "IsolatedRuntime": {
+      "Docker": {
+        "Executable": "docker",
+        "ProbeTimeoutSeconds": 8
+      }
+    }
+  }
+}
+```
+
+将 `RuntimeProvider` 改为 `Docker` 即启用容器 Agent。`AllowedCommands` 只控制可执行文件名，不会把任意命令字符串转换为 shell 命令。生产环境应进一步收紧列表。
+
+`SenparcNcf:IsolatedRuntime:Docker` 是 Workspace 与 Sandbox 共用的 Docker Provider 配置。
+两个模块共享 CLI 探测、结构化挂载、网络、资源限制、进程超时、日志和销毁能力，但各自保留独立的业务生命周期。
+
+本次升级没有修改数据库模型，因此没有新增 Migration。已有 AdminChat Workspace 字段的迁移仍按下文命令管理；后续若修改实体，必须继续使用 `dotnet ef migrations add` 生成，而不能手写迁移。
+
+## 数据库迁移（NCF Web Admin 标准基线）
+
+AdminChat 会话新增以下字段：
+
+- `WorkspaceId`
+- `WorkspaceWriteEnabled`
+- `WorkspaceCliEnabled`
+
+当前NCF Web Admin 标准基线已使用标准 EF Core 命令生成六套迁移。请在 `NcfPackageSources/tools/NcfWebAdminBaseline` 目录执行：
+
+```bash
+dotnet ef migrations add Add_AdminChatWorkspace -c AdminSenparcEntities_Sqlite -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj -o Domain/Migrations/Sqlite
+dotnet ef migrations add Add_AdminChatWorkspace -c AdminSenparcEntities_MySql -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj -o Domain/Migrations/MySql
+dotnet ef migrations add Add_AdminChatWorkspace -c AdminSenparcEntities_SqlServer -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj -o Domain/Migrations/SqlServer
+dotnet ef migrations add Add_AdminChatWorkspace -c AdminSenparcEntities_PostgreSQL -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj -o Domain/Migrations/PostgreSQL
+dotnet ef migrations add Add_AdminChatWorkspace -c AdminSenparcEntities_Oracle -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj -o Domain/Migrations/Oracle
+dotnet ef migrations add Add_AdminChatWorkspace -c AdminSenparcEntities_Dm -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj -o Domain/Migrations/Dm
+```
+
+生成后使用对应的 Context 执行数据库更新：
+
+```bash
+dotnet ef database update -c AdminSenparcEntities_Sqlite -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj
+dotnet ef database update -c AdminSenparcEntities_MySql -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj
+dotnet ef database update -c AdminSenparcEntities_SqlServer -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj
+dotnet ef database update -c AdminSenparcEntities_PostgreSQL -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj
+dotnet ef database update -c AdminSenparcEntities_Oracle -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj
+dotnet ef database update -c AdminSenparcEntities_Dm -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj
+```
+
+对应迁移目录分别为 `Sqlite`、`MySql`、`SqlServer`、`PostgreSQL`、`Oracle` 和 `Dm`。每套迁移都明确绑定对应的 `AdminSenparcEntities_*`，并只变更 `ADMIN_AdminChatSession` 的三个 Workspace 字段。

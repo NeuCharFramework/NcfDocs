@@ -67,7 +67,7 @@ dotnet new install Senparc.Xncf.XncfBuilder.Template
 
 > Nuget 地址：[https://www.nuget.org/packages/Senparc.Xncf.XncfBuilder.Template](https://www.nuget.org/packages/Senparc.Xncf.XncfBuilder.Template)
 
-> 当前源码模板包版本为 `0.13.0`，以 NuGet 源实际发布版本为准。
+> 当前源码模板包版本为 `0.15.0`，以 NuGet 源实际发布版本为准。
 > 生成后的 Function 代码位于 `Application/AppServices` 和
 > `Application/DTOs`，不再位于旧版 `OHS/Local/AppService`、`OHS/Local/PL`。
 

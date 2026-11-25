@@ -214,7 +214,7 @@
 
 ### 1. 运行时升级到 .NET 10
 
-- 模拟站点 `Senparc.Web` 当前目标框架为 `net10.0`。
+- NCF Web Admin 标准基线 `Senparc.Web` 当前目标框架为 `net10.0`。
 - 本地 `http` profile 使用 `http://localhost:5000`，`https` profile 使用 `https://localhost:5111`；Docker HTTPS 端口为 `5001`。
 - 升级项目时应同步检查 SDK、CI 镜像、Docker 基础镜像和部署主机，不要只修改 `TargetFramework`。
 
@@ -232,9 +232,9 @@
 
 ### 4. XNCF 模板结构调整
 
-- 当前源码中的模板包版本为 `0.13.0`，XncfBuilder 项目版本为 `0.37.0-preview5`。
-- 模板 `0.13.0` 增加 `Application/Events` 与 `Application/EventHandlers` 下的
-  EventBus 往返示例。
+- 当前源码中的模板包版本为 `0.15.0`，XncfBuilder 项目版本为 `0.41.9`。
+- 模板 `0.15.0` 保留 `Application/Events` 与 `Application/EventHandlers` 下的
+  EventBus 往返示例，并改进 Area 元数据、示例 Function/API 文案本地化和生成页面可用性。
 - 新模板把 Function 实现和 DTO 放在 `Application/AppServices` 与 `Application/DTOs`。
 - Function 继续通过 `AppServiceBase` 方法上的 `[FunctionRender]` 自动扫描；不要再实现旧的 `IXncfFunction` 或重写 `Register.Functions`。
 

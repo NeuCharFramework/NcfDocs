@@ -29,7 +29,7 @@
 - **AdminChat 按账号隔离**（Senparc.Areas.Admin）：AI 助手会话/消息的列表、详情、发送、归档、删除、反馈与 Harness Trajectory 全部接口均按登录管理员做归属校验，跨账号访问一律返回“会话不存在或无权限”。超级管理员（`administrator` 角色）在 AdminChat 页面可打开「用量统计」面板：各账号会话数（总数/活跃/归档/删除）、消息数与最后活跃时间——仅数量统计，不展示任何会话或消息内容；多租户开启时统计同样受租户过滤器约束。
 - **CloudflareProtect 站点防护**（Senparc.Web）：新增 `CloudflareProtect` SystemConfig 配置节（默认关闭），开启后自首个请求起立即生效固定窗口限流与安全响应头。
 - MCP 相关能力已下沉到 `IXncfRegister`/`XncfRegisterBase` 统一协议，可按模块开关。
-- 模拟站点已迁移到 .NET 10，并提供中文、英文、日文、法文、西班牙文和俄文界面资源。
+- NCF Web Admin 标准基线已迁移到 .NET 10，并提供中文、英文、日文、法文、西班牙文和俄文界面资源。
 - 安装器默认勾选六个基础模块，并在真正安装前显示确认清单。
 
 ### 1.1 XNCF 的单粒度模块定义（框架意义）
@@ -72,23 +72,23 @@
 
 ### 2.3 开发与运维模块
 
-| 模块                         | 版本                    | XncfOrder | MCP | 说明                                                                                                                       |
-| ---------------------------- | ----------------------- | --------: | --- | -------------------------------------------------------------------------------------------------------------------------- |
-| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5（项目） |      5896 | 是  | 模板包 `0.13.0`；直接脚手架及隔离 AI 开发 / Sandbox 预览 / 人工合入（[说明](../xncf/xncfbuilder-isolated-development.md)） |
-| Senparc.Xncf.Sandbox         | 0.1.0-preview1          |         - | 否  | 可销毁 Docker/Wasm 实验环境；见 [环境准备](../xncf/sandbox-environment.md)                                                 |
-| Senparc.Xncf.DesktopBridge   | 0.2.1-preview2          |         - | 否  | 受保护的 HTTP/SSE 桌面桥接、设备配对与活动通知                                                                             |
-| Senparc.Xncf.DatabaseToolkit | 0.7.1                   |         - | 否  | 数据库更新、备份、结构查询、Agent 集成查询                                                                                 |
-| Senparc.Xncf.Swagger         | 0.7.1                   |         0 | 否  | 接口文档                                                                                                                   |
-| Senparc.Xncf.Terminal        | 0.1.6                   |         - | 否  | 服务器终端命令执行（高权限）                                                                                               |
-| Senparc.Xncf.FileManager     | 0.2.5                   |         - | 否  | 文件管理                                                                                                                   |
-| Senparc.Xncf.FirmwareUpdate  | 0.1.0                   |         - | 否  | 同步 NCF 安装包并维护 latest-release.json                                                                                  |
-| Senparc.Xncf.ChangeNamespace | 0.3.9                   |         - | 否  | 全局命名空间替换（高风险）                                                                                                 |
-| Senparc.Xncf.DynamicData     | 0.1.0                   |         - | 否  | 动态数据基础模块（早期）                                                                                                   |
-| Senparc.Xncf.SenMapic        | 0.1.3                   |         - | 否  | 爬虫示例模块                                                                                                               |
-| Senparc.Xncf.Application     | 0.0.5                   |         - | 否  | 外部程序调用模块                                                                                                           |
-| Senparc.Xncf.WeixinManager   | 0.21.1                  |      5880 | 是  | 微信管理与对应 MCP 能力                                                                                                    |
-| Senparc.Xncf.Accounts        | -                       |         - | 否  | 账号管理模块                                                                                                               |
-| Senparc.Xncf.Installer       | -                       |         - | 否  | NCF 安装器                                                                                                                 |
+| 模块                         | 版本           | XncfOrder | MCP | 说明                                                                                                                       |
+| ---------------------------- | -------------- | --------: | --- | -------------------------------------------------------------------------------------------------------------------------- |
+| Senparc.Xncf.XncfBuilder     | 0.41.9（项目） |      5896 | 是  | 模板包 `0.15.0`；直接脚手架及隔离 AI 开发 / Sandbox 预览 / 人工合入（[说明](../xncf/xncfbuilder-isolated-development.md)） |
+| Senparc.Xncf.Sandbox         | 0.1.0-preview1 |         - | 否  | 可销毁 Docker/Wasm 实验环境；见 [环境准备](../xncf/sandbox-environment.md)                                                 |
+| Senparc.Xncf.DesktopBridge   | 0.2.1-preview2 |         - | 否  | 受保护的 HTTP/SSE 桌面桥接、设备配对与活动通知                                                                             |
+| Senparc.Xncf.DatabaseToolkit | 0.7.1          |         - | 否  | 数据库更新、备份、结构查询、Agent 集成查询                                                                                 |
+| Senparc.Xncf.Swagger         | 0.7.1          |         0 | 否  | 接口文档                                                                                                                   |
+| Senparc.Xncf.Terminal        | 0.1.6          |         - | 否  | 服务器终端命令执行（高权限）                                                                                               |
+| Senparc.Xncf.FileManager     | 0.2.5          |         - | 否  | 文件管理                                                                                                                   |
+| Senparc.Xncf.FirmwareUpdate  | 0.1.0          |         - | 否  | 同步 NCF 安装包并维护 latest-release.json                                                                                  |
+| Senparc.Xncf.ChangeNamespace | 0.3.9          |         - | 否  | 全局命名空间替换（高风险）                                                                                                 |
+| Senparc.Xncf.DynamicData     | 0.1.0          |         - | 否  | 动态数据基础模块（早期）                                                                                                   |
+| Senparc.Xncf.SenMapic        | 0.1.3          |         - | 否  | 爬虫示例模块                                                                                                               |
+| Senparc.Xncf.Application     | 0.0.5          |         - | 否  | 外部程序调用模块                                                                                                           |
+| Senparc.Xncf.WeixinManager   | 0.21.1         |      5880 | 是  | 微信管理与对应 MCP 能力                                                                                                    |
+| Senparc.Xncf.Accounts        | -              |         - | 否  | 账号管理模块                                                                                                               |
+| Senparc.Xncf.Installer       | -              |         - | 否  | NCF 安装器                                                                                                                 |
 
 `AIKernel.Abstractions`、`AgentsManager.Abstractions`、`MCP.Abstractions`、
 `PromptRange.Abstractions`、`NeuCharWorkflow.Abstractions` 和

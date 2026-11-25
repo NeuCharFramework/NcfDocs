@@ -29,7 +29,7 @@ When learning the current version, focus on these capabilities first:
 - **AdminChat per-account isolation** (Senparc.Areas.Admin): all AI-assistant session/message endpoints (list, detail, send, archive, delete, feedback) and Harness trajectory operations perform ownership checks against the logged-in admin; cross-account access returns "session not found or forbidden". Super administrators (`administrator` role) get a **Usage Stats** panel on the AdminChat page: per-account session counts (total/active/archived/deleted), message counts and last-active time — counts only, no session or message content is exposed; with multi-tenancy enabled the statistics are likewise constrained by the tenant filter.
 - **CloudflareProtect site protection** (Senparc.Web): a new `CloudflareProtect` SystemConfig section (off by default) that activates fixed-window rate limiting and security headers immediately from the first request when enabled.
 - MCP integration is now part of the common register contract (`IXncfRegister` + `XncfRegisterBase`).
-- The simulated host now targets .NET 10 and includes Chinese, English, Japanese, French, Spanish, and Russian resources.
+- The NcfWebAdminBaseline host now targets .NET 10 and includes Chinese, English, Japanese, French, Spanish, and Russian resources.
 - The installer preselects six foundational modules and presents a confirmation list before installation.
 
 ### 1.1 XNCF as Single-Granularity Module Units (Framework Meaning)
@@ -72,23 +72,23 @@ If you only study base libraries but skip XNCF modules, you understand “how th
 
 ### 2.3 Tooling and Operations Modules
 
-| Module                       | Version                   | XncfOrder | MCP | Notes                                                                                                                                                             |
-| ---------------------------- | ------------------------- | --------: | --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Senparc.Xncf.XncfBuilder     | 0.37.0-preview5 (project) |      5896 | Yes | Template package `0.13.0`; direct scaffolding plus isolated AI development / Sandbox preview / human merge ([guide](../xncf/xncfbuilder-isolated-development.md)) |
-| Senparc.Xncf.Sandbox         | 0.1.0-preview1            |         - | No  | Disposable Docker/Wasm experiment environments; [setup](../xncf/sandbox-environment.md)                                                                           |
-| Senparc.Xncf.DesktopBridge   | 0.2.1-preview2            |         - | No  | Protected HTTP/SSE desktop bridge, device pairing, and activity notifications                                                                                     |
-| Senparc.Xncf.DatabaseToolkit | 0.7.1                     |         - | No  | DB update, backup, schema query, AI-agent DB query integration                                                                                                    |
-| Senparc.Xncf.Swagger         | 0.7.1                     |         0 | No  | API documentation module                                                                                                                                          |
-| Senparc.Xncf.Terminal        | 0.1.6                     |         - | No  | Server command execution (high privilege)                                                                                                                         |
-| Senparc.Xncf.FileManager     | 0.2.5                     |         - | No  | File management                                                                                                                                                   |
-| Senparc.Xncf.FirmwareUpdate  | 0.1.0                     |         - | No  | NCF package mirror + latest-release.json maintenance                                                                                                              |
-| Senparc.Xncf.ChangeNamespace | 0.3.9                     |         - | No  | Global namespace replacement (high risk)                                                                                                                          |
-| Senparc.Xncf.DynamicData     | 0.1.0                     |         - | No  | Dynamic data foundation (early stage)                                                                                                                             |
-| Senparc.Xncf.SenMapic        | 0.1.3                     |         - | No  | Crawler demo module                                                                                                                                               |
-| Senparc.Xncf.Application     | 0.0.5                     |         - | No  | External program execution module                                                                                                                                 |
-| Senparc.Xncf.WeixinManager   | 0.21.1                    |      5880 | Yes | WeChat management + MCP support                                                                                                                                   |
-| Senparc.Xncf.Accounts        | -                         |         - | No  | Account management module                                                                                                                                         |
-| Senparc.Xncf.Installer       | -                         |         - | No  | NCF installer                                                                                                                                                     |
+| Module                       | Version          | XncfOrder | MCP | Notes                                                                                                                                                             |
+| ---------------------------- | ---------------- | --------: | --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Senparc.Xncf.XncfBuilder     | 0.41.9 (project) |      5896 | Yes | Template package `0.15.0`; direct scaffolding plus isolated AI development / Sandbox preview / human merge ([guide](../xncf/xncfbuilder-isolated-development.md)) |
+| Senparc.Xncf.Sandbox         | 0.1.0-preview1   |         - | No  | Disposable Docker/Wasm experiment environments; [setup](../xncf/sandbox-environment.md)                                                                           |
+| Senparc.Xncf.DesktopBridge   | 0.2.1-preview2   |         - | No  | Protected HTTP/SSE desktop bridge, device pairing, and activity notifications                                                                                     |
+| Senparc.Xncf.DatabaseToolkit | 0.7.1            |         - | No  | DB update, backup, schema query, AI-agent DB query integration                                                                                                    |
+| Senparc.Xncf.Swagger         | 0.7.1            |         0 | No  | API documentation module                                                                                                                                          |
+| Senparc.Xncf.Terminal        | 0.1.6            |         - | No  | Server command execution (high privilege)                                                                                                                         |
+| Senparc.Xncf.FileManager     | 0.2.5            |         - | No  | File management                                                                                                                                                   |
+| Senparc.Xncf.FirmwareUpdate  | 0.1.0            |         - | No  | NCF package mirror + latest-release.json maintenance                                                                                                              |
+| Senparc.Xncf.ChangeNamespace | 0.3.9            |         - | No  | Global namespace replacement (high risk)                                                                                                                          |
+| Senparc.Xncf.DynamicData     | 0.1.0            |         - | No  | Dynamic data foundation (early stage)                                                                                                                             |
+| Senparc.Xncf.SenMapic        | 0.1.3            |         - | No  | Crawler demo module                                                                                                                                               |
+| Senparc.Xncf.Application     | 0.0.5            |         - | No  | External program execution module                                                                                                                                 |
+| Senparc.Xncf.WeixinManager   | 0.21.1           |      5880 | Yes | WeChat management + MCP support                                                                                                                                   |
+| Senparc.Xncf.Accounts        | -                |         - | No  | Account management module                                                                                                                                         |
+| Senparc.Xncf.Installer       | -                |         - | No  | NCF installer                                                                                                                                                     |
 
 Abstractions packages such as `AIKernel.Abstractions`, `AgentsManager.Abstractions`,
 `MCP.Abstractions`, `PromptRange.Abstractions`, `NeuCharWorkflow.Abstractions`,

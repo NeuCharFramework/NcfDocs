@@ -27,4 +27,4 @@ The repository includes dedicated provider projects:
 
 - Integrate module databases via `IXncfDatabase + XncfDatabaseDbContext` conventions.
 - Keep DB schema migrations aligned with module version lifecycle.
-- Validate DB provider switching end-to-end in the simulated site before production rollout.
+- Validate DB provider switching end-to-end in the NCF Web Admin baseline before production rollout.

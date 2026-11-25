@@ -1,5 +1,41 @@
 # 日志
 
+## 2026-11-25 更新
+
+NcfPackageSources（当前开发线，核对日期：2026-11-25）——AdminChat 命令能力、Workflow 协作与全模块国际化：
+
+1、AdminChat 新增可扩展 Chat Tool 注册体系。XNCF 模块可通过 `IChatTool` 注册斜杠命令、参数定义、候选项来源、说明及对应 Function；命令按名称去重并提供参数候选查询能力，便于模块在不修改 AdminChat 核心流程的情况下接入交互能力。
+
+2、系统管理模块增加 `/analyze-system-logs` 命令，可在管理员权限边界内分析指定日期的 SenparcTrace 日志。分析过程优先读取概览，再通过关键词、日志类型、线程及异常状态缩小查询范围，必要时读取指定行的证据；结果会限制单次数据量并自动脱敏，区分观察事实、可能原因与建议操作，避免一次读取完整日志。
+
+3、NeuCharWorkflow 增加 AdminChat 工作流命令：支持按名称或描述查找当前管理员拥有的工作流、启动运行、只读检查工作流图，以及基于 `ExpectedRevision` 的冲突检测保存图修改；Workflow 编辑结果会返回新版本号并提示编辑器重新加载。AgentsManager 同步开放 `/run-agent-group`，可查找已有 Agent Group 并提交异步任务，不会在调用时隐式创建或修改分组。
+
+4、NeuCharWorkflow 运行与页面协作继续完善：工作流输出 Schema 获取和图遍历逻辑完成优化；设计器、运行回放、任务与分析页面统一使用 `NeuCharWorkflowUi.openPage` 处理后台 Tab 导航和标题，降低直接跳转造成的页面上下文丢失。NeuCharWorkflow 更新至 `0.4.8`。
+
+5、开发期后台基线由 `NcfSimulatedSite` 统一更名为 `NcfWebAdminBaseline`，安装器选项增加防护并同步更新项目引用及开发文档。`NcfWebAdminSyncTool` 更新至 `0.0.3`，支持命令行/交互式中英文界面、非交互同步、批量覆盖选择，并在同步时排除模块专用 `App_Data` 运行数据。
+
+6、Admin、NeuCharWorkflow、AgentsManager、PromptRange、DynamicData、FileManager、KnowledgeBase、Sandbox、Workspace、WeixinManager、MCP、DesktopBridge、XncfBuilder 等模块完成新一轮多语言整理：补齐中、英、西、法、日、俄资源，统一静态页面、动态消息、Function/参数元数据及后台运行提示；各模块的 `Frontend.*` 资源映射相互隔离，前端键与中性源文本保持稳定，并修复部分页面和 Vue 多语言模板的渲染问题。PromptRange 更新至 `0.20.17`。
+
+7、模块 README、代码 XML 注释、XNCF 开发 Skill 与同步工具说明得到补充，项目模板和组件目录约定（Unpublished、Extension、Domain、Open Host Service）进一步明确，减少模块开发、维护与基线同步时的歧义。
+
+## 2026-11-16 更新
+
+NcfPackageSources（当前开发线，核对日期：2026-11-16）——后台导航上下文、XNCF 检查能力、Workspace 运维与多语言：
+
+1、Admin iframe Tab 现在会记录打开新页面的来源 Tab，并在 Tab 悬浮面板中提供快速返回来源的操作。直接 URL 打开的 Tab 先使用精简路径名称，iframe 页面加载后可采用页面 `title`；从菜单打开的 Tab 保留菜单文字作为权威名称，不再把过长 URL 作为主要标签文字。
+
+2、菜单树节点和 Tab 增加 XNCF 模块上下文。悬浮详情可以显示所属模块名称、UID、已注册页面及快速跳转链接；Tab 顶部颜色根据 UID 分段数据计算，并限制在适度的 HSL 范围内，在提高模块区分度的同时避免颜色过于突兀。
+
+3、XNCF 模块管理页在模块提供相应能力时展示已注册 Function 元数据与数据库/实体洞察。实体检查继续使用现有管理员重新认证边界；页面展示接口、Function 数量、数据库前缀/上下文、迁移状态、实体名称、可读取时的行数以及公开列信息，不会修改模块数据。
+
+4、Workspace 管理页现在展示按所有者隔离的文件数量与用量，支持清空 Workspace 内容但保留 Workspace 记录，并补充 Workspace Agent 打包运行时文档。上传、清空、服务端消息和页面文案统一接入源文本多语言处理链路。
+
+5、NeuCharWorkflow、PromptRange、Sandbox、Workspace 及相关 Admin 页面继续推进国际化：共享 Admin 多语言脚本加载各模块的 `Frontend.*` 资源映射，Vue 动态消息使用 `ncfST`，代码注释和日志描述逐步统一为英文，同时保留中文资源源文本以支持语言切换。
+
+6、前端源文本映射现在以中性资源中的源键作为稳定来源，以当前语言资源作为目标值。这样修复了 English 或其他语言 RESX 同时翻译 `Frontend.*` 两侧，导致旧 Vue 模板中的中文无法匹配的问题。
+
+运维说明见：[Workspace 与 AdminChat](../../NcfPackageSources/xncf/workspace-adminchat.md)、[NeuChar Workflow](../../NcfPackageSources/xncf/neuchar-workflow.md)、[PromptRange](../../NcfPackageSources/xncf/prompt-range.md) 和 [XNCF 模块文档映射](../../NcfPackageSources/xncf/module-documentation-map.md)。
+
 ## 2026-09-20更新
 
 NcfPackageSources（Developer-MAF-V3-Spark 分支）——多租户模块完整升级 + AdminChat 按账号隔离：
@@ -16,8 +52,6 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——多租户模块完整�
 
 详见 [配置多租户](../config/mutiple-tenant.md)。
 
-
-
 NcfPackageSources（Developer-MAF-V3-Spark 分支）——Sandbox v0.3.3：JupyterLab 外部控制、可选容器端口映射与会话别名：
 
 1、JupyterLab 外部控制：模块现具备完整的外部操作接口。新增可被 AI 调用的「创建 Notebook」（`LabCreateNotebook`）Function：在运行中的 Lab 工作区写入 nbformat-4 的 `.ipynb` 文件，支持 Python 与 C#（dotnet-interactive，内核 `C# .NET SDK`）；Notebook 源码遵循 Jupyter 百分号文件约定（`# %%` 分隔代码单元格、`# %% [markdown]` 标记 Markdown 单元格；可选标题生成首个 Markdown 标题单元格），单个字符串即可完整描述 Notebook。「执行 Lab 命令」Function 新增可选 `StdinContent` 参数（最多 32 KB），经 `docker exec -i` 执行，可向容器内终端程序 / REPL 批量提交指令。
@@ -32,7 +66,6 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——Sandbox v0.3.3：Jupyt
 
 完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
-
 ## 2026-09-18更新
 
 NcfPackageSources（Developer-MAF-V3-Spark 分支）——Function 全局 Provit 访问控制：覆盖代码属性的数据库策略：
@@ -44,7 +77,6 @@ NcfPackageSources（Developer-MAF-V3-Spark 分支）——Function 全局 Provit
 3、访问控制管理页：NeuCharPivot 菜单下新增页面（`/Admin/NeuCharPivot/Access`，仅超级管理员），为每个 Function 完整展示决策上下文——模块标识/版本/可用状态、代码基线、当前数据库策略与最终生效策略（含来源：数据库或代码）——以及模块已清除的孤儿策略。支持单条编辑（策略模式、用户/角色/权限选择器、备注）与对选中行的批量操作：批量应用 开放 / 受限 / 禁用 / 继承，或批量清除。数据库迁移已同步六个提供方（Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL）；单元测试同步扩展（覆盖语义、受限主体匹配、孤儿保留、绑定规范化）。
 
 完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
-
 
 ## 2026-09-14更新
 
@@ -96,7 +128,6 @@ NcfPackageSources（Developer-MAF-V3 分支）——后台体验、AIKernel 可�
 
 完整模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
 
-
 ## 2026-08-30更新
 
 NcfPackageSources（Developer-MAF-V3 分支）各 XNCF 模块功能文档同步更新，主要内容：
@@ -106,6 +137,7 @@ NcfPackageSources（Developer-MAF-V3 分支）各 XNCF 模块功能文档同步�
 2、AgentsManager（0.3.22）：A2A（Agent-to-Agent）远程智能体支持——远程智能体接入/发布管理、ChatGroup 上下文共享（可配置）、`AgentTemplateRunner` 统一本地与 A2A 智能体执行、已发布 A2A 智能体手动 Prompt 执行与部署模型回退机制；`AgentModelRequestDiagnostics` 模型请求诊断（敏感数据脱敏）；线程管理引入取消令牌实现优雅停机。
 
 3、新增模块：
+
 - `Senparc.Xncf.Sandbox`（0.1.0-preview1）：独立沙箱编排，Docker/Wasm 快速创建/销毁隔离实验环境，支持配额/TTL、JupyterLab、csharp-exec（.NET 10）、持久化 Lab 工作区文件上传/下载，与 XncfBuilder Preview Host 解耦。
 - `Senparc.Xncf.DesktopBridge`（0.2.1-preview2）：为 NCF 桌面伴侣应用提供受保护的 HTTP/SSE 桥接：能力发现、活动快照、授权资源变更同步流、一次性 PKCE 会话交接；以 `NCF_DESKTOP_BRIDGE_TOKEN` 作为启动安全边界。
 - `Senparc.Xncf.Dapr`（0.0.1）：Dapr 客户端抽象，提供服务调用（GET/POST/PUT/PATCH/DELETE）、Pub/Sub 发布、状态读写删除、健康检查与序列化抽象。
@@ -116,7 +148,6 @@ NcfPackageSources（Developer-MAF-V3 分支）各 XNCF 模块功能文档同步�
 5、其他：`SystemManager` 1.1.3、`XncfBuilder` 0.10.3（Preview Host 进程级模块预览）、`FileManager` 0.6.0；PromptRange 新增 API 文档 XML（ApiDocXML）。
 
 详细模块清单见 [NCF 核心能力详解](../../NcfPackageSources/home/capability-guide.md)，升级注意事项见 [版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
-
 
 ## 2026-08-29更新
 
@@ -131,7 +162,6 @@ NcfPackageSources（Developer-MAF-V3 分支）发布更新，主要内容：
 4、版本更新：XncfBuilder 模板 `1.1.7`、Senparc.Ncf.Database `0.21.8-preview8`；下载页支持选择下载源（自动 / 本地 / GitHub）并展示 MD5 指纹；NCF Desktop 更新至 `0.10.1-build10066`。
 
 详细升级说明见 [NcfPackageSources 版本升级说明](../../NcfPackageSources/home/version-upgrade-notes.md)。
-
 
 ## 2025-05-04更新
 

@@ -1,5 +1,13 @@
 # Module Management
 
+<a id="help-module-manage"></a>
+
+The list shows installed, installable and updatable modules, with enable/disable, install, update and details actions.
+Check names and versions to identify the target; installation, enablement and menu publication are different actions.
+The publish switch changes the visibility mode of extension-module management menus, not NuGet publication or site deployment.
+For a module's Functions, operation panels and ChatAgent, see
+[module details and lifecycle](./admin-module-manage.html#help-module-lifecycle).
+
 Open 【Extension Modules】>【Module Management】 to see the management page for all modules:
 
 <img src="./images/admin-module-manage-01.png" />
@@ -14,6 +22,26 @@ Under the "Installed" modules, you can see two modules that are already installe
 | NCF System Service Core | The core logic (Service) layer module, which also includes some special handling of data models |
 
 > Note: These two modules are core system modules, similar to core files of an operating system. If you do not have better modules to replace them, please do not delete them (although to provide a highly customizable system, we have given operators this permission).
+
+<a id="help-module-lifecycle"></a>
+
+## Module details and lifecycle
+
+Use module details to inspect version/history and **Update now**, **Enable**, **Disable** or **Delete**.
+Installation does not imply enablement; a disabled module's Functions and scheduled tasks cannot execute.
+Function definitions, NeuCharPivot panels and ChatAgent are separate regions.
+Generating or editing a Pivot through Chat changes its operation UI, not Function permissions.
+Back up data before deletion; data cleanup depends on the module implementation, not simply hiding a menu.
+
+<a id="help-module-functions"></a>
+
+## Function definitions and execution parameters
+
+The Function region of module details shows function names, descriptions and parameters; page/parameter views inspect their definitions.
+Enable the module first, then choose a Function and check parameter types and required fields before execution.
+Verify targets especially for database, file, deployment and cleanup actions. This is not the guide for AI-generated panels,
+and generic help cannot replace each Function's own description.
+See [module management](./admin-module-manage.html).
 
 ## Example: Database Management Module Installation and Usage
 
@@ -78,6 +106,8 @@ After waiting for 15 minutes, you can see the latest backup file, and the previo
 After opening the management page of a module, there is a "Delete" button in the upper right corner, which can be used to delete the module.
 
 <img src="./images/admin-module-manage-11.png" />
+
+<a id="help-module-publish"></a>
 
 ## Switch "Publish" Status
 

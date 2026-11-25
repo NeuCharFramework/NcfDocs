@@ -1,6 +1,6 @@
 # 当前 XNCF 模板结构
 
-> 面向 Template 二次开发，对应 `Senparc.Xncf.XncfBuilder.Template` `0.13.0`。
+> 面向 Template 二次开发，对应 `Senparc.Xncf.XncfBuilder.Template` `0.15.0`。
 > 模板母版和打包项目的关系见
 > [项目关系、同步与发布](/zh/NcfPackageSources/home/project-relationships.html)。
 
@@ -84,7 +84,8 @@ public class SampleAppService : AppServiceBase
 
 ## EventBus 示例
 
-`0.13.0` 模板增加了模块内部 EventBus 往返示例，事件定义和处理器分别位于
+`0.15.0` 模板保留模块内部 EventBus 往返示例，并补齐 Area/示例 Function/API
+文案的本地化。事件定义和处理器分别位于
 `Application/Events` 与 `Application/EventHandlers`。业务模块可以沿用此结构，
 但只有在需要解耦应用服务或跨处理器协作时才保留示例；不使用 EventBus 时可
 删除示例代码，不影响基本 XNCF 注册和 Function。
@@ -100,7 +101,7 @@ public class SampleAppService : AppServiceBase
 
 ## 本地化
 
-模板提供 `Resources` 目录和 `GlobalUsings.Localization.cs`。当前模拟站点支持
+模板提供 `Resources` 目录和 `GlobalUsings.Localization.cs`。当前NCF Web Admin 标准基线支持
 `zh-CN`、`en`、`ja`、`fr`、`es`、`ru`。模块名称、Function 名称、参数说明
 和页面文案应使用同一资源体系，并保留默认文本或资源回退。
 

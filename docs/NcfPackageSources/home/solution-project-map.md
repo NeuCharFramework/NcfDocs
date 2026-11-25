@@ -1,7 +1,7 @@
-# `NcfPackageSources_Include_NcfSimulatedSite.sln` Project Map
+# `NcfPackageSources_Include_NcfWebAdminBaseline.sln` Project Map
 
 > This page is checked against the current project list in
-> `NcfPackageSources/src/NcfPackageSources_Include_NcfSimulatedSite.sln`.
+> `NcfPackageSources/src/NcfPackageSources_Include_NcfWebAdminBaseline.sln`.
 > It answers three questions: what a project does, where a beginner starts, and
 > where a contributor should extend it. Every `XNCF` project is listed.
 > Projects ending in `.Tests` validate behavior; they are not runtime entry points.
@@ -12,7 +12,7 @@ This solution is not a single website. It has four layers:
 
 1. **Basic**: NCF runtime foundations, data access, and database providers.
 2. **Extensions / System**: installable, enableable, and permission-aware XNCF capabilities.
-3. **NcfSimulatedSite**: the runnable `Senparc.Web` host that composes the libraries and modules, with Admin, installer, and sample modules.
+3. **NcfWebAdminBaseline**: the runnable `Senparc.Web` host that composes the libraries and modules, with Admin, installer, and sample modules.
 4. **Tests / DevelopmentTools**: automated tests and development helpers.
 
 Recommended learning path:
@@ -114,7 +114,7 @@ High-risk modules must run with least privilege.
 
 | Project                                   | Role                                                                                                                |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `Senparc.Web`                             | Simulated host; composes NCF libraries, XNCF modules, Admin, and configuration, and is the solution's runtime entry |
+| `Senparc.Web`                             | NCF Web Admin baseline host; composes NCF libraries, XNCF modules, Admin, and configuration, and is the solution's runtime entry |
 | `Senparc.Areas.Admin`                     | Admin Area; provides post-login management pages, interactions, Chat, and metrics                                   |
 | `Senparc.Xncf.Installer`                  | First-run installer; creates initial configuration, database, and default modules                                   |
 | `Senparc.Xncf.Accounts`                   | Administrator/account features used by the login flow                                                               |
@@ -126,7 +126,7 @@ High-risk modules must run with least privilege.
 Start the host:
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
+dotnet run --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 Complete the installer on first launch, then sign in at `/Admin/Login`. The
@@ -161,7 +161,7 @@ After changing a module, run its targeted tests first, then validate installatio
 login, module enablement, and the key page in `Senparc.Web`:
 
 ```bash
-dotnet test src/NcfPackageSources_Include_NcfSimulatedSite.sln --no-restore
+dotnet test src/NcfPackageSources_Include_NcfWebAdminBaseline.sln --no-restore
 ```
 
 ## 6. Quick Selection Table

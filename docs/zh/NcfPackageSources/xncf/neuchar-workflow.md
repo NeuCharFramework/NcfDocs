@@ -5,6 +5,67 @@
 
 `NeuCharWorkflow` 是一个服务端可视化编排模块：把已启用 XNCF 的 Function、Agent / Agent 组 / A2A 对象和内置系统节点连接为一张有向图，由服务器执行。它不是浏览器端脚本执行器，也不会在模板中执行任意 JavaScript。
 
+<a id="help-workflow-designer"></a>
+
+## Workflow 设计器
+
+选择或新建工作流，添加并连接节点，配置节点输入、变量及手动/间隔/Webhook/Chat 触发方式。
+保存后再运行测试；未连接的草稿节点需先处理。自动保存只在本页面打开且内容变化时执行，
+不是发布服务或后台定时保存承诺。画布自动排列影响展示，不改变节点业务含义。
+任务、统计、导入/导出是独立入口；正在运行的任务可中止，但已发生的外部效果不会自动撤销。
+节点和表达式详见 [Workflow 指南](./neuchar-workflow.md)。
+
+### 小白第一次运行
+
+先使用“手动”触发器和一两个没有外部副作用的节点。
+保存 Workflow 后用测试输入运行一次，先检查任务记录，再添加 Webhook、定时、
+HTTP 请求、消息或数据修改。每次只增加一条分支，图结构变化后重新执行校验。
+
+启用定时或 Webhook 前，写下预期输入、Workflow 所有人、密钥来源、可接受的最大频率，
+以及失败后的处理方式。画布显示绿色或保存成功，不代表下游服务已经接受请求。
+
+<a id="help-workflow-ai-shortcuts"></a>
+
+### 设计器的 AdminChat 快捷入口
+
+设计器底部的 **AI** 快捷入口会逐字填入 `/edit-workflow `；当前已选中保存后的工作流时，会自动带上
+`--id` 和 `--revision`。AI 读取当前管理员拥有的脱敏图；对于明确请求，通过专用编辑工具仅保存一次最小
+Graph 修改。名称、说明、触发器、启用状态和密钥占位符均保留，服务端会再次校验 Expected Revision。
+修改含义不明确或 Revision 冲突时会停止确认，不会创建另一条 Workflow。该命令拿不到通用 Workflow
+创建、Workspace 或 Skill 工具，也不能启动当前流程。AI 保存成功后，应先重新加载设计器再继续页面编辑。
+
+也可以在 AdminChat 使用 `/run-workflow --id=<id> <输入内容>` 启动当前管理员拥有的已保存流程。
+不提供 ID 时，命令会按名称和说明搜索；存在多个候选时必须先让管理员选择。每次最多启动一条异步运行，
+返回 `runId` 后再到任务页查看完成状态、错误和回放。
+
+<a id="help-workflow-tasks"></a>
+
+## Workflow 任务
+
+任务页通过搜索和状态筛选查找执行记录，查看运行详情或回放，对运行中的任务执行停止。
+快捷清理用于清理选定范围的任务记录，先核对范围；创建工作流应进入设计器。
+等待人工输入时应提交要求的响应，不是反复启动。
+节点行为、触发器、表达式及 Agent 集成见 [Workflow 指南](./neuchar-workflow.md)。
+
+只有在确认当前筛选状态和范围后，才使用“快捷清理”。清理会删除记录，不会修复
+失败的 Workflow，也不会撤销已经产生的外部副作用。
+遇到失败时先打开任务记录，保存错误和资源信息，再决定回放、修改 Workflow 还是重新运行。
+
+<a id="help-workflow-replay"></a>
+
+## Workflow 回放
+
+回放基于该次运行的冻结快照，用播放、暂停、步进检查节点顺序、输入输出及失败情况。
+查看记录不会重新执行，也不是撤销操作。跳转到最新 Workflow 与复制当前 Workflow 是不同动作，
+不能把最新设计当作历史执行时的定义。记录中可能含敏感数据。
+
+<a id="help-workflow-analytics"></a>
+
+## Workflow 统计
+
+先选择时间、Workflow、状态及资源筛选，再查看趋势、资源调用、健康度及明细。
+通过任务/回放页面调查单次失败，汇总指标不能替代原始运行记录。
+
 ## 1. 能力与边界
 
 模块安装时会执行自己的数据库迁移，并在后台提供两个入口：
@@ -22,6 +83,121 @@
 | 运行记录   | 任务列表显示状态与摘要；完成后的任务可进入只读回看，回看使用当时的图快照，不会改动最新定义。                         |
 | 变量与代码 | 最多声明 30 个工作流变量；“安全代码”只能给已声明变量赋值，不能执行任意 JavaScript。                                  |
 | 人工交互   | 支持原生“等待人工输入”节点；启用 AgentsManager 后，Agent / Agent 组运行触发的 HIL 也会汇入同一个 Workflow 处理面板。 |
+| 文件交换   | 支持标准化 `ncf.workflow` JSON/YAML 文件的导入、导出和校验；导入默认创建禁用草稿。                                   |
+
+### 1.2 标准化文件、导入与迁移
+
+Workflow 支持使用版本化的 `ncf.workflow` 文件保存完整定义，包含名称、说明、触发器、图、外部依赖和敏感字段声明。JSON 是规范格式，YAML 是可选的可读表现形式；两者导入后都会转换回现有的 `GraphJson` 和触发器配置，不改变服务端执行语义。
+
+建议文件扩展名：
+
+```text
+*.workflow.json
+*.workflow.yaml
+```
+
+最小文件结构：
+
+```json
+{
+  "format": "ncf.workflow",
+  "schemaVersion": 1,
+  "metadata": {
+    "name": "示例工作流",
+    "description": "可由 AI 或人工生成"
+  },
+  "compatibility": {},
+  "trigger": {
+    "type": "manual",
+    "config": {}
+  },
+  "graph": {
+    "nodes": [],
+    "edges": [],
+    "variables": [],
+    "layout": {
+      "direction": "vertical"
+    }
+  },
+  "requirements": {
+    "functions": [],
+    "objects": [],
+    "workflows": []
+  },
+  "secrets": []
+}
+```
+
+核心字段：
+
+| 字段            | 说明                                               |
+| --------------- | -------------------------------------------------- |
+| `format`        | 固定为 `ncf.workflow`                              |
+| `schemaVersion` | 文件格式版本，不等同于数据库 Workflow Revision     |
+| `metadata`      | 名称、说明和标签                                   |
+| `trigger`       | `manual`、`interval`、`webhook` 或 `chat` 及其配置 |
+| `graph`         | 节点、连线、变量和布局                             |
+| `requirements`  | Function、对象和子 Workflow 等外部依赖             |
+| `secrets`       | 导入后必须重新配置的敏感字段路径                   |
+
+管理端设计器支持：
+
+1. 打开 Workflow 后点击“导出”，选择 JSON 或 YAML。
+2. 点击“导入”选择 `.json`、`.yaml` 或 `.yml` 文件。
+3. 服务端先执行格式、图结构和触发器一致性校验。
+4. 校验通过后确认创建新的禁用草稿，不覆盖当前 Workflow。
+
+对应管理端接口：
+
+| 方法 | 地址                                                              | 说明               |
+| ---- | ----------------------------------------------------------------- | ------------------ |
+| GET  | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=json` | 导出 JSON          |
+| GET  | `/Admin/NeuCharWorkflow/Index?handler=Export&id={id}&format=yaml` | 导出 YAML          |
+| POST | `/Admin/NeuCharWorkflow/Index?handler=ValidateImport`             | 只校验，不创建数据 |
+| POST | `/Admin/NeuCharWorkflow/Index?handler=Import`                     | 校验后创建禁用草稿 |
+
+导入请求体：
+
+```json
+{
+  "content": "...workflow file content...",
+  "format": "json"
+}
+```
+
+`format` 可以省略，由服务端根据内容自动识别。校验结果包括 `valid`、`errors`、`warnings` 和 `secrets`。
+
+#### 敏感信息
+
+导出不会包含当前环境中的真实密钥。Webhook Token、Password、Secret、Token、API Key 和 Human Input 的 `externalResumeKey` 会被替换为空字符串，并记录在 `secrets` 中：
+
+```json
+{
+  "secrets": [
+    {
+      "path": "trigger.config.token",
+      "reason": "Webhook token must be configured after import.",
+      "requiredOnImport": true
+    }
+  ]
+}
+```
+
+导入后必须在设计器中重新配置这些值。不要把真实密钥写入 Git、AI 提示词、导出文件或日志。
+
+#### AI 生成约束
+
+AI 生成 Workflow 时应：
+
+1. 只输出 `ncf.workflow`、`schemaVersion: 1` 文件，不输出任意 C#、JavaScript 或 Shell 脚本。
+2. 保证节点 ID 唯一，且每条连线都引用存在的节点。
+3. 保证每张图只有一个与 `trigger.type` 匹配的触发器。
+4. 只使用当前引擎支持的节点类型和条件分支。
+5. 不生成真实密码、Token、API Key 或外部恢复密钥。
+6. 使用 `requirements` 声明 Function、Agent、对象和子 Workflow 等外部依赖。
+7. 生成后先调用 `ValidateImport`，修复所有 `errors` 后再导入。
+
+导入后的工作流始终是禁用草稿；管理员应重新配置敏感字段和环境相关资源，使用测试输入验证后再启用。
 
 ### 1.1 数据访问与运行状态保存（2026-10-02）
 

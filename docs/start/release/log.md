@@ -1,5 +1,41 @@
 # Logs
 
+## 2026-11-25 update
+
+NcfPackageSources (current development line, checked on 2026-11-25) — AdminChat command capabilities, Workflow collaboration, and full-module internationalization:
+
+1. AdminChat now includes an extensible Chat Tool registration system. XNCF modules can register slash commands, parameter definitions, candidate sources, descriptions, and their corresponding Functions through `IChatTool`. Commands are de-duplicated by name and support parameter-candidate queries, allowing modules to add interactive capabilities without modifying the AdminChat core flow.
+
+2. The system administration module adds the `/analyze-system-logs` command, which can analyze SenparcTrace logs for a specified date within the administrator permission boundary. Analysis reads the overview first, narrows the query by keywords, log type, thread, and exception status, and reads evidence from specified lines only when necessary. Results are limited per request and automatically redacted, distinguishing observed facts, possible causes, and recommended actions instead of reading the complete log at once.
+
+3. NeuCharWorkflow adds AdminChat workflow commands: administrators can find workflows they own by name or description, start runs, inspect workflow graphs in read-only mode, and save graph changes with `ExpectedRevision` conflict detection. Workflow edit results return the new version number and prompt the editor to reload. AgentsManager likewise exposes `/run-agent-group`, which can find an existing Agent Group and submit an asynchronous task without implicitly creating or modifying the group.
+
+4. NeuCharWorkflow runtime and page collaboration continue to improve: workflow output-schema retrieval and graph traversal have been optimized; the designer, run replay, task, and analysis pages now consistently use `NeuCharWorkflowUi.openPage` for background-tab navigation and titles, reducing loss of page context caused by direct navigation. NeuCharWorkflow is updated to `0.4.8`.
+
+5. The development-time backend baseline has been uniformly renamed from `NcfSimulatedSite` to `NcfWebAdminBaseline`; installer options now include safeguards, and project references and development documentation have been updated accordingly. `NcfWebAdminSyncTool` is updated to `0.0.3`, supporting Chinese and English command-line/interactive interfaces, non-interactive synchronization, batch overwrite selection, and exclusion of module-specific `App_Data` runtime data during synchronization.
+
+6. Admin, NeuCharWorkflow, AgentsManager, PromptRange, DynamicData, FileManager, KnowledgeBase, Sandbox, Workspace, WeixinManager, MCP, DesktopBridge, XncfBuilder, and other modules have completed another round of localization: Chinese, English, Spanish, French, Japanese, and Russian resources have been filled in, with static pages, dynamic messages, Function/parameter metadata, and backend runtime prompts brought into alignment. Each module's `Frontend.*` resource mappings are isolated from one another, frontend keys and neutral source text remain stable, and rendering issues in some pages and Vue localization templates have been fixed. PromptRange is updated to `0.20.17`.
+
+7. Module READMEs, code XML comments, the XNCF development Skill, and synchronization-tool documentation have been expanded. Project template and component-directory conventions (`Unpublished`, `Extension`, `Domain`, `Open Host Service`) are now clearer, reducing ambiguity in module development, maintenance, and baseline synchronization.
+
+## 2026-11-16 update
+
+NcfPackageSources (current development line, checked on 2026-11-16) — Admin navigation context, XNCF inspection, Workspace operations, and localization:
+
+1. Admin iframe tabs now retain the source tab that opened a new page and expose a quick return action in the tab hover panel. Direct URL tabs start with a short path label and can adopt the loaded iframe document title; menu-opened tabs keep the menu label as their authoritative title. Long URL text is no longer used as the primary tab label.
+
+2. XNCF module context is attached to menu tree nodes and tabs. Hover details can show the owning module name, UID, registered pages, and quick links to those pages. Tab accent colors are derived from segmented UID data with constrained HSL output so modules remain visually distinguishable without producing disruptive colors.
+
+3. The XNCF module administration page now exposes registered Function metadata and database/entity insights where the module provides them. Entity inspection requires the existing administrator re-authentication boundary; the page reports interfaces, Function counts, database prefix/context information, migration state, entity names, row counts when available, and public columns without changing module data.
+
+4. Workspace administration now reports owner-scoped file counts and usage, supports clearing Workspace contents while preserving the Workspace record, and documents the packaged Workspace Agent runtime. Upload, cleanup, server messages, and page copy use the shared localization source-map pipeline.
+
+5. NeuCharWorkflow, PromptRange, Sandbox, Workspace, and related Admin surfaces continue the internationalization pass: module `Frontend.*` resource mappings are loaded by the shared Admin localization script, dynamic Vue messages use `ncfST`, and source comments/log descriptions are being normalized to English while preserving Chinese resource source text for language switching.
+
+6. Frontend source-text mapping now uses the neutral resource key as the stable source and the active culture resource as the target. This fixes the case where an English or other localized RESX translated both sides of `Frontend.*` and therefore could not match Chinese text still present in legacy Vue templates.
+
+For the operator guides, see [Workspace and AdminChat](../../NcfPackageSources/xncf/workspace-adminchat.md), [NeuChar Workflow](../../NcfPackageSources/xncf/neuchar-workflow.md), [PromptRange](../../NcfPackageSources/xncf/prompt-range.md), and [XNCF module documentation map](../../NcfPackageSources/xncf/module-documentation-map.md).
+
 ## 2026-09-20 update
 
 NcfPackageSources (Developer-MAF-V3-Spark branch) — full multi-tenant module upgrade + AdminChat per-account isolation:
@@ -16,8 +52,6 @@ Unit tests: new `AdminChatAccountIsolationTests` (cross-account session/message 
 
 See [Configure Multi-Tenant](../config/mutiple-tenant.md).
 
-
-
 NcfPackageSources (Developer-MAF-V3-Spark branch) — Sandbox v0.3.3: external JupyterLab control, optional container port mappings, and session aliases:
 
 1. External JupyterLab control: the module now exposes complete external interfaces for operating a running JupyterLab container. A new AI-callable Function 创建 Notebook (`LabCreateNotebook`) writes nbformat-4 `.ipynb` files into the Lab workspace for Python or C# (dotnet-interactive, kernel `C# .NET SDK`); the notebook source follows the Jupyter percent-file convention (`# %%` separates code cells, `# %% [markdown]` marks markdown cells, and an optional title becomes the first markdown heading), so one string fully describes the notebook. The existing 执行 Lab 命令 Function now accepts an optional `StdinContent` (up to 32 KB) — executed via `docker exec -i` — so commands can be piped into terminal programs or REPLs inside the container.
@@ -32,7 +66,6 @@ Persistence: two new nullable columns `SandboxSession.Alias` / `SandboxSession.E
 
 For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
-
 ## 2026-09-18 update
 
 NcfPackageSources (Developer-MAF-V3-Spark branch) — Function global Provit access control: database policies that override code attributes:
@@ -44,7 +77,6 @@ NcfPackageSources (Developer-MAF-V3-Spark branch) — Function global Provit acc
 3. Access Control management page: a new page under the NeuCharPivot menu (`/Admin/NeuCharPivot/Access`, super admin only) shows the full decision context for every Function — module identity/version/availability, code baseline, current DB policy, and the resulting effective policy (with source: DB or code) — plus orphan policies whose module was cleared. Supports single-row editing (policy mode, user/role/permission pickers, remark) and batch operations across selected rows: apply Open / Restricted / Deny / Inherit, or clear. Migrations synced for all six providers (Sqlite / SqlServer / MySql / Dm / Oracle / PostgreSQL); unit tests extended for override semantics, restricted subject matching, orphan retention, and binding normalization.
 
 For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
-
 
 ## 2026-09-14 update
 
@@ -96,7 +128,6 @@ NcfPackageSources (Developer-MAF-V3 branch) — Admin experience, AIKernel obser
 
 For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
 
-
 ## 2026-08-30 update
 
 Documentation sync for all XNCF module capabilities in NcfPackageSources (Developer-MAF-V3 branch), highlights:
@@ -106,6 +137,7 @@ Documentation sync for all XNCF module capabilities in NcfPackageSources (Develo
 2. AgentsManager (0.3.22): A2A (Agent-to-Agent) remote agent support — remote agent connect/publish management, configurable ChatGroup context sharing, `AgentTemplateRunner` for unified local/A2A agent execution, manual-prompt execution of published A2A agents with deployment-model fallback; `AgentModelRequestDiagnostics` for model request diagnostics with sensitive-data redaction; thread management now uses cancellation tokens for graceful shutdown.
 
 3. New modules:
+
 - `Senparc.Xncf.Sandbox` (0.1.0-preview1): standalone sandbox orchestration — create/destroy isolated Docker/Wasm experiment environments with quota/TTL, optional JupyterLab, csharp-exec (.NET 10), and persistent Lab workspace file upload/download; decoupled from the XncfBuilder Preview Host.
 - `Senparc.Xncf.DesktopBridge` (0.2.1-preview2): secured HTTP/SSE bridge for NCF desktop companion apps — capability discovery, activity snapshots, authorized resource-change sync stream, one-time PKCE session handoff; `NCF_DESKTOP_BRIDGE_TOKEN` acts as the startup security boundary.
 - `Senparc.Xncf.Dapr` (0.0.1): Dapr client abstraction with service invocation (GET/POST/PUT/PATCH/DELETE), pub/sub publishing, state read/write/delete, health checks, and serializer abstractions.
@@ -116,7 +148,6 @@ Documentation sync for all XNCF module capabilities in NcfPackageSources (Develo
 5. Others: `SystemManager` 1.1.3, `XncfBuilder` 0.10.3 (Preview Host process-level module preview), `FileManager` 0.6.0; PromptRange adds API documentation XML (ApiDocXML).
 
 For the full module inventory see [NCF Capability Deep Dive](../../NcfPackageSources/home/capability-guide.md); for upgrade notes see [Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md).
-
 
 ## 2026-08-29 Update
 
@@ -131,7 +162,6 @@ NcfPackageSources (Developer-MAF-V3 branch) released. Highlights:
 4. Version bumps: XncfBuilder template `1.1.7`, Senparc.Ncf.Database `0.21.8-preview8`; the download page supports source selection (auto / local / GitHub) and shows MD5 fingerprints; NCF Desktop updated to `0.10.1-build10066`.
 
 See [NcfPackageSources Version Upgrade Notes](../../NcfPackageSources/home/version-upgrade-notes.md) for full upgrade details.
-
 
 ## 2023-04-21 Update
 

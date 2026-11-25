@@ -7,6 +7,17 @@ you do not need to read the implementation to use the workflow safely.
 For the code-level architecture, state machine, and extension points, see
 [XncfBuilder Isolated Development Source Analysis](/NcfPackageSources/xncf/xncfbuilder-isolated-development.html).
 
+<a id="help-builder-preview"></a>
+
+## XncfBuilder preview monitor
+
+Monitor started isolated preview pipelines and development tasks by module, stage, source fingerprint, process, Host, time and state.
+Generated source does not automatically enter the preview queue; start an XNCF isolated preview first.
+**Refresh status** updates the display, **Open** visits the preview site and **Stop** stops that preview.
+**Manual merge** and **Discard** act on isolated development tasks; inspect differences and paths first.
+Resolve persistence-not-ready messages rather than treating an empty list as a successful build.
+See [isolated development and manual merge](./isolated-xncf-development.html) for the full flow.
+
 ## What This Workflow Solves
 
 Traditional **Generate XNCF** writes directly into the selected solution. That
@@ -62,6 +73,7 @@ NuGet/deployment path.
    ```
 
    The isolated workflow never downloads or installs a template by itself.
+
 3. Apply the XncfBuilder database migration that creates
    `XncfBuilderXncfDevelopmentJob`. This workflow intentionally has no
    in-memory fallback: without the table it creates no snapshot and changes no
@@ -84,9 +96,9 @@ job**.
 
 Choose one mode:
 
-| Mode | Use when | Result |
-| --- | --- | --- |
-| `CreateNew` | A module does not exist yet | The locally installed `XNCF` template generates the module only in the isolated workspace. |
+| Mode             | Use when                       | Result                                                                                     |
+| ---------------- | ------------------------------ | ------------------------------------------------------------------------------------------ |
+| `CreateNew`      | A module does not exist yet    | The locally installed `XNCF` template generates the module only in the isolated workspace. |
 | `ModifyExisting` | A source module already exists | The existing module is copied into the isolated workspace; the original remains unchanged. |
 
 Provide the target `.sln`, full module project name, requirement, and template
@@ -168,14 +180,14 @@ source.
 
 ## Troubleshooting
 
-| Message or symptom | First action |
-| --- | --- |
-| Development-task persistence is not ready | Apply the XncfBuilder database migration. Do not retry creation until it succeeds. |
-| `XNCF` template is unavailable | Install an organization-approved local template; the job intentionally will not install one. |
-| Host project reference validation fails | Ensure `Senparc.Web.csproj` directly references the module project in the isolated source solution. |
-| Sandbox preview refuses to start | Check Sandbox enablement, Docker availability, pinned image digest, and the path-base host opt-in. |
-| Restore fails in preview | Keep network disabled and bake/cache dependencies in the approved image, or use a dedicated package-mirror Docker network. |
-| Merge is refused because target changed | Create a new job from the current target source; do not overwrite a newer checkout. |
+| Message or symptom                        | First action                                                                                                               |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Development-task persistence is not ready | Apply the XncfBuilder database migration. Do not retry creation until it succeeds.                                         |
+| `XNCF` template is unavailable            | Install an organization-approved local template; the job intentionally will not install one.                               |
+| Host project reference validation fails   | Ensure `Senparc.Web.csproj` directly references the module project in the isolated source solution.                        |
+| Sandbox preview refuses to start          | Check Sandbox enablement, Docker availability, pinned image digest, and the path-base host opt-in.                         |
+| Restore fails in preview                  | Keep network disabled and bake/cache dependencies in the approved image, or use a dedicated package-mirror Docker network. |
+| Merge is refused because target changed   | Create a new job from the current target source; do not overwrite a newer checkout.                                        |
 
 ## Related Guides
 

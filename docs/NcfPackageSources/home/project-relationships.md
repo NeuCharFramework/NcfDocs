@@ -1,14 +1,19 @@
 # Project Relationships, Synchronization, and Release
 
-> This page explains how two simulated sources in `NcfPackageSources` feed
+> This page explains how two authoritative sources in `NcfPackageSources` feed
 > publishable projects. The current implementation of
-> `tools/NcfSimulatedSiteSyncTool` is the synchronization authority.
+> `tools/NcfWebAdminSyncTool` is the synchronization authority.
+
+`NcfWebAdminBaseline` is not the final NuGet template. It is the runnable,
+source-referencing NCF Web Admin baseline used for day-to-day integration and
+validation. `NcfWebAdminSyncTool` promotes its changes into the public NCF
+template and the XNCF template packaging sources.
 
 ## Relationship overview
 
 ```text
 Template_OrgName.Xncf.Template_XncfName (runnable XNCF template source)
-    │  NcfSimulatedSiteSyncTool: forced one-way sync plus placeholder transforms
+    │  NcfWebAdminSyncTool: forced one-way sync plus placeholder transforms
     ▼
 Senparc.Xncf.XncfBuilder.Template/templates/template1 (package content)
     │  dotnet pack / release pipeline package preparation
@@ -18,8 +23,8 @@ Senparc.Xncf.XncfBuilder.Template (NuGet template package)
     ▼
 Developer-owned XNCF project
 
-tools/NcfSimulatedSite (integration host for core packages)
-    │  same NcfSimulatedSiteSyncTool: interactive Y / R / N per file
+tools/NcfWebAdminBaseline (runnable NCF Web Admin baseline)
+    │  same NcfWebAdminSyncTool: interactive Y / R / N per file
     ▼
 NCF/src/back-end (backend content of the public NCF template)
     │
@@ -33,9 +38,9 @@ Both flows use the same tool, but they have different synchronization rules.
 
 | Project or directory                                                        | Role                                                                                                              | Directly published?                                         |
 | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `tools/NcfSimulatedSite/Template_OrgName.Xncf.Template_XncfName`            | Runnable, integration-tested source of truth for XNCF template content                                            | No                                                          |
+| `tools/NcfWebAdminBaseline/Template_OrgName.Xncf.Template_XncfName`            | Runnable, integration-tested source of truth for XNCF template content                                            | No                                                          |
 | `src/Extensions/Senparc.Xncf.XncfBuilder/Senparc.Xncf.XncfBuilder.Template` | NuGet template packaging project; actual template content is under `templates/template1`                          | Yes, as `Senparc.Xncf.XncfBuilder.Template`                 |
-| `tools/NcfSimulatedSite`                                                    | Integration host for NCF libraries and extensions, and normal synchronization source for the NCF backend template | No                                                          |
+| `tools/NcfWebAdminBaseline`                                                    | Runnable NCF Web Admin integration and validation baseline, and normal synchronization source for the public NCF backend template | No                                                          |
 | `src/back-end` in `NeuCharFramework/NCF`                                    | Public NCF backend template content for end users                                                                 | Included in `Senparc.NCF.Template` by `NCF.Template.csproj` |
 | `Senparc.Web` in `NeuCharFramework/NCF`                                     | Publishable sample/runnable site                                                                                  | CI produces platform archives and GitHub Release assets     |
 
@@ -44,21 +49,21 @@ Both flows use the same tool, but they have different synchronization rules.
 Tool project:
 
 ```text
-tools/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool/
-  NcfSimulatedSiteSyncTool.csproj
+tools/NcfWebAdminSyncTool/NcfWebAdminSyncTool/
+  NcfWebAdminSyncTool.csproj
 ```
 
 Synchronize only the XNCF template:
 
 ```bash
-dotnet run --project tools/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool.csproj -- --template-only
+dotnet run --project tools/NcfWebAdminSyncTool/NcfWebAdminSyncTool/NcfWebAdminSyncTool.csproj -- --template-only
 ```
 
-Synchronize the XNCF template first, then the complete simulated site and NCF
+Synchronize the XNCF template first, then the complete web-admin baseline and NCF
 repository:
 
 ```bash
-dotnet run --project tools/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool/NcfSimulatedSiteSyncTool.csproj
+dotnet run --project tools/NcfWebAdminSyncTool/NcfWebAdminSyncTool/NcfWebAdminSyncTool.csproj
 ```
 
 The tool expects the current repository layout, locates the sibling `NCF`
@@ -71,7 +76,7 @@ the tool before accepting any overwrite.
 The direction is fixed:
 
 ```text
-NcfSimulatedSite/Template_OrgName.Xncf.Template_XncfName
+NcfWebAdminBaseline/Template_OrgName.Xncf.Template_XncfName
     → Senparc.Xncf.XncfBuilder.Template/templates/template1
 ```
 
@@ -79,7 +84,7 @@ NcfSimulatedSite/Template_OrgName.Xncf.Template_XncfName
 - Hidden files, `bin`, `obj`, `.vs`, `.user`, and `.DS_Store` are ignored.
 - The sample `Uid` in `Register.cs` becomes `Template_Guid`, and the sample
   module version becomes `Template_Version` for `dotnet new` substitution.
-- Change and test the runnable simulated-site template first, then synchronize.
+- Change and test the runnable baseline template source first, then synchronize.
   Do not maintain the packaging directory as an independent second source.
 
 ### Release method
@@ -95,18 +100,18 @@ that this project is explicitly built or packed before package discovery.
 `GeneratePackageOnBuild` alone does not guarantee that the current main
 pipeline produces this template package.
 
-## Simulated site and NCF: interactive synchronization
+## NcfWebAdminBaseline and NCF: interactive synchronization
 
 The normal default direction is:
 
 ```text
-NcfPackageSources/tools/NcfSimulatedSite → NCF/src/back-end
+NcfPackageSources/tools/NcfWebAdminBaseline → NCF/src/back-end
 ```
 
 When files at the same path differ, the tool prompts per file:
 
-- `Y`: overwrite `NCF/src/back-end` from `NcfSimulatedSite`;
-- `R`: reverse the direction and overwrite `NcfSimulatedSite` from
+- `Y`: overwrite `NCF/src/back-end` from `NcfWebAdminBaseline`;
+- `R`: reverse the direction and overwrite `NcfWebAdminBaseline` from
   `NCF/src/back-end`;
 - `N`: skip that difference.
 
@@ -131,7 +136,7 @@ prove publication to NuGet or GitHub Releases.
 
 ## Recommended maintenance flow
 
-1. Make and locally verify changes in the simulated source in `NcfPackageSources`.
+1. Make and locally verify changes in the authoritative source in `NcfPackageSources`.
 2. Inspect the tool's printed absolute paths and differences before choosing a sync mode.
 3. Use `--template-only` for the XNCF template and inspect placeholders and package content.
 4. For the full site, decide `Y/R/N` per file so independent NCF changes are preserved.

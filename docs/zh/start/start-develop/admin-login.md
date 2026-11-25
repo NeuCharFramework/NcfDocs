@@ -1,5 +1,7 @@
 # 管理员登录
 
+<a id="help-admin-login"></a>
+
 默认管理员登录地址为：`/Admin/Login`：
 
 <img src="./images/admin-login-01.png" />

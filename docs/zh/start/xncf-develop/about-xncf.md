@@ -1,7 +1,7 @@
 # XNCF 的构成
 
 > 本页属于 Template 二次开发，只说明模块的公共组成和使用约定，不展开框架
-> 扫描源码。内容已按 `Senparc.Xncf.XncfBuilder.Template` `0.13.0` 核对。
+> 扫描源码。内容已按 `Senparc.Xncf.XncfBuilder.Template` `0.15.0` 核对。
 
 XNCF 是 NCF 中可被扫描、安装、启停和独立治理的模块单元。开发者通常使用
 [XNCF 模块生成器](./create-xncf.md)，不需要从空项目手工搭建全部结构。

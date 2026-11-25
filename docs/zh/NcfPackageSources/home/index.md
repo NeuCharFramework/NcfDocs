@@ -21,7 +21,7 @@
 2. 理清仓库边界：[项目关系、同步与发布](./project-relationships.md)
 3. 再进入：[NCF 核心能力源码详解](./capability-guide.md)
 4. 补齐模块源码认知：[XNCF 扩展库说明（Senparc.Xncf.xxx）](./xncf-extension-modules.md)
-5. 使用[完整解决方案项目地图](./solution-project-map.md)，按项目定位 `NcfPackageSources_Include_NcfSimulatedSite.sln` 中的全部项目，包括 `Senparc.Web`、Admin 和全部 XNCF 模块。
+5. 使用[完整解决方案项目地图](./solution-project-map.md)，按项目定位 `NcfPackageSources_Include_NcfWebAdminBaseline.sln` 中的全部项目，包括 `Senparc.Web`、Admin 和全部 XNCF 模块。
 
 ## 你可以从这份文档得到什么
 
@@ -36,7 +36,7 @@
 
 - `src/Basic`：基础运行时能力（Core、XncfBase、Repository、Service、Database\* 等）。
 - `src/Extensions`：可安装扩展模块（系统模块、AI 模块、开发工具模块、运维模块等）。
-- `tools/NcfSimulatedSite`：用于集成联调和模块验证的模拟站点（含 `Senparc.Web`、后台 Area、Installer 等）。
+- `tools/NcfWebAdminBaseline`：用于集成联调和模块验证的NCF Web Admin 标准基线（含 `Senparc.Web`、后台 Area、Installer 等）。
 
 它与 `NeuCharFramework/NCF`、XncfBuilder 模板打包项目之间不是三份独立维护的
 业务代码。权威源、同步方向和发布边界见
@@ -50,13 +50,13 @@
 git clone https://github.com/NeuCharFramework/NcfPackageSources.git
 cd NcfPackageSources
 
-dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
+dotnet build src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
 ```
 
-### 2.2 本地运行（模拟站点）
+### 2.2 本地运行（NCF Web Admin 标准基线）
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
+dotnet run --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 ### 2.3 代码验证建议

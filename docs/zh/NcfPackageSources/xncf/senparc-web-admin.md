@@ -1,6 +1,6 @@
 # Senparc.Web 与 Admin
 
-本页说明 `NcfPackageSources_Include_NcfSimulatedSite.sln` 中可运行的宿主站点
+本页说明 `NcfPackageSources_Include_NcfWebAdminBaseline.sln` 中可运行的宿主站点
 和管理员区域，面向需要运行源码的新手，以及需要判断宿主、安装器和模块代码
 应该放在哪里的贡献者。
 
@@ -22,9 +22,9 @@
 在 `NcfPackageSources` 仓库根目录执行：
 
 ```bash
-dotnet restore src/NcfPackageSources_Include_NcfSimulatedSite.sln
-dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
+dotnet restore src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
+dotnet build src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
+dotnet run --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 打开宿主输出的地址，通常是 `http://localhost:5000`。第一次访问出现安装器
