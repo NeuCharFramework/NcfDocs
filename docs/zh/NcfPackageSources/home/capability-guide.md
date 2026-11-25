@@ -29,7 +29,7 @@
 - **AdminChat 按账号隔离**（Senparc.Areas.Admin）：AI 助手会话/消息的列表、详情、发送、归档、删除、反馈与 Harness Trajectory 全部接口均按登录管理员做归属校验，跨账号访问一律返回“会话不存在或无权限”。超级管理员（`administrator` 角色）在 AdminChat 页面可打开「用量统计」面板：各账号会话数（总数/活跃/归档/删除）、消息数与最后活跃时间——仅数量统计，不展示任何会话或消息内容；多租户开启时统计同样受租户过滤器约束。
 - **CloudflareProtect 站点防护**（Senparc.Web）：新增 `CloudflareProtect` SystemConfig 配置节（默认关闭），开启后自首个请求起立即生效固定窗口限流与安全响应头。
 - MCP 相关能力已下沉到 `IXncfRegister`/`XncfRegisterBase` 统一协议，可按模块开关。
-- 模拟站点已迁移到 .NET 10，并提供中文、英文、日文、法文、西班牙文和俄文界面资源。
+- NCF Web Admin 标准基线已迁移到 .NET 10，并提供中文、英文、日文、法文、西班牙文和俄文界面资源。
 - 安装器默认勾选六个基础模块，并在真正安装前显示确认清单。
 
 ### 1.1 XNCF 的单粒度模块定义（框架意义）

@@ -28,6 +28,17 @@ Leaving a saved secret blank keeps the existing secret. To replace it, enter a
 new value. To remove an account, use **Delete**; existing Agent references to
 that connector will stop working.
 
+### Safe first test
+
+Create the connector disabled if you are still collecting credentials. After saving, test
+one low-impact action before enabling it for a Chat, Workflow, or Agent. A successful test
+proves only that this server accepted that action at that time; it does not prove that every
+action is safe, that every user is authorized, or that the provider will remain reachable.
+
+If the editor shows a masked secret, do not copy the mask back into the field. Leave it blank
+to keep the stored secret, or enter the newly rotated secret. Never place provider secrets in
+the connector name, note, Workflow input, Agent prompt, exported configuration, or screenshots.
+
 ## How permissions work
 
 The connector page controls which actions are enabled on an account. It does

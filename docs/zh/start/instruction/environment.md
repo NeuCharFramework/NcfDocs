@@ -9,7 +9,7 @@
 
 ## .NET SDK
 
-- 当前 NCF 模板、`NcfPackageSources` 模拟站点和 XNCF 模板以 **.NET 10**
+- 当前 NCF 模板、`NcfPackageSources` NCF Web Admin 标准基线和 XNCF 模板以 **.NET 10**
   为开发基线。SDK 下载地址：
   [https://dotnet.microsoft.com/download/dotnet/10.0](https://dotnet.microsoft.com/download/dotnet/10.0)
 - 使用旧版 NCF 或旧 NuGet 包时，请以对应发布标签和项目文件中的

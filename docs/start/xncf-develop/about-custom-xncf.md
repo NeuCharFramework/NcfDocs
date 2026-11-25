@@ -107,7 +107,7 @@ Request models derive from `FunctionAppRequestBase`. Use:
 ## Localization
 
 The template includes `Resources` and `GlobalUsings.Localization.cs`. The
-current simulated site supports `zh-CN`, `en`, `ja`, `fr`, `es`, and `ru`.
+current web-admin baseline supports `zh-CN`, `en`, `ja`, `fr`, `es`, and `ru`.
 Module names, Function names, parameter descriptions, and page text should use
 the same resource system with stable fallback text.
 

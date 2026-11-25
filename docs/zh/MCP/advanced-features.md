@@ -31,7 +31,7 @@ public static class LocalizedTools
 }
 ```
 
-模拟站点当前支持 `zh-CN`、`en`、`ja`、`fr`、`es`、`ru`。资源缺失时应提供
+NCF Web Admin 标准基线当前支持 `zh-CN`、`en`、`ja`、`fr`、`es`、`ru`。资源缺失时应提供
 稳定的默认描述，避免模型只能看到空白工具说明。
 
 ## 自定义注册

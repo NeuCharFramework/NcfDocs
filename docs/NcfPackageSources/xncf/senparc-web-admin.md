@@ -1,7 +1,7 @@
 # Senparc.Web and Admin
 
 This page explains the runnable host and administrator area included by
-`NcfPackageSources_Include_NcfSimulatedSite.sln`. It is for beginners who need
+`NcfPackageSources_Include_NcfWebAdminBaseline.sln`. It is for beginners who need
 to run the source tree and contributors who need to know where host, installer,
 and module code belongs.
 
@@ -24,9 +24,9 @@ therefore comes from the composition of modules, not from `Senparc.Web` alone.
 From the `NcfPackageSources` repository root:
 
 ```bash
-dotnet restore src/NcfPackageSources_Include_NcfSimulatedSite.sln
-dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
+dotnet restore src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
+dotnet build src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
+dotnet run --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 Open the URL printed by the host, normally `http://localhost:5000`.

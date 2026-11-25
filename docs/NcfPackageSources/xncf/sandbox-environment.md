@@ -264,7 +264,7 @@ Requirements and behavior:
   proxy. Cookies and `Authorization` headers are removed before proxying to the
   preview process.
 - The preview `Senparc.Web` must read `NCF_XNCF_PREVIEW_PATH_BASE` and call
-  `UsePathBase` before NCF/routing middleware. The simulated host supports
+  `UsePathBase` before NCF/routing middleware. The NcfWebAdminBaseline host supports
   this; a custom host must add the same opt-in.
 
 See [Safely Create, Test, and Merge an XNCF Module](/start/xncf-develop/isolated-xncf-development.html)

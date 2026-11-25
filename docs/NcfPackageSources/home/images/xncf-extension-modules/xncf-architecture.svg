@@ -7,7 +7,7 @@
 
   <!-- Host site layer -->
   <rect x="20" y="20" width="820" height="110" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
-  <text x="40" y="48" font-size="16" font-weight="bold" fill="#9a3412">Host Site (Senparc.Web / NcfSimulatedSite)</text>
+  <text x="40" y="48" font-size="16" font-weight="bold" fill="#9a3412">Host Site (Senparc.Web / NcfWebAdminBaseline)</text>
   <g font-size="13" fill="#1f2937">
     <rect x="40" y="62" width="150" height="34" rx="8" fill="#ffffff" stroke="#ea580c"/>
     <text x="115" y="84" text-anchor="middle">Admin Backoffice</text>

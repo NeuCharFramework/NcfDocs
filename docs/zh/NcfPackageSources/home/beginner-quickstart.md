@@ -9,7 +9,7 @@
 如果你第一次接触 NCF 源码，这篇文档会带你在 60 分钟内完成：
 
 - 拉取并编译 `NcfPackageSources`。
-- 启动模拟站点 `Senparc.Web`。
+- 启动NCF Web Admin 标准基线 `Senparc.Web`。
 - 完成首装、管理员登录、模块启用。
 - 跑通一个最小 AI / RAG 验证链路。
 - 知道遇到报错时应该先查哪里。
@@ -19,7 +19,7 @@
 | 项目       | 要求                                   | 如何检查                            |
 | ---------- | -------------------------------------- | ----------------------------------- |
 | 操作系统   | Windows / macOS / Linux 任一           | -                                   |
-| .NET SDK   | 10.0（与当前模拟站点和 XNCF 模板一致） | `dotnet --version`                  |
+| .NET SDK   | 10.0（与当前NCF Web Admin 标准基线和 XNCF 模板一致） | `dotnet --version`                  |
 | Git        | 可正常克隆仓库                         | `git --version`                     |
 | 可用浏览器 | Chrome / Edge / Safari 任一            | -                                   |
 | 本机端口   | `5000`（HTTP）未被占用                 | 启动日志是否出现 `Now listening on` |
@@ -45,8 +45,8 @@ git rev-parse --short HEAD
 ## 4. 10-20 分钟：还原并编译
 
 ```bash
-dotnet restore src/NcfPackageSources_Include_NcfSimulatedSite.sln
-dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
+dotnet restore src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
+dotnet build src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
 ```
 
 预期结果：
@@ -54,10 +54,10 @@ dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
 - `restore` 完成，无阻断错误。
 - `build` 结束看到 `Build succeeded.`。
 
-## 5. 20-30 分钟：启动模拟站点
+## 5. 20-30 分钟：启动NCF Web Admin 标准基线
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
+dotnet run --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 预期结果：
@@ -132,7 +132,7 @@ HTTPS 端口，不是普通 `dotnet run` 的默认地址。
 | `dotnet` 命令不可用             | SDK 未安装或 PATH 未生效               | 安装/修复 .NET SDK 后重开终端，执行 `dotnet --info`                                         |
 | `restore` 失败（超时/源不可达） | 网络或 NuGet 源异常                    | 检查网络后重试 `dotnet restore`，必要时更换 NuGet 源                                        |
 | `build` 失败（SDK 不匹配）      | 本机 SDK 版本过旧                      | 升级到 .NET 10 SDK，再执行 `dotnet build`                                                   |
-| 启动后端口占用                  | `5000` 或 `5111` 已被其他进程使用      | 修改 `tools/NcfSimulatedSite/Senparc.Web/Properties/launchSettings.json` 端口或显式指定 URL |
+| 启动后端口占用                  | `5000` 或 `5111` 已被其他进程使用      | 修改 `tools/NcfWebAdminBaseline/Senparc.Web/Properties/launchSettings.json` 端口或显式指定 URL |
 | 一直停在安装页                  | 初装未完成或数据库初始化失败           | 重做安装步骤并检查启动日志异常                                                              |
 | 模块安装后菜单不出现            | 模块未启用或权限不足                   | 在模块管理确认状态，检查管理员账号权限                                                      |
 | Function 数量为 0               | 未使用 `[FunctionRender]` 或扫描未命中 | 检查 AppService 方法标注并重启应用                                                          |

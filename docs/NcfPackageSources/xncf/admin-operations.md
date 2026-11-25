@@ -39,11 +39,36 @@ Footer accepts plain text and `<a>` links with absolute HTTP/HTTPS destinations;
 Module publish mode is switched in module management, not in this editor.
 This page has no authentication-expiry setting and is not an editor for model credentials or arbitrary host configuration.
 
+### Beginner checklist
+
+1. Change **System name** only after deciding what users should see in the browser title and
+   administration shell.
+2. For **Footer**, start with plain text. If you add a link, use an absolute `https://` URL
+   and keep the visible link text understandable.
+3. Save, refresh the public page, and confirm the result in the actual browser.
+4. If a module appears to be missing, open module management. Do not expect the **Publish mode**
+   value on this page to install, enable, or publish a module.
+
+The Footer field is intentionally limited. Do not paste scripts, event attributes, relative
+URLs, or a complete page fragment into it. A value displayed in the preview is not proof that
+every downstream browser, reverse proxy, or content-security policy will accept the link.
+
 <a id="help-tenants"></a>
 
 ## Tenants
 
 Instructions moved to [Tenants](../../start/config/mutiple-tenant.md#help-tenants).
+
+Before using the page, confirm that multi-tenancy is enabled and decide which request value
+selects a tenant. The **match keyword** is the value used to identify the tenant; it is not
+the tenant display name unless your deployment deliberately makes them equal.
+
+When creating a tenant, fill in the name, match keyword, administrator note, and enabled state.
+Use **Initialize** only when you intend to create the tenant's initial system information and
+administrator account. The result dialog contains credentials that must be recorded in the
+approved password store immediately; do not leave them in screenshots, chat messages, or logs.
+Changing a tenant's match keyword can make existing requests resolve to a different tenant, so
+test with a non-production request before changing an established tenant.
 
 <a id="help-accounts"></a>
 

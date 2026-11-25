@@ -16,7 +16,7 @@ Gaps in the earlier audit below continue to track source-analysis depth, not an 
 > a module is unsupported or unsuitable for production.
 >
 > The complete project-level audit for
-> `NcfPackageSources_Include_NcfSimulatedSite.sln` is maintained in the
+> `NcfPackageSources_Include_NcfWebAdminBaseline.sln` is maintained in the
 > [Solution Project Map](../home/solution-project-map.md). Every runtime
 > project in that solution has a beginner-facing introduction there; this page
 > tracks the remaining need for deeper, module-specific source analysis.

@@ -278,7 +278,7 @@ docker pull registry.example.com/ncf-sandbox/python:3.12-alpine
 - 固定容器调用不接收调用方提供的 Shell 命令、Docker socket、host 网络或可写生产源码。它使用第二份归 Sandbox 所有的源码副本、仅 loopback 端口、移除能力、`no-new-privileges`、只读根文件系统、tmpfs 和 CPU/内存/PID 限制。
 - 它只执行固定步骤：还原固定的 `Senparc.Web` 项目、发布、在 8080 端口启动。预览输出不会部署回宿主机。
 - 访问使用带 Admin 鉴权的 `/sandbox-preview/{sessionId}/...` 代理；代理到预览进程前会移除 Cookie 和 `Authorization` 头。
-- 预览 `Senparc.Web` 必须读取 `NCF_XNCF_PREVIEW_PATH_BASE`，并在 NCF/路由中间件之前调用 `UsePathBase`。模拟宿主已经支持；自定义宿主必须增加同样的 opt-in。
+- 预览 `Senparc.Web` 必须读取 `NCF_XNCF_PREVIEW_PATH_BASE`，并在 NCF/路由中间件之前调用 `UsePathBase`。NCF Web Admin 标准基线已经支持；自定义宿主必须增加同样的 opt-in。
 
 操作流程请看[安全地创建、测试并合入 XNCF 模块](/zh/start/xncf-develop/isolated-xncf-development.html)，实现边界请看[XncfBuilder 隔离开发源码剖析](./xncfbuilder-isolated-development.md)。
 

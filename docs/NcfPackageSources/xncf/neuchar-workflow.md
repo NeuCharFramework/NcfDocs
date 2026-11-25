@@ -15,6 +15,34 @@ it does not promise publication or background scheduled saves. Automatic canvas 
 Tasks, analytics and import/export are separate entries. Stopping a run does not undo external effects already performed.
 See [the Workflow guide](./neuchar-workflow.md) for nodes and expressions.
 
+### First run for a beginner
+
+Start with a **manual** trigger and one or two nodes that have no external side effects.
+Save the Workflow, run it once with a test input, and inspect the task record before adding
+Webhooks, schedules, HTTP calls, messages, or data mutations. Add one branch at a time and
+run the validation again after every graph change.
+
+Before enabling a schedule or Webhook, write down the expected input, the owner of the
+Workflow, the secret source, the maximum acceptable frequency, and what should happen after
+a failure. A green canvas or successful save does not prove that the downstream service
+accepted the request.
+
+<a id="help-workflow-ai-shortcuts"></a>
+
+### AdminChat shortcuts from the designer
+
+The designer's Footer **AI** shortcut inserts `/edit-workflow `. Once a saved workflow is selected, the command
+contains its `--id` and `--revision`, so the assistant can inspect that workflow's masked graph and current
+revision. A clear request is saved once through the dedicated edit tool, which preserves the existing name,
+description, trigger, enabled state and masked secret placeholders. The expected revision is checked again on the
+server. Ambiguous requests or revision conflicts stop for confirmation rather than creating another workflow.
+The command cannot start the workflow and does not receive general Workflow-creation, Workspace or Skill tools.
+Reload the editor after a successful AI save before making further page edits.
+
+Use `/run-workflow --id=<id> <input>` from AdminChat to start a saved workflow owned by the current administrator.
+Without an ID, the command searches by name/description and asks for a choice when the match is ambiguous. It starts
+at most one asynchronous run and returns its run ID; use the task page for completion, errors and replay.
+
 <a id="help-workflow-tasks"></a>
 
 ## Workflow tasks
@@ -24,6 +52,11 @@ Quick cleanup removes records in the selected scope: check that scope first. Cre
 Human-input pauses require the requested response, not repeated starts.
 See the [Workflow guide](./neuchar-workflow.md) for node behavior,
 triggers, expressions, and Agent integration.
+
+Use **Quick cleanup** only after confirming the selected status and scope. Cleanup removes
+records; it does not repair a failed Workflow or undo side effects. For a failed run, open
+the record first, capture the error and resource information, then decide whether to replay,
+edit the Workflow, or rerun it.
 
 <a id="help-workflow-replay"></a>
 

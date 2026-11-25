@@ -9,7 +9,7 @@
 
 ## .NET SDK
 
-- The current NCF template, the `NcfPackageSources` simulated site, and the XNCF
+- The current NCF template, the `NcfPackageSources` web-admin baseline, and the XNCF
   template use **.NET 10** as their development baseline. Download the SDK from
   [https://dotnet.microsoft.com/download/dotnet/10.0](https://dotnet.microsoft.com/download/dotnet/10.0).
 - For an older NCF release or NuGet package, follow that release tag and the

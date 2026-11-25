@@ -97,7 +97,7 @@ These are source-analysis topics, not prerequisites for a business module:
 - how reflection populates `FunctionRenderCollection`;
 - how the XNCF base class maps MCP routes;
 - internal multi-database, repository-base, and runtime-composition details;
-- synchronization between the simulated site, NCF repository, and NuGet templates.
+- synchronization between the NCF Web Admin baseline, NCF repository, and NuGet templates.
 
 When you need to debug or change those behaviors, continue to the
 [NcfPackageSources Source Guide](/NcfPackageSources/home/). Otherwise, use the

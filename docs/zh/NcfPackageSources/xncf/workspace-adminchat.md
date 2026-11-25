@@ -12,6 +12,16 @@ Workspace 作用域记忆仍按用户隔离并保存在数据库中，不会自�
 下方“连接指南”说明如何在 VS Code / Cursor 中连接。工作区创建成功不代表已授权 AI 写入或执行 Python，
 这两项在 AdminChat 创建会话时设置。运行时与远程网关配置见 [Workspace 与 AdminChat](./workspace-adminchat.md)。
 
+### 第一次使用
+
+建议一个 Workspace 对应一个项目或责任范围，只上传该范围需要的文件。
+除非项目确实需要，不要把生成产物或密钥放进工作区。
+连接 VS Code 或 Cursor 前，确认授权流程中显示的管理员账号和目标 Workspace。
+
+“清理”会删除所选 Workspace 中的文件，并重新创建空的 `input`、`output`、`logs`
+目录；Workspace 记录本身会保留，但操作不可撤销。不要把它当作刷新按钮，
+执行前先下载或归档必须保留的文件。
+
 <a id="help-workspace-permissions"></a>
 
 ## Workspace 权限
@@ -22,6 +32,10 @@ Workspace 保存持久文件，运行时只是执行环境。
 AdminChat 创建入口中先选择 Workspace，再分别勾选“允许 AI 写入文件”“允许 AI 执行 Python”；
 Python 选项依赖写入权限，只执行 Workspace 内的 `.py` 文件，并优先使用该 Workspace 的 `.venv`。
 这个问号解释会话授权，不负责创建或上传工作区文件。
+
+排查操作被拒绝时，按顺序检查：当前选择的 Workspace、会话的读/写/CLI 开关、
+管理员是否拥有该工作区或具备超级管理员范围，以及所选运行时。
+上传文件不会开启 Python 或命令执行；启用 Docker 也不会自动授予模型使用 Docker 的权限。
 
 远程网关同时检查 DesktopBridge 设备会话、管理员 JWT 和所有权。
 远程访问使用 HTTPS。撤销设备会话不会删除 Workspace 文件。
@@ -166,7 +180,7 @@ Linux 部署需要确保容器用户对 Workspace 持久化目录拥有读写权
 
 本次升级没有修改数据库模型，因此没有新增 Migration。已有 AdminChat Workspace 字段的迁移仍按下文命令管理；后续若修改实体，必须继续使用 `dotnet ef migrations add` 生成，而不能手写迁移。
 
-## 数据库迁移（模拟站点）
+## 数据库迁移（NCF Web Admin 标准基线）
 
 AdminChat 会话新增以下字段：
 
@@ -174,7 +188,7 @@ AdminChat 会话新增以下字段：
 - `WorkspaceWriteEnabled`
 - `WorkspaceCliEnabled`
 
-当前模拟站点已使用标准 EF Core 命令生成六套迁移。请在 `NcfPackageSources/tools/NcfSimulatedSite` 目录执行：
+当前NCF Web Admin 标准基线已使用标准 EF Core 命令生成六套迁移。请在 `NcfPackageSources/tools/NcfWebAdminBaseline` 目录执行：
 
 ```bash
 dotnet ef migrations add Add_AdminChatWorkspace -c AdminSenparcEntities_Sqlite -p Senparc.Areas.Admin/Senparc.Areas.Admin.csproj -s Senparc.Web.DatabasePlant/Senparc.Web.DatabasePlant.csproj -o Domain/Migrations/Sqlite

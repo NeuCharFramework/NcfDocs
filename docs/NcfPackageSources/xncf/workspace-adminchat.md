@@ -10,6 +10,17 @@ The **Connection guide** explains VS Code / Cursor access.
 Creating a Workspace does not grant AI file writes or Python execution; those are AdminChat session choices.
 See [Workspace and AdminChat](./workspace-adminchat.md) for runtimes and remote gateway configuration.
 
+### First use
+
+Create one Workspace for one project or responsibility area. Upload only the files needed for
+that area, and keep generated artifacts or secrets out of the Workspace unless the project
+requires them. Before connecting VS Code or Cursor, confirm the selected Workspace and the
+administrator account shown by the authorization flow.
+
+The **Clear** action removes the files in the selected Workspace and recreates the empty
+`input`, `output`, and `logs` directories; it keeps the Workspace record but cannot be undone.
+Do not use it as a refresh button. Download or archive files that must be retained first.
+
 <a id="help-workspace-permissions"></a>
 
 ## Workspace permissions
@@ -22,6 +33,11 @@ automatically grant execution permission either.
 In the AdminChat launcher, select a Workspace before enabling **Allow AI file writes** or **Allow AI to execute Python**.
 Python requires write permission, runs `.py` files inside that Workspace and prefers its `.venv`.
 This help describes session authorization, not the Workspace creation/upload page.
+
+When troubleshooting a denied operation, check in order: the selected Workspace, the session's
+read/write/CLI flags, the administrator's ownership or super-admin scope, and the selected
+runtime. Uploading a file does not enable Python or command execution; enabling Docker does
+not grant the model permission to use it.
 
 The remote gateway checks both the DesktopBridge device session and the Admin
 JWT, as well as ownership. Use HTTPS for remote access. Revoking a device session
@@ -87,6 +103,6 @@ configuration in the target environment.
 
 No database model changed in this upgrade, so no migration was added. Existing migrations remain generated with `dotnet ef migrations add`.
 
-The simulated site now includes standard EF Core migrations for SQLite, MySQL, SQL Server, PostgreSQL, Oracle, and DM. Run `dotnet ef database update` with the matching `AdminSenparcEntities_*` context, the Admin project, and `Senparc.Web.DatabasePlant` as startup project before using the Workspace option. Each migration changes only the three Workspace fields on `ADMIN_AdminChatSession`.
+The web-admin baseline now includes standard EF Core migrations for SQLite, MySQL, SQL Server, PostgreSQL, Oracle, and DM. Run `dotnet ef database update` with the matching `AdminSenparcEntities_*` context, the Admin project, and `Senparc.Web.DatabasePlant` as startup project before using the Workspace option. Each migration changes only the three Workspace fields on `ADMIN_AdminChatSession`.
 
 See the Chinese guide for the full configuration and deployment recommendations.

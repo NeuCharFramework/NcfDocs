@@ -101,7 +101,7 @@ public class SampleAppService : AppServiceBase
 
 ## 本地化
 
-模板提供 `Resources` 目录和 `GlobalUsings.Localization.cs`。当前模拟站点支持
+模板提供 `Resources` 目录和 `GlobalUsings.Localization.cs`。当前NCF Web Admin 标准基线支持
 `zh-CN`、`en`、`ja`、`fr`、`es`、`ru`。模块名称、Function 名称、参数说明
 和页面文案应使用同一资源体系，并保留默认文本或资源回退。
 

@@ -7,7 +7,7 @@
 
 ### NCF installer or module manager
 
-On first installation of the simulated site, `Senparc.Xncf.MCP` is selected by
+On first installation of the NCF Web Admin baseline, `Senparc.Xncf.MCP` is selected by
 default under Advanced Options. On an existing site, install and enable it from
 the admin module manager.
 
@@ -45,11 +45,11 @@ During startup, NCF automatically:
 
 ## 3. Start the site and locate the endpoint
 
-For the source simulated site:
+For the source baseline:
 
 ```bash
 dotnet run \
-  --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj \
+  --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj \
   --launch-profile http
 ```
 

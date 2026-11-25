@@ -88,7 +88,7 @@
 - `FunctionRenderCollection` 如何由反射结果生成；
 - XNCF 基类内部如何映射 MCP 路由；
 - 多数据库底层实现、仓储基类和运行时装配细节；
-- 模拟站点、NCF 仓库与 NuGet 模板之间的同步实现。
+- NCF Web Admin 标准基线、NCF 仓库与 NuGet 模板之间的同步实现。
 
 当你要调试或修改这些行为时，再进入
 [NcfPackageSources 源码剖析](/zh/NcfPackageSources/home/)；否则以当前模板生成的

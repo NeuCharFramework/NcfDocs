@@ -9,7 +9,7 @@
 If this is your first time touching NCF source code, this guide gets you from zero to usable in about 60 minutes:
 
 - Clone and build `NcfPackageSources`.
-- Run the simulated host site `Senparc.Web`.
+- Run the NCF Web Admin baseline `Senparc.Web`.
 - Complete first-time installation, admin login, and module enablement.
 - Validate a minimum AI / RAG flow.
 - Know where to troubleshoot first when errors appear.
@@ -19,7 +19,7 @@ If this is your first time touching NCF source code, this guide gets you from ze
 | Item       | Requirement                                                      | How to Verify                            |
 | ---------- | ---------------------------------------------------------------- | ---------------------------------------- |
 | OS         | Windows / macOS / Linux                                          | -                                        |
-| .NET SDK   | 10.0 (aligned with the current simulated site and XNCF template) | `dotnet --version`                       |
+| .NET SDK   | 10.0 (aligned with the current web-admin baseline and XNCF template) | `dotnet --version`                       |
 | Git        | Able to clone repositories                                       | `git --version`                          |
 | Browser    | Chrome / Edge / Safari                                           | -                                        |
 | Local port | `5000` (HTTP) is available                                       | Check `Now listening on` in startup logs |
@@ -45,8 +45,8 @@ Expected result:
 ## 4. Minute 10-20: Restore and Build
 
 ```bash
-dotnet restore src/NcfPackageSources_Include_NcfSimulatedSite.sln
-dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
+dotnet restore src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
+dotnet build src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
 ```
 
 Expected result:
@@ -54,10 +54,10 @@ Expected result:
 - `restore` completes without blocking errors.
 - `build` ends with `Build succeeded.`.
 
-## 5. Minute 20-30: Run the Simulated Host Site
+## 5. Minute 20-30: Run the NcfWebAdminBaseline
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
+dotnet run --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 Expected result:
@@ -132,7 +132,7 @@ Expected result:
 | `dotnet` command not found                   | SDK missing or PATH not refreshed              | Install/repair .NET SDK, reopen terminal, run `dotnet --info`                                                         |
 | `restore` fails (timeout/source unavailable) | Network or NuGet feed issue                    | Verify network, retry `dotnet restore`, switch NuGet source if needed                                                 |
 | `build` fails (SDK mismatch)                 | Local SDK is too old                           | Upgrade to .NET 10 SDK, rerun `dotnet build`                                                                          |
-| Startup port conflict                        | `5000` or `5111` already used                  | Change the profile in `tools/NcfSimulatedSite/Senparc.Web/Properties/launchSettings.json` or specify a URL explicitly |
+| Startup port conflict                        | `5000` or `5111` already used                  | Change the profile in `tools/NcfWebAdminBaseline/Senparc.Web/Properties/launchSettings.json` or specify a URL explicitly |
 | Installer page keeps showing                 | Initial install not finished or DB init failed | Redo installer flow and inspect startup logs                                                                          |
 | Module menu not visible after install        | Module not enabled or insufficient permission  | Recheck module state and admin role permissions                                                                       |
 | Function count is 0                          | Missing `[FunctionRender]` or scan miss        | Check AppService annotations and restart app                                                                          |

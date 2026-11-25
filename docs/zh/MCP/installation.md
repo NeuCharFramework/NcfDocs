@@ -6,7 +6,7 @@
 
 ### 通过 NCF 安装器或模块管理器
 
-首次安装模拟站点时，`Senparc.Xncf.MCP` 已在高级选项中默认选中。对于已
+首次安装NCF Web Admin 标准基线时，`Senparc.Xncf.MCP` 已在高级选项中默认选中。对于已
 安装站点，可在后台模块管理器中安装并启用该模块。
 
 这是 NCF 应用的推荐方式，框架会自动完成模块扫描、服务注册和路由映射。
@@ -41,11 +41,11 @@ NCF 启动时会自动：
 
 ## 3. 启动并定位端点
 
-以源码模拟站点为例：
+以源码NCF Web Admin 标准基线为例：
 
 ```bash
 dotnet run \
-  --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj \
+  --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj \
   --launch-profile http
 ```
 

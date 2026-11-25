@@ -23,7 +23,7 @@ Template users.
 2. Understand repository boundaries in [Project Relationships, Synchronization, and Release](./project-relationships.md)
 3. Continue with [NCF Capability Source Deep Dive](./capability-guide.md)
 4. Complete module source understanding with [XNCF Extension Library Guide](./xncf-extension-modules.md)
-5. Use the [complete solution project map](./solution-project-map.md) to locate every project in `NcfPackageSources_Include_NcfSimulatedSite.sln`, including `Senparc.Web`, Admin, and all XNCF modules.
+5. Use the [complete solution project map](./solution-project-map.md) to locate every project in `NcfPackageSources_Include_NcfWebAdminBaseline.sln`, including `Senparc.Web`, Admin, and all XNCF modules.
 
 ## What You Will Get From This Guide
 
@@ -40,7 +40,7 @@ It mainly contains three layers:
 
 - `src/Basic`: foundational runtime capabilities (Core, XncfBase, Repository, Service, Database\*).
 - `src/Extensions`: installable modules (system, AI, tooling, operations).
-- `tools/NcfSimulatedSite`: a simulated host site for integration and module verification (`Senparc.Web`, admin areas, installer, etc.).
+- `tools/NcfWebAdminBaseline`: a NCF Web Admin baseline for integration and module verification (`Senparc.Web`, admin areas, installer, etc.).
 
 It, `NeuCharFramework/NCF`, and the XncfBuilder template packaging project are
 not three independently maintained copies of business code. See
@@ -55,13 +55,13 @@ for source authority, synchronization direction, and release boundaries.
 git clone https://github.com/NeuCharFramework/NcfPackageSources.git
 cd NcfPackageSources
 
-dotnet build src/NcfPackageSources_Include_NcfSimulatedSite.sln
+dotnet build src/NcfPackageSources_Include_NcfWebAdminBaseline.sln
 ```
 
-### 2.2 Run the Simulated Host Site
+### 2.2 Run the NcfWebAdminBaseline
 
 ```bash
-dotnet run --project tools/NcfSimulatedSite/Senparc.Web/Senparc.Web.csproj --launch-profile http
+dotnet run --project tools/NcfWebAdminBaseline/Senparc.Web/Senparc.Web.csproj --launch-profile http
 ```
 
 ### 2.3 Validation Priorities

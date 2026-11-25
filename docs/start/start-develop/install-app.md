@@ -9,7 +9,7 @@ When you first start the NCF Web project, the system will prompt for installatio
 <img src="./images/install-01.png" />
 
 Before clicking "Install Now", expand **Advanced Options** to review the modules
-submitted with the first installation. The current simulated site selects these
+submitted with the first installation. The current web-admin baseline selects these
 six items by default:
 
 - Admin area module (required by the system)

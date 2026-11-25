@@ -3,7 +3,7 @@
 > 本覆盖审计于 2026-08-14 基于 `NcfPackageSources` 开发分支完成。
 > 它描述的是文档覆盖度，不代表模块是否受支持或是否适合生产使用。
 >
-> 针对 `NcfPackageSources_Include_NcfSimulatedSite.sln` 的完整项目审计维护在
+> 针对 `NcfPackageSources_Include_NcfWebAdminBaseline.sln` 的完整项目审计维护在
 > [解决方案项目地图](../home/solution-project-map.md)。该解决方案中的每个运行时
 > 项目都已经在那里提供面向小白的介绍；本页继续追踪需要独立深入源码剖析的模块。
 
