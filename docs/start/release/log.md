@@ -1,5 +1,23 @@
 # Logs
 
+## 2026-11-25 update
+
+NcfPackageSources (current development line, checked on 2026-11-25) — AdminChat command capabilities, Workflow collaboration, and full-module internationalization:
+
+1. AdminChat now includes an extensible Chat Tool registration system. XNCF modules can register slash commands, parameter definitions, candidate sources, descriptions, and their corresponding Functions through `IChatTool`. Commands are de-duplicated by name and support parameter-candidate queries, allowing modules to add interactive capabilities without modifying the AdminChat core flow.
+
+2. The system administration module adds the `/analyze-system-logs` command, which can analyze SenparcTrace logs for a specified date within the administrator permission boundary. Analysis reads the overview first, narrows the query by keywords, log type, thread, and exception status, and reads evidence from specified lines only when necessary. Results are limited per request and automatically redacted, distinguishing observed facts, possible causes, and recommended actions instead of reading the complete log at once.
+
+3. NeuCharWorkflow adds AdminChat workflow commands: administrators can find workflows they own by name or description, start runs, inspect workflow graphs in read-only mode, and save graph changes with `ExpectedRevision` conflict detection. Workflow edit results return the new version number and prompt the editor to reload. AgentsManager likewise exposes `/run-agent-group`, which can find an existing Agent Group and submit an asynchronous task without implicitly creating or modifying the group.
+
+4. NeuCharWorkflow runtime and page collaboration continue to improve: workflow output-schema retrieval and graph traversal have been optimized; the designer, run replay, task, and analysis pages now consistently use `NeuCharWorkflowUi.openPage` for background-tab navigation and titles, reducing loss of page context caused by direct navigation. NeuCharWorkflow is updated to `0.4.8`.
+
+5. The development-time backend baseline has been uniformly renamed from `NcfSimulatedSite` to `NcfWebAdminBaseline`; installer options now include safeguards, and project references and development documentation have been updated accordingly. `NcfWebAdminSyncTool` is updated to `0.0.3`, supporting Chinese and English command-line/interactive interfaces, non-interactive synchronization, batch overwrite selection, and exclusion of module-specific `App_Data` runtime data during synchronization.
+
+6. Admin, NeuCharWorkflow, AgentsManager, PromptRange, DynamicData, FileManager, KnowledgeBase, Sandbox, Workspace, WeixinManager, MCP, DesktopBridge, XncfBuilder, and other modules have completed another round of localization: Chinese, English, Spanish, French, Japanese, and Russian resources have been filled in, with static pages, dynamic messages, Function/parameter metadata, and backend runtime prompts brought into alignment. Each module's `Frontend.*` resource mappings are isolated from one another, frontend keys and neutral source text remain stable, and rendering issues in some pages and Vue localization templates have been fixed. PromptRange is updated to `0.20.17`.
+
+7. Module READMEs, code XML comments, the XNCF development Skill, and synchronization-tool documentation have been expanded. Project template and component-directory conventions (`Unpublished`, `Extension`, `Domain`, `Open Host Service`) are now clearer, reducing ambiguity in module development, maintenance, and baseline synchronization.
+
 ## 2026-11-16 update
 
 NcfPackageSources (current development line, checked on 2026-11-16) — Admin navigation context, XNCF inspection, Workspace operations, and localization:

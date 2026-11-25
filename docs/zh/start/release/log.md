@@ -1,5 +1,23 @@
 # 日志
 
+## 2026-11-25 更新
+
+NcfPackageSources（当前开发线，核对日期：2026-11-25）——AdminChat 命令能力、Workflow 协作与全模块国际化：
+
+1、AdminChat 新增可扩展 Chat Tool 注册体系。XNCF 模块可通过 `IChatTool` 注册斜杠命令、参数定义、候选项来源、说明及对应 Function；命令按名称去重并提供参数候选查询能力，便于模块在不修改 AdminChat 核心流程的情况下接入交互能力。
+
+2、系统管理模块增加 `/analyze-system-logs` 命令，可在管理员权限边界内分析指定日期的 SenparcTrace 日志。分析过程优先读取概览，再通过关键词、日志类型、线程及异常状态缩小查询范围，必要时读取指定行的证据；结果会限制单次数据量并自动脱敏，区分观察事实、可能原因与建议操作，避免一次读取完整日志。
+
+3、NeuCharWorkflow 增加 AdminChat 工作流命令：支持按名称或描述查找当前管理员拥有的工作流、启动运行、只读检查工作流图，以及基于 `ExpectedRevision` 的冲突检测保存图修改；Workflow 编辑结果会返回新版本号并提示编辑器重新加载。AgentsManager 同步开放 `/run-agent-group`，可查找已有 Agent Group 并提交异步任务，不会在调用时隐式创建或修改分组。
+
+4、NeuCharWorkflow 运行与页面协作继续完善：工作流输出 Schema 获取和图遍历逻辑完成优化；设计器、运行回放、任务与分析页面统一使用 `NeuCharWorkflowUi.openPage` 处理后台 Tab 导航和标题，降低直接跳转造成的页面上下文丢失。NeuCharWorkflow 更新至 `0.4.8`。
+
+5、开发期后台基线由 `NcfSimulatedSite` 统一更名为 `NcfWebAdminBaseline`，安装器选项增加防护并同步更新项目引用及开发文档。`NcfWebAdminSyncTool` 更新至 `0.0.3`，支持命令行/交互式中英文界面、非交互同步、批量覆盖选择，并在同步时排除模块专用 `App_Data` 运行数据。
+
+6、Admin、NeuCharWorkflow、AgentsManager、PromptRange、DynamicData、FileManager、KnowledgeBase、Sandbox、Workspace、WeixinManager、MCP、DesktopBridge、XncfBuilder 等模块完成新一轮多语言整理：补齐中、英、西、法、日、俄资源，统一静态页面、动态消息、Function/参数元数据及后台运行提示；各模块的 `Frontend.*` 资源映射相互隔离，前端键与中性源文本保持稳定，并修复部分页面和 Vue 多语言模板的渲染问题。PromptRange 更新至 `0.20.17`。
+
+7、模块 README、代码 XML 注释、XNCF 开发 Skill 与同步工具说明得到补充，项目模板和组件目录约定（Unpublished、Extension、Domain、Open Host Service）进一步明确，减少模块开发、维护与基线同步时的歧义。
+
 ## 2026-11-16 更新
 
 NcfPackageSources（当前开发线，核对日期：2026-11-16）——后台导航上下文、XNCF 检查能力、Workspace 运维与多语言：
